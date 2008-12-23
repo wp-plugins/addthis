@@ -1,6 +1,5 @@
 === AddThis ===
 Contributors: _mjk_
-Donate link: http://www.addthis.com/
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget
 Requires at least: 2.3
 Tested up to: 2.7
