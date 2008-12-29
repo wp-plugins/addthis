@@ -10,13 +10,13 @@ The AddThis Social Bookmarking Widget allows any visitor to bookmark and share y
 == Description ==
 Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
 
-PHP 5 required for now. 
-
 == Installation ==
 
 1. Upload `addthis_social_widget.php` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. (Optional) Customize the plugin in the Settings > AddThis menu
+
+If you're using PHP 4, make sure to grab the plugin from our /php4 directory.
 
 == Frequently Asked Questions ==
 
@@ -35,4 +35,4 @@ No. You only need to create an account if you want to see how your users are sha
 
 == PHP Version ==
 
-PHP 5 is required. Sorry for the inconvenience!
+PHP 5+ is preferred; PHP 4 is supported.
