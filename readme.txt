@@ -8,7 +8,11 @@ Stable tag: 1.5.0
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with many popular services. 
 
 == Description ==
-Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
+Help your visitor promote your site! The AddThis Social Bookmarking Widget allows your users to bookmark your site easily with over 45 popular services, and to share it with friends via email. Our button is small, unobtrusive, quick to load and recognized all over the web.
+
+Sign up for an AddThis.com account to see how your visitors are sharing your content: which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
+
+Over 120,000 sites have installed AddThis. Join us!
 
 == Installation ==
 
@@ -28,10 +32,17 @@ Yep! The features you see today on AddThis will always be free.
 
 No. You only need to create an account if you want to see how your users are sharing your blog; the sharing itself works the same either way.
 
+= Is JavaScript required? =
+
+If you've turned on the drop-down menu (which is recommended, as it's been shown to increase sharing/bookmarking rates), JavaScript must be enabled. We load the actual interface via JavaScript at run-time, which allows us to upgrade the core functionality of the menu itself automatically everywhere. 
+
 == Screenshots ==
 
 1. The button on a sample post.
-2. The settings interface on WordPress 2.7.
+2. The button, open, on a sample post.
+3. The settings interface on WordPress 2.7.
+4. A sample sharing trend report.
+5. A sample service usage report.
 
 == PHP Version ==
 
