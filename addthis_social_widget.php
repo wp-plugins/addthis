@@ -20,6 +20,7 @@
 * +--------------------------------------------------------------------------+
 */
 
+
 /**
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
@@ -259,6 +260,8 @@ function addthis_plugin_options() {
 <?php
 }
 
-
-$addthis &= new addthis_social_widget();
+// If we're not running in PHP 4, initialize
+if (strpos(phpversion(), '4') !== 0) {
+    $addthis &= new addthis_social_widget();
+}
 ?>
