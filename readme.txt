@@ -39,7 +39,7 @@ If you've turned on the drop-down menu (which is recommended, as it's been shown
 == Screenshots ==
 
 1. The button on a sample post.
-2. The button, open, on a sample post.
+2. The open menu on a sample post.
 3. The settings interface on WordPress 2.7.
 4. A sample sharing trend report.
 5. A sample service usage report.
