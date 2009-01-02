@@ -166,10 +166,10 @@ EOF;
 
 function addthis_admin_menu()
 {
-    add_options_page('AddThis Plugin Options', 'AddThis', 8, __FILE__, 'addthis_plugin_options');
+    add_options_page('AddThis Plugin Options', 'AddThis', 8, __FILE__, 'addthis_plugin_options_php4');
 }
 
-function addthis_plugin_options() {
+function addthis_plugin_options_php4() {
     global $addthis_styles;
     global $addthis_languages;
     global $addthis_settings;
