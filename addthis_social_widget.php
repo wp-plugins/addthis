@@ -104,8 +104,8 @@ class addthis_social_widget
     */
     public function social_widget($content)
     {
-        // add nothing to RSS feed
-        if (is_feed()) return $content;
+        // add nothing to RSS feed or static pages
+        if (is_feed() || is_category() || is_page()) return $content;
 
         $pub = $this->addthis_username;
         $link  = urlencode(get_permalink());
@@ -161,7 +161,7 @@ EOF;
         $btnWidth = $btnRecord['w'];
         $btnHeight = $btnRecord['h'];
         return <<<EOF
-<img src="{$btnUrl}" width="{$btnWidth}" height="{$btnHeight}" border="0" alt="" />
+<img src="{$btnUrl}" width="{$btnWidth}" height="{$btnHeight}" border="0" alt="Bookmark and Share"/>
 EOF;
     }
 

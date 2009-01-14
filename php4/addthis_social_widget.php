@@ -98,8 +98,8 @@ function addthis_social_widget($content)
 {
     global $addthis_settings;
 
-    // add nothing to RSS feed
-    if (is_feed()) return $content;
+    // add nothing to RSS feed or static pages
+    if (is_feed() || is_category() || is_page()) return $content;
 
     $pub = $addthis_settings['username'];
     $link  = urlencode(get_permalink());
@@ -160,16 +160,16 @@ function addthis_get_button_img()
     $btnWidth = $btnRecord['w'];
     $btnHeight = $btnRecord['h'];
     return <<<EOF
-<img src="$btnUrl" width="$btnWidth" height="$btnHeight" border="0" alt="" />
+<img src="$btnUrl" width="$btnWidth" height="$btnHeight" border="0" alt="Bookmark and Share"/>
 EOF;
 }
 
 function addthis_admin_menu()
 {
-    add_options_page('AddThis Plugin Options', 'AddThis', 8, __FILE__, 'addthis_plugin_options_php4');
+    add_options_page('AddThis Plugin Options', 'AddThis', 8, __FILE__, 'addthis_plugin_options');
 }
 
-function addthis_plugin_options_php4() {
+function addthis_plugin_options() {
     global $addthis_styles;
     global $addthis_languages;
     global $addthis_settings;
