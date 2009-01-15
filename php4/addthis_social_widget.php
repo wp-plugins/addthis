@@ -99,7 +99,7 @@ function addthis_social_widget($content)
     global $addthis_settings;
 
     // add nothing to RSS feed or static pages
-    if (is_feed() || is_category() || is_page()) return $content;
+    if (is_archive() || is_feed() || is_category() || is_page()) return $content;
 
     $pub = $addthis_settings['username'];
     $link  = urlencode(get_permalink());

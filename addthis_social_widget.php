@@ -105,7 +105,7 @@ class addthis_social_widget
     public function social_widget($content)
     {
         // add nothing to RSS feed or static pages
-        if (is_feed() || is_category() || is_page()) return $content;
+        if (is_archive() || is_feed() || is_category() || is_page()) return $content;
 
         $pub = $this->addthis_username;
         $link  = urlencode(get_permalink());
