@@ -24,7 +24,7 @@
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 1.5.2
+* Version: 1.5.3
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com
@@ -62,14 +62,19 @@ function addthis_init($username=null, $style=null)
     add_option('addthis_username');
     add_option('addthis_options', 'email, favorites, digg, delicious, myspace, google, facebook, reddit, live, more');
     add_option('addthis_isdropdown', true);
+    add_option('addthis_showonpages', false);
+    add_option('addthis_showoncats', false);
+    add_option('addthis_showonarchives', false);
     add_option('addthis_style');
-    add_option('addthis_logo');
-    add_option('addthis_logo_background');
-    add_option('addthis_logo_color');
+    add_option('addthis_header_background');
+    add_option('addthis_header_color');
     add_option('addthis_brand');
     add_option('addthis_language', 'en');
 
     $addthis_settings['isdropdown'] = get_option('addthis_isdropdown') === 'true';
+    $addthis_settings['showonpages'] = get_option('addthis_showonpages') === 'true';
+    $addthis_settings['showonarchives'] = get_option('addthis_showonarchives') === 'true';
+    $addthis_settings['showoncats'] = get_option('addthis_showoncats') === 'true';
     
     if (!isset($style)) $style = get_option('addthis_style');
     if (strlen($style) == 0) $style = 'share';
@@ -81,7 +86,7 @@ function addthis_init($username=null, $style=null)
     $language = get_option('addthis_language');
     $addthis_settings['language'] = $language;
 
-    $advopts = array('logo', 'brand', 'language', 'logo_background', 'logo_colors', 'options');
+    $advopts = array('brand', 'language', 'header_background', 'header_color', 'options');
     $addthis_settings['customization'] = '';
     for ($i = 0; $i < count($advopts); $i++)
     {
@@ -98,8 +103,11 @@ function addthis_social_widget($content)
 {
     global $addthis_settings;
 
-    // add nothing to RSS feed or static pages
-    if (is_archive() || is_feed() || is_category() || is_page()) return $content;
+    // add nothing to RSS feed; control adding to static/archive/category pages
+    if (is_feed()) return $content;
+    else if (is_page() && !$addthis_settings['showonpages']) return $content;
+    else if (is_archive() && !$addthis_settings['showonarchives']) return $content;
+    else if (is_category() && !$addthis_settings['showoncats']) return $content;
 
     $pub = $addthis_settings['username'];
     $link  = urlencode(get_permalink());
@@ -113,14 +121,14 @@ function addthis_social_widget($content)
             $content .= '<script type="text/javascript">' . (isset($pub) ? "\nvar addthis_pub = '$pub';\n" : "\n") . ($addthis_settings['customization']) . "\n</script>\n";
         }
         $content .= <<<EOF
-<div><a href="http://www.addthis.com/bookmark.php" onmouseover="return addthis_open(this, '', '$link', '$title')" onmouseout="addthis_close()" onclick="return addthis_sendto()">
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php" onmouseover="return addthis_open(this, '', '$link', '$title')" onmouseout="addthis_close()" onclick="return addthis_sendto()">
 EOF;
-        $content .= addthis_get_button_img() . '</a><script type="text/javascript" src="http://s7.addthis.com/js/152/addthis_widget.js"></script></div>';
+        $content .= addthis_get_button_img() . '</a><script type="text/javascript" src="http://s7.addthis.com/js/200/addthis_widget.js"></script></div>';
     }
     else
     {
         $content .= <<<EOF
-<div><a href="http://www.addthis.com/bookmark.php" onclick="window.open('http://www.addthis.com/bookmark.php?pub=$pub&amp;url=$link&amp;title=$title', 'addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php" onclick="window.open('http://www.addthis.com/bookmark.php?pub=$pub&amp;url=$link&amp;title=$title', 'addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
 EOF;
         $content .= addthis_get_button_img() . '</a></div>';
     }
@@ -201,7 +209,7 @@ function addthis_plugin_options() {
                 </select>
             </td>
         </tr>
-        <tr valign="top">
+        <tr>
             <th scope="row"><?php _e("Use dropdown menu:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_isdropdown" value="true" <?php echo (get_option('addthis_isdropdown') !== '' ? 'checked' : ''); ?>/></td>
         </tr>
@@ -212,8 +220,22 @@ function addthis_plugin_options() {
     <br />
 
     <h3>Advanced</h3>
-    See <a href="http://addthis.com/customization">our customization docs</a>.
     <table class="form-table">
+        <tr valign="top">
+            <td colspan="2">See <a href="http://addthis.com/customization">our customization docs</a>.</td>
+        </tr>
+        <tr>
+            <th scope="row"><?php _e("Show on <a href=\"http://codex.wordpress.org/Pages\" target=\"blank\">pages</a>:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_showonpages" value="true" <?php echo (get_option('addthis_showonpages') !== '' ? 'checked' : ''); ?>/></td>
+        </tr>
+        <tr>
+            <th scope="row"><?php _e("Show in archives:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_showonarchives" value="true" <?php echo (get_option('addthis_showonarchives') == 'true' ? 'checked' : ''); ?>/></td>
+        </tr>
+        <tr>
+            <th scope="row"><?php _e("Show in categories:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_showoncats" value="true" <?php echo (get_option('addthis_showoncats') == 'true' ? 'checked' : ''); ?>/></td>
+        </tr>
         <tr valign="top">
             <th scope="row"><?php _e("Brand:", 'addthis_trans_domain' ); ?></th>
             <td><input type="text" name="addthis_brand" value="<?php echo get_option('addthis_brand'); ?>" /></td>
@@ -237,21 +259,17 @@ function addthis_plugin_options() {
             </td>
         </tr>
         <tr valign="top">
-            <th scope="row"><?php _e("Logo:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="text" name="addthis_logo" value="<?php echo get_option('addthis_logo'); ?>" /></td>
+            <th scope="row"><?php _e("Header background:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="text" name="addthis_header_background" value="<?php echo get_option('addthis_header_background'); ?>" /></td>
         </tr>
         <tr valign="top">
-            <th scope="row"><?php _e("Logo background:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="text" name="addthis_logo_background" value="<?php echo get_option('addthis_logo_background'); ?>" /></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row"><?php _e("Logo color:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="text" name="addthis_logo_color" value="<?php echo get_option('addthis_logo_color'); ?>" /></td>
+            <th scope="row"><?php _e("Header  color:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="text" name="addthis_header_color" value="<?php echo get_option('addthis_header_color'); ?>" /></td>
         </tr>
     </table>
 
     <input type="hidden" name="action" value="update" />
-    <input type="hidden" name="page_options" value="addthis_username,addthis_style,addthis_isdropdown,addthis_language,addthis_brand,addthis_options,addthis_logo,addthis_logo_background,addthis_logo_color"/>
+    <input type="hidden" name="page_options" value="addthis_username,addthis_style,addthis_isdropdown,addthis_showonpages,addthis_showoncats,addthis_showonarchives,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
 
     <p class="submit">
     <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
