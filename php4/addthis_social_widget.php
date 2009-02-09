@@ -20,6 +20,11 @@
 * +--------------------------------------------------------------------------+
 */
 
+// If we're not running in PHP 4, return
+if (strpos(phpversion(), '4') !== 0) {
+    return;
+}
+
 /**
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
