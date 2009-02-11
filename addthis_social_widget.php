@@ -46,6 +46,7 @@ class addthis_social_widget
     /// Enable AddThis on pages
     private $addthis_showonpages;
     private $addthis_showonarchives;
+    private $addthis_showonhome;
     private $addthis_showoncats;
 
     /// AddThis publisher ID
@@ -78,10 +79,11 @@ class addthis_social_widget
 
         add_option('addthis_username');
         add_option('addthis_options', 'email, favorites, digg, delicious, myspace, google, facebook, reddit, live, more');
-        add_option('addthis_isdropdown', true);
-        add_option('addthis_showonpages', false);
-        add_option('addthis_showonarchives', false);
-        add_option('addthis_showoncats', false);
+        add_option('addthis_isdropdown', 'true');
+        add_option('addthis_showonhome', 'true');
+        add_option('addthis_showonpages', 'false');
+        add_option('addthis_showonarchives', 'false');
+        add_option('addthis_showoncats', 'false');
         add_option('addthis_style');
         add_option('addthis_header_background');
         add_option('addthis_header_color');
@@ -97,6 +99,7 @@ class addthis_social_widget
         if (!isset($username)) $username = get_option('addthis_username');
         $this->addthis_username = $username;
 
+        $this->addthis_showonhome = !(get_option('addthis_showonhome') !== 'true');
         $this->addthis_showonpages = get_option('addthis_showonpages') === 'true';
         $this->addthis_showonarchives = get_option('addthis_showonarchives') === 'true';
         $this->addthis_showoncats = get_option('addthis_showoncats') === 'true';
@@ -124,6 +127,7 @@ class addthis_social_widget
         else if (is_page() && !$this->addthis_showonpages) return $content;
         else if (is_archive() && !$this->addthis_showonarchives) return $content;
         else if (is_category() && !$this->addthis_showoncats) return $content;
+        else if (is_home() && !$this->addthis_showonhome) return $content;
 
         $pub = $this->addthis_username;
         $link  = urlencode(get_permalink());
@@ -237,6 +241,10 @@ function addthis_plugin_options() {
             <td><input type="checkbox" name="addthis_showonpages" value="true" <?php echo (get_option('addthis_showonpages') == 'true' ? 'checked' : ''); ?>/></td>
         </tr>
         <tr>
+            <th scope="row"><?php _e("Show on homepage:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_showonhome" value="true" <?php echo (get_option('addthis_showonhome') == 'true' ? 'checked' : ''); ?>/></td>
+        </tr>
+        <tr>
             <th scope="row"><?php _e("Show in archives:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_showonarchives" value="true" <?php echo (get_option('addthis_showonarchives') == 'true' ? 'checked' : ''); ?>/></td>
         </tr>
@@ -277,7 +285,7 @@ function addthis_plugin_options() {
     </table>
 
     <input type="hidden" name="action" value="update" />
-    <input type="hidden" name="page_options" value="addthis_username,addthis_style,addthis_isdropdown,addthis_showonpages,addthis_showonarchives,addthis_showoncats,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
+    <input type="hidden" name="page_options" value="addthis_username,addthis_style,addthis_isdropdown,addthis_showonpages,addthis_showonarchives,addthis_showonhome,addthis_showoncats,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
 
     <p class="submit">
     <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
