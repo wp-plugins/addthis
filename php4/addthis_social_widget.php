@@ -20,10 +20,8 @@
 * +--------------------------------------------------------------------------+
 */
 
-// If we're not running in PHP 4, return
-if (strpos(phpversion(), '4') !== 0) {
-    return;
-}
+if (!defined('ADDTHIS_INIT')) define('ADDTHIS_INIT', 1);
+else return;
 
 /**
 * Plugin Name: AddThis Social Bookmarking Widget
@@ -292,8 +290,5 @@ function addthis_plugin_options_php4() {
 <?php
 }
 
-// If we're running in PHP 4, initialize
-if (strpos(phpversion(), '4') === 0) {
-    addthis_init();
-}
+addthis_init();
 ?>

@@ -20,7 +20,7 @@ Over 120,000 sites have installed AddThis. Join us!
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. (Optional) Customize the plugin in the Settings > AddThis menu
 
-If you're using PHP 4, make sure to grab the plugin from our /php4 directory.
+Note: due to the confusion for many of our users, there are no longer separate versions for PHP4 and PHP5.
 
 == Frequently Asked Questions ==
 

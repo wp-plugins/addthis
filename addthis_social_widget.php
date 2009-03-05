@@ -20,10 +20,8 @@
 * +--------------------------------------------------------------------------+
 */
 
-// If we're running in PHP 4, return
-if (strpos(phpversion(), '4') === 0) {
-    return;
-}
+if (!defined('ADDTHIS_INIT')) define('ADDTHIS_INIT', 1);
+else return;
 
 /**
 * Plugin Name: AddThis Social Bookmarking Widget
@@ -34,166 +32,162 @@ if (strpos(phpversion(), '4') === 0) {
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com
 */
-class addthis_social_widget
+$addthis_settings = array(array('isdropdown', 'false'),
+                          array('customization', ''), 
+                          array('language', 'en'), 
+                          array('username', ''), 
+                          array('style', 'share'));
+
+$addthis_languages = array('zh'=>'Chinese', 'da'=>'Danish', 'nl'=>'Dutch', 'en'=>'English', 'fi'=>'Finnish', 'fr'=>'French', 'de'=>'German', 'he'=>'Hebrew', 'it'=>'Italian', 'ja'=>'Japanese', 'ko'=>'Korean', 'no'=>'Norwegian', 'pl'=>'Polish', 'pt'=>'Portugese', 'ru'=>'Russian', 'es'=>'Spanish', 'sv'=>'Swedish');
+
+$addthis_styles = array(
+                      'share' => array('img'=>'lg-share-%lang%.gif', 'w'=>125, 'h'=>16),
+                      'bookmark' => array('img'=>'lg-bookmark-en.gif', 'w'=>125, 'h'=>16),
+                      'addthis' => array('img'=>'lg-addthis-en.gif', 'w'=>125, 'h'=>16),
+                      'share-small' => array('img'=>'sm-share-%lang%.gif', 'w'=>83, 'h'=>16),
+                      'bookmark-small' => array('img'=>'sm-bookmark-en.gif', 'w'=>83, 'h'=>16),
+                      'plus' => array('img'=>'sm-plus.gif', 'w'=>16, 'h'=>16)
+                      /* Add your own style here, like this:
+                        , 'custom' => array('img'=>'http://example.com/button.gif', 'w'=>16, 'h'=>16) */
+                    );
+
+
+/**
+* Adds WP filter so we can append the AddThis button to post content.
+*/
+function addthis_init($username=null, $style=null)
 {
-    /// Set false if you'd like the pop-up menu instead
-    private $addthis_isdropdown;
+    global $addthis_settings;
 
-    /// Advanced customization options here (e.g., 'addthis_options = "email";'). See http://www.addthis.com/customization
-    private $customization;
-    private $addthis_language;
+    add_filter('the_content', 'addthis_social_widget');
+    add_filter('admin_menu', 'addthis_admin_menu');
 
-    /// Enable AddThis on pages
-    private $addthis_showonpages;
-    private $addthis_showonarchives;
-    private $addthis_showonhome;
-    private $addthis_showoncats;
+    add_option('addthis_username');
+    add_option('addthis_options', 'email, favorites, digg, delicious, myspace, google, facebook, reddit, live, more');
+    add_option('addthis_isdropdown', 'true');
+    add_option('addthis_showonhome', 'true');
+    add_option('addthis_showonpages', 'false');
+    add_option('addthis_showoncats', 'false');
+    add_option('addthis_showonarchives', 'false');
+    add_option('addthis_style');
+    add_option('addthis_header_background');
+    add_option('addthis_header_color');
+    add_option('addthis_brand');
+    add_option('addthis_language', 'en');
 
-    /// AddThis publisher ID
-    private $addthis_username;
+    $addthis_settings['isdropdown'] = get_option('addthis_isdropdown') === 'true';
+    $addthis_settings['showonhome'] = !(get_option('addthis_showonhome') !== 'true');
+    $addthis_settings['showonpages'] = get_option('addthis_showonpages') === 'true';
+    $addthis_settings['showonarchives'] = get_option('addthis_showonarchives') === 'true';
+    $addthis_settings['showoncats'] = get_option('addthis_showoncats') === 'true';
+    
+    if (!isset($style)) $style = get_option('addthis_style');
+    if (strlen($style) == 0) $style = 'share';
+    $addthis_settings['style'] = $style;
 
-    /// Share button style (possible styles: share, bookmark, addthis, share-small, bookmark-small, plus)
-    private $addthis_style;
+    if (!isset($username)) $username = get_option('addthis_username');
+    $addthis_settings['username'] = $username;
 
-    public static $languages = array('zh'=>'Chinese', 'da'=>'Danish', 'nl'=>'Dutch', 'en'=>'English', 'fi'=>'Finnish', 'fr'=>'French', 'de'=>'German', 'he'=>'Hebrew', 'it'=>'Italian', 'ja'=>'Japanese', 'ko'=>'Korean', 'no'=>'Norwegian', 'pl'=>'Polish', 'pt'=>'Portugese', 'ru'=>'Russian', 'es'=>'Spanish', 'sv'=>'Swedish');
+    $language = get_option('addthis_language');
+    $addthis_settings['language'] = $language;
 
-    public static $btnStyles = array(
-                                      'share' => array('img'=>'lg-share-%lang%.gif', 'w'=>125, 'h'=>16),
-                                      'bookmark' => array('img'=>'lg-bookmark-en.gif', 'w'=>125, 'h'=>16),
-                                      'addthis' => array('img'=>'lg-addthis-en.gif', 'w'=>125, 'h'=>16),
-                                      'share-small' => array('img'=>'sm-share-%lang%.gif', 'w'=>83, 'h'=>16),
-                                      'bookmark-small' => array('img'=>'sm-bookmark-en.gif', 'w'=>83, 'h'=>16),
-                                      'plus' => array('img'=>'sm-plus.gif', 'w'=>16, 'h'=>16)
-                                      /* Add your own style here, like this:
-                                        , 'custom' => array('img'=>'http://example.com/button.gif', 'w'=>16, 'h'=>16) */
-                                    );
-
-
-    /**
-    * Adds WP filter so we can append the AddThis button to post content.
-    */
-    function addthis_social_widget($username=null, $style=null)
+    $advopts = array('brand', 'language', 'header_background', 'header_color', 'options');
+    $addthis_settings['customization'] = '';
+    for ($i = 0; $i < count($advopts); $i++)
     {
-        add_filter('the_content', array(&$this, 'social_widget'));
-        add_filter('admin_menu', array(&$this, 'admin_menu'));
-
-        add_option('addthis_username');
-        add_option('addthis_options', 'email, favorites, digg, delicious, myspace, google, facebook, reddit, live, more');
-        add_option('addthis_isdropdown', 'true');
-        add_option('addthis_showonhome', 'true');
-        add_option('addthis_showonpages', 'false');
-        add_option('addthis_showonarchives', 'false');
-        add_option('addthis_showoncats', 'false');
-        add_option('addthis_style');
-        add_option('addthis_header_background');
-        add_option('addthis_header_color');
-        add_option('addthis_brand');
-        add_option('addthis_language', 'en');
-
-        $this->addthis_isdropdown = get_option('addthis_isdropdown') === 'true';
-        
-        if (!isset($style)) $style = get_option('addthis_style');
-        if (strlen($style) == 0) $style = 'share';
-        $this->addthis_style = $style;
-
-        if (!isset($username)) $username = get_option('addthis_username');
-        $this->addthis_username = $username;
-
-        $this->addthis_showonhome = !(get_option('addthis_showonhome') !== 'true');
-        $this->addthis_showonpages = get_option('addthis_showonpages') === 'true';
-        $this->addthis_showonarchives = get_option('addthis_showonarchives') === 'true';
-        $this->addthis_showoncats = get_option('addthis_showoncats') === 'true';
-
-        $language = get_option('addthis_language');
-        $this->addthis_language = $language;
-
-        $advopts = array('brand', 'language', 'header_background', 'header_color', 'options');
-        $this->customization = '';
-        for ($i = 0; $i < count($advopts); $i++)
-        {
-            $opt = $advopts[$i];
-            $val = get_option("addthis_$opt");
-            if (isset($val) && strlen($val)) $this->customization .= "var addthis_$opt = '$val';";
-        }
-    }
-
-    /**
-    * Appends AddThis button to post content.
-    */
-    public function social_widget($content)
-    {
-        // add nothing to RSS feeds; control adding to static/archive/category pages
-        if (is_feed()) return $content;
-        else if (is_page() && !$this->addthis_showonpages) return $content;
-        else if (is_archive() && !$this->addthis_showonarchives) return $content;
-        else if (is_category() && !$this->addthis_showoncats) return $content;
-        else if (is_home() && !$this->addthis_showonhome) return $content;
-
-        $pub = $this->addthis_username;
-        $link  = urlencode(get_permalink());
-        $title = urlencode(get_the_title($id));
-
-        $content .= "\n<!-- AddThis Button BEGIN -->\n";
-        if ($this->addthis_isdropdown)
-        {
-            if (isset($pub) || strlen($this->customization)) 
-            {
-                $content .= '<script type="text/javascript">' . (isset($pub) ? "\nvar addthis_pub = '$pub';\n" : "\n") . ($this->customization) . "\n</script>\n";
-            }
-            $content .= <<<EOF
-<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php" onmouseover="return addthis_open(this, '', '$link', '$title')" onmouseout="addthis_close()" onclick="return addthis_sendto()">{$this->get_button_img()}</a><script type="text/javascript" src="http://s7.addthis.com/js/200/addthis_widget.js"></script></div>
-EOF;
-        }
-        else
-        {
-            $content .= <<<EOF
-<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php" onclick="window.open('http://www.addthis.com/bookmark.php?pub=$pub&amp;url=$link&amp;title=$title', 'addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">{$this->get_button_img()}</a></div>
-EOF;
-        }
-        $content .= "\n<!-- AddThis Button END -->";
-        return $content;
-    }
-
-    /**
-    * Generates img tag for share/bookmark button.
-    */
-    private function get_button_img()
-    {
-        $btnStyle = $this->addthis_style;
-        if ($this->addthis_language != 'en')
-        {
-            // We use a translation of the word 'share' for all verbal buttons
-            switch ($btnStyle)
-            {   
-                case 'bookmark':
-                case 'addthis':
-                case 'bookmark-sm':
-                    $btnStyle = 'share';
-            }
-        }
-
-        if (!isset(self::$btnStyles[$btnStyle])) $btnStyle = 'share';
-        $btnRecord = self::$btnStyles[$btnStyle];
-        $btnUrl = (strpos(trim($btnRecord['img']), 'http://') !== 0 ? "http://s7.addthis.com/static/btn/" : "") . $btnRecord['img'];
-             
-        if (strpos($btnUrl, '%lang%') !== false)
-        {
-            $btnUrl = str_replace('%lang%',$this->addthis_language, $btnUrl);
-        }
-        $btnWidth = $btnRecord['w'];
-        $btnHeight = $btnRecord['h'];
-        return <<<EOF
-<img src="{$btnUrl}" width="{$btnWidth}" height="{$btnHeight}" border="0" alt="Bookmark and Share" style="border:0;padding:0"/>
-EOF;
-    }
-
-    public function admin_menu()
-    {
-        add_options_page('AddThis Plugin Options', 'AddThis', 8, __FILE__, 'addthis_plugin_options');
+        $opt = $advopts[$i];
+        $val = get_option("addthis_$opt");
+        if (isset($val) && strlen($val)) $addthis_settings['customization'] .= "var addthis_$opt = '$val';";
     }
 }
 
-function addthis_plugin_options() {
+/**
+* Appends AddThis button to post content.
+*/
+function addthis_social_widget($content)
+{
+    global $addthis_settings;
+
+    // add nothing to RSS feed; control adding to static/archive/category pages
+    if (is_feed()) return $content;
+    else if (is_home() && !$addthis_settings['showonhome']) return $content;
+    else if (is_page() && !$addthis_settings['showonpages']) return $content;
+    else if (is_archive() && !$addthis_settings['showonarchives']) return $content;
+    else if (is_category() && !$addthis_settings['showoncats']) return $content;
+
+    $pub = $addthis_settings['username'];
+    $link  = urlencode(get_permalink());
+    $title = urlencode(get_the_title($id));
+
+    $content .= "\n<!-- AddThis Button BEGIN -->\n";
+    if ($addthis_settings['isdropdown'])
+    {
+        if (isset($pub) || strlen($addthis_settings['customization'])) 
+        {
+            $content .= '<script type="text/javascript">' . (isset($pub) ? "\nvar addthis_pub = '$pub';\n" : "\n") . ($addthis_settings['customization']) . "\n</script>\n";
+        }
+        $content .= <<<EOF
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php" onmouseover="return addthis_open(this, '', '$link', '$title')" onmouseout="addthis_close()" onclick="return addthis_sendto()">
+EOF;
+        $content .= addthis_get_button_img() . '</a><script type="text/javascript" src="http://s7.addthis.com/js/200/addthis_widget.js"></script></div>';
+    }
+    else
+    {
+        $content .= <<<EOF
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php" onclick="window.open('http://www.addthis.com/bookmark.php?pub=$pub&amp;url=$link&amp;title=$title', 'addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
+EOF;
+        $content .= addthis_get_button_img() . '</a></div>';
+    }
+    $content .= "\n<!-- AddThis Button END -->";
+    return $content;
+}
+
+/**
+* Generates img tag for share/bookmark button.
+*/
+function addthis_get_button_img()
+{
+    global $addthis_settings;
+    global $addthis_styles;
+
+    $btnStyle = $addthis_settings['style'];
+    if ($addthis_settings['language'] != 'en')
+    {
+        // We use a translation of the word 'share' for all verbal buttons
+        switch ($btnStyle)
+        {   
+            case 'bookmark':
+            case 'addthis':
+            case 'bookmark-sm':
+                $btnStyle = 'share';
+        }
+    }
+
+    if (!isset($addthis_styles[$btnStyle])) $btnStyle = 'share';
+    $btnRecord = $addthis_styles[$btnStyle];
+    $btnUrl = (strpos(trim($btnRecord['img']), 'http://') !== 0 ? "http://s7.addthis.com/static/btn/" : "") . $btnRecord['img'];
+         
+    if (strpos($btnUrl, '%lang%') !== false)
+    {
+        $btnUrl = str_replace('%lang%',$addthis_settings['language'], $btnUrl);
+    }
+    $btnWidth = $btnRecord['w'];
+    $btnHeight = $btnRecord['h'];
+    return <<<EOF
+<img src="$btnUrl" width="$btnWidth" height="$btnHeight" border="0" alt="Bookmark and Share"/>
+EOF;
+}
+
+function addthis_admin_menu()
+{
+    add_options_page('AddThis Plugin Options', 'AddThis', 8, __FILE__, 'addthis_plugin_options_php4');
+}
+
+function addthis_plugin_options_php4() {
+    global $addthis_styles;
+    global $addthis_languages;
+    global $addthis_settings;
+
 ?>
     <div class="wrap">
     <h2>AddThis</h2>
@@ -213,7 +207,7 @@ function addthis_plugin_options() {
                 <select name="addthis_style">
                 <?php
                     $curstyle = get_option('addthis_style');
-                    foreach (addthis_social_widget::$btnStyles as $style => $info)
+                    foreach ($addthis_styles as $style => $info)
                     {
                         echo "<option value=\"$style\"". ($style == $curstyle ? " selected":""). ">$style</option>";
                     }
@@ -223,7 +217,7 @@ function addthis_plugin_options() {
         </tr>
         <tr>
             <th scope="row"><?php _e("Use dropdown menu:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_isdropdown" value="true" <?php echo (get_option('addthis_isdropdown') == 'true' ? 'checked' : ''); ?>/></td>
+            <td><input type="checkbox" name="addthis_isdropdown" value="true" <?php echo (get_option('addthis_isdropdown') !== '' ? 'checked' : ''); ?>/></td>
         </tr>
     </table>
     
@@ -238,7 +232,7 @@ function addthis_plugin_options() {
         </tr>
         <tr>
             <th scope="row"><?php _e("Show on <a href=\"http://codex.wordpress.org/Pages\" target=\"blank\">pages</a>:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_showonpages" value="true" <?php echo (get_option('addthis_showonpages') == 'true' ? 'checked' : ''); ?>/></td>
+            <td><input type="checkbox" name="addthis_showonpages" value="true" <?php echo (get_option('addthis_showonpages') !== '' ? 'checked' : ''); ?>/></td>
         </tr>
         <tr>
             <th scope="row"><?php _e("Show on homepage:", 'addthis_trans_domain' ); ?></th>
@@ -266,7 +260,7 @@ function addthis_plugin_options() {
                 <select name="addthis_language">
                 <?php
                     $curlng = get_option('addthis_language');
-                    foreach (addthis_social_widget::$languages as $lng=>$name)
+                    foreach ($addthis_languages as $lng=>$name)
                     {
                         echo "<option value=\"$lng\"". ($lng == $curlng ? " selected":""). ">$name</option>";
                     }
@@ -279,13 +273,13 @@ function addthis_plugin_options() {
             <td><input type="text" name="addthis_header_background" value="<?php echo get_option('addthis_header_background'); ?>" /></td>
         </tr>
         <tr valign="top">
-            <th scope="row"><?php _e("Header color:", 'addthis_trans_domain' ); ?></th>
+            <th scope="row"><?php _e("Header  color:", 'addthis_trans_domain' ); ?></th>
             <td><input type="text" name="addthis_header_color" value="<?php echo get_option('addthis_header_color'); ?>" /></td>
         </tr>
     </table>
 
     <input type="hidden" name="action" value="update" />
-    <input type="hidden" name="page_options" value="addthis_username,addthis_style,addthis_isdropdown,addthis_showonpages,addthis_showonarchives,addthis_showonhome,addthis_showoncats,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
+    <input type="hidden" name="page_options" value="addthis_username,addthis_style,addthis_isdropdown,addthis_showonpages,addthis_showoncats,addthis_showonhome,addthis_showonarchives,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
 
     <p class="submit">
     <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
@@ -296,8 +290,5 @@ function addthis_plugin_options() {
 <?php
 }
 
-// If we're not running in PHP 4, initialize
-if (strpos(phpversion(), '4') !== 0) {
-    $addthis &= new addthis_social_widget();
-}
+addthis_init();
 ?>
