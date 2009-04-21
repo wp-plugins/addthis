@@ -32,7 +32,7 @@ else return;
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com
 */
-$addthis_settings = array(array('isdropdown', 'false'),
+$addthis_settings = array(array('isdropdown', 'true'),
                           array('customization', ''), 
                           array('language', 'en'), 
                           array('username', ''), 
@@ -72,9 +72,11 @@ function addthis_init($username=null, $style=null)
     add_option('addthis_style');
     add_option('addthis_header_background');
     add_option('addthis_header_color');
+    add_option('addthis_sidebar_only', 'false');
     add_option('addthis_brand');
     add_option('addthis_language', 'en');
 
+    $addthis_settings['sidebar_only'] = get_option('addthis_sidebar_only') === 'true';
     $addthis_settings['isdropdown'] = get_option('addthis_isdropdown') === 'true';
     $addthis_settings['showonhome'] = !(get_option('addthis_showonhome') !== 'true');
     $addthis_settings['showonpages'] = get_option('addthis_showonpages') === 'true';
@@ -99,25 +101,46 @@ function addthis_init($username=null, $style=null)
         $val = get_option("addthis_$opt");
         if (isset($val) && strlen($val)) $addthis_settings['customization'] .= "var addthis_$opt = '$val';";
     }
+
+    add_action('widgets_init', 'addthis_widget_init');
+}
+
+function addthis_widget_init()
+{
+    if ( function_exists('register_sidebar_widget') )
+        register_sidebar_widget('AddThis Widget', 'addthis_sidebar_widget');
+}
+
+function addthis_sidebar_widget($args) 
+{
+    extract($args);
+    echo $before_widget; 
+    echo $before_title . $after_title . addthis_social_widget('', true);
+    echo $after_widget;
 }
 
 /**
 * Appends AddThis button to post content.
 */
-function addthis_social_widget($content)
+function addthis_social_widget($content, $sidebar = false)
 {
     global $addthis_settings;
 
-    // add nothing to RSS feed; control adding to static/archive/category pages
-    if (is_feed()) return $content;
-    else if (is_home() && !$addthis_settings['showonhome']) return $content;
-    else if (is_page() && !$addthis_settings['showonpages']) return $content;
-    else if (is_archive() && !$addthis_settings['showonarchives']) return $content;
-    else if (is_category() && !$addthis_settings['showoncats']) return $content;
+    // add nothing to RSS feed or search results; control adding to static/archive/category pages
+    if (!$sidebar) 
+    {
+        if ($addthis_settings['sidebar_only'] == 'true') return $content;
+        else if (is_feed()) return $content;
+        else if (is_search()) return $content;
+        else if (is_home() && !$addthis_settings['showonhome']) return $content;
+        else if (is_page() && !$addthis_settings['showonpages']) return $content;
+        else if (is_archive() && !$addthis_settings['showonarchives']) return $content;
+        else if (is_category() && !$addthis_settings['showoncats']) return $content;
+    }
 
     $pub = $addthis_settings['username'];
-    $link  = urlencode(get_permalink());
-    $title = urlencode(get_the_title($id));
+    $link  = $sidebar ? '[URL]' : urlencode(get_permalink());
+    $title = $sidebar ? '[TITLE]' : urlencode(get_the_title($id));
 
     $content .= "\n<!-- AddThis Button BEGIN -->\n";
     if ($addthis_settings['isdropdown'])
@@ -127,14 +150,14 @@ function addthis_social_widget($content)
             $content .= '<script type="text/javascript">' . (isset($pub) ? "\nvar addthis_pub = '$pub';\n" : "\n") . ($addthis_settings['customization']) . "\n</script>\n";
         }
         $content .= <<<EOF
-<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php" onmouseover="return addthis_open(this, '', '$link', '$title')" onmouseout="addthis_close()" onclick="return addthis_sendto()">
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=20" onmouseover="return addthis_open(this, '', '$link', '$title')" onmouseout="addthis_close()" onclick="return addthis_sendto()">
 EOF;
         $content .= addthis_get_button_img() . '</a><script type="text/javascript" src="http://s7.addthis.com/js/200/addthis_widget.js"></script></div>';
     }
     else
     {
         $content .= <<<EOF
-<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php" onclick="window.open('http://www.addthis.com/bookmark.php?pub=$pub&amp;url=$link&amp;title=$title', 'addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=20" onclick="window.open('http://www.addthis.com/bookmark.php?v=20&pub=$pub&amp;url=$link&amp;title=$title', 'addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
 EOF;
         $content .= addthis_get_button_img() . '</a></div>';
     }
@@ -217,7 +240,11 @@ function addthis_plugin_options_php4() {
         </tr>
         <tr>
             <th scope="row"><?php _e("Use dropdown menu:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_isdropdown" value="true" <?php echo (get_option('addthis_isdropdown') !== '' ? 'checked' : ''); ?>/></td>
+            <td><input type="checkbox" name="addthis_isdropdown" value="true" <?php echo (get_option('addthis_isdropdown') == 'true' ? 'checked' : ''); ?>/></td>
+        </tr>
+        <tr>
+            <th scope="row"><?php _e("Show in sidebar only:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_sidebar_only" value="true" <?php echo (get_option('addthis_sidebar_only') == 'true' ? 'checked' : ''); ?>/></td>
         </tr>
     </table>
     
@@ -273,13 +300,13 @@ function addthis_plugin_options_php4() {
             <td><input type="text" name="addthis_header_background" value="<?php echo get_option('addthis_header_background'); ?>" /></td>
         </tr>
         <tr valign="top">
-            <th scope="row"><?php _e("Header  color:", 'addthis_trans_domain' ); ?></th>
+            <th scope="row"><?php _e("Header color:", 'addthis_trans_domain' ); ?></th>
             <td><input type="text" name="addthis_header_color" value="<?php echo get_option('addthis_header_color'); ?>" /></td>
         </tr>
     </table>
 
     <input type="hidden" name="action" value="update" />
-    <input type="hidden" name="page_options" value="addthis_username,addthis_style,addthis_isdropdown,addthis_showonpages,addthis_showoncats,addthis_showonhome,addthis_showonarchives,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
+    <input type="hidden" name="page_options" value="addthis_username,addthis_style,addthis_sidebar_only,addthis_isdropdown,addthis_showonpages,addthis_showoncats,addthis_showonhome,addthis_showonarchives,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
 
     <p class="submit">
     <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
