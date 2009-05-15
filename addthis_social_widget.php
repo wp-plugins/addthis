@@ -197,7 +197,7 @@ function addthis_get_button_img()
     $btnWidth = $btnRecord['w'];
     $btnHeight = $btnRecord['h'];
     return <<<EOF
-<img src="$btnUrl" width="$btnWidth" height="$btnHeight" border="0" alt="Bookmark and Share"/>
+<img src="$btnUrl" width="$btnWidth" height="$btnHeight" style="border:0" alt="Bookmark and Share"/>
 EOF;
 }
 
