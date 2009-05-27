@@ -3,7 +3,7 @@ Contributors: _mjk_
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget
 Requires at least: 2.3
 Tested up to: 2.7
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with many popular services. 
 
