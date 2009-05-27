@@ -2,7 +2,7 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 /* 
 * +--------------------------------------------------------------------------+
-* | Copyright (c) 2008 Add This, LLC                                         |
+* | Copyright (c) 2008-2009 Add This, LLC                                    |
 * +--------------------------------------------------------------------------+
 * | This program is free software; you can redistribute it and/or modify     |
 * | it under the terms of the GNU General Public License as published by     |
@@ -27,7 +27,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 1.5.4
+* Version: 1.5.5
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com
@@ -150,14 +150,14 @@ function addthis_social_widget($content, $sidebar = false)
             $content .= '<script type="text/javascript">' . (isset($pub) ? "\nvar addthis_pub = '$pub';\n" : "\n") . ($addthis_settings['customization']) . "\n</script>\n";
         }
         $content .= <<<EOF
-<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=20" onmouseover="return addthis_open(this, '', '$link', '$title')" onmouseout="addthis_close()" onclick="return addthis_sendto()">
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250" onmouseover="return addthis_open(this, '', '$link', '$title')" onmouseout="addthis_close()" onclick="return addthis_sendto()">
 EOF;
-        $content .= addthis_get_button_img() . '</a><script type="text/javascript" src="http://s7.addthis.com/js/200/addthis_widget.js"></script></div>';
+        $content .= addthis_get_button_img() . '</a><script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js"></script></div>';
     }
     else
     {
         $content .= <<<EOF
-<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=20" onclick="window.open('http://www.addthis.com/bookmark.php?v=20&pub=$pub&amp;url=$link&amp;title=$title', 'addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250" onclick="window.open('http://www.addthis.com/bookmark.php?v=250&pub=$pub&amp;url=$link&amp;title=$title', 'addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
 EOF;
         $content .= addthis_get_button_img() . '</a></div>';
     }
