@@ -1,0 +1,82 @@
+#dashboard_addthis .addthis-tab {
+    display: block;
+    background: #fff;
+    padding: 5px 12px;
+}
+
+#dashboard_addthis .addthis_tab {
+    text-align:center;
+}
+#dashboard_addthis .atb-active {
+    display: block;
+    background: #666;
+    padding: 5px 12px;
+    text-decoration: none;
+    color: #fff;
+    margin-right:5px;
+}
+
+#dashboard_addthis p.sub, #dashboard_addthis .table, #dashboard_addthis .versions {
+margin:-12px;
+}
+#dashboard_addthis .inside {
+font-size:11px;
+}
+#dashboard_addthis p.sub {
+color:#777777;
+font-family:Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+font-size:13px;
+font-style:italic;
+padding:5px 10px 15px;
+}
+#dashboard_addthis .table {
+-moz-background-clip:border;
+-moz-background-inline-policy:continuous;
+-moz-background-origin:padding;
+background:#F9F9F9 none repeat scroll 0 0;
+border-bottom:1px solid #ECECEC;
+border-top:1px solid #ECECEC;
+margin:0 -9px 10px;
+padding:0 10px;
+}
+#dashboard_addthis table {
+width:100%;
+}
+#dashboard_addthis .table td {
+    text-align: left;
+}
+
+#dashboard_addthis table td {
+border-top:1px solid #ECECEC;
+padding:3px 0 0 0;
+white-space:nowrap;
+}
+#dashboard_addthis td.pp {
+    padding-right: 10px;
+}
+#dashboard_addthis table tr.first td {
+border-top:medium none;
+}
+#dashboard_addthis table tr {
+    padding:0;
+}
+#dashboard_addthis td.b {
+font-family:Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+padding-right:6px;
+}
+#dashboard_addthis td.ll {
+border-left:1px solid #cCcCcC!important;
+padding-left:5px;
+}
+#dashboard_addthis .t {
+color:#777777;
+padding-right:12px;
+padding-top:6px;
+}
+#dashboard_addthis td.first, #dashboard_addthis td.last {
+width:1px;
+}
+
+#dashboard_addthis .analytics {
+padding:6px 0px;
+}
