@@ -33,13 +33,14 @@ else return;
 * Author URI: http://www.addthis.com
 */
 
-$addthis_settings = array(array('isdropdown', 'true'),
-                          array('customization', ''), 
-                          array('menu_type', 'dropdown'), 
-                          array('language', 'en'), 
-                          array('username', ''), 
-                          array('fallback_username', ''), 
-                          array('style', 'share'));
+$addthis_settings = array();
+$addthis_settings['isdropdown'] = 'true';
+$addthis_settings['customization'] = '';
+$addthis_settings['menu_type'] = 'dropdown';
+$addthis_settings['language'] = 'en';
+$addthis_settings['username'] = '';
+$addthis_settings['fallback_username'] = '';
+$addthis_settings['style'] = 'share';
 
 $addthis_languages = array('zh'=>'Chinese', 'da'=>'Danish', 'nl'=>'Dutch', 'en'=>'English', 'fi'=>'Finnish', 'fr'=>'French', 'de'=>'German', 'he'=>'Hebrew', 'it'=>'Italian', 'ja'=>'Japanese', 'ko'=>'Korean', 'no'=>'Norwegian', 'pl'=>'Polish', 'pt'=>'Portugese', 'ru'=>'Russian', 'es'=>'Spanish', 'sv'=>'Swedish');
 
@@ -114,28 +115,30 @@ function addthis_render_dashboard_widget() {
 
     echo <<<ENDHTML
         <p id="addthis_header" class="sub">Loading...</p>
-        <div class="sub">
-            <table id="addthis_tab_table" style="display:none">
-                <colgroup><col width="25%"/><col width="25%"/><col width="50%"/></colgroup>
-                <tr>
-                    <td><a id="addthis_posts_tab" class="addthis-tab atb-active" href="#" onclick="return addthis_toggle_tabs(false)">Top Content</a></td>
-                    <td><a id="addthis_services_tab" class="addthis-tab" href="#" onclick="return addthis_toggle_tabs(true)">Top Services</a></td>
-                    <td style="text-align:right;"><a href="http://addthis.com/myaccount">View all stats &raquo;</a></td>
-                </tr>
-            </table>
-        </div>
+        <div id="addthis_data_container">
+            <div class="sub">
+                <table id="addthis_tab_table" style="display:none">
+                    <colgroup><col width="25%"/><col width="25%"/><col width="50%"/></colgroup>
+                    <tr>
+                        <td><a id="addthis_posts_tab" class="addthis-tab atb-active" href="#" onclick="return addthis_toggle_tabs(false)">Top Content</a></td>
+                        <td><a id="addthis_services_tab" class="addthis-tab" href="#" onclick="return addthis_toggle_tabs(true)">Top Services</a></td>
+                        <td style="text-align:right;"><a href="http://addthis.com/myaccount">View all stats &raquo;</a></td>
+                    </tr>
+                </table>
+            </div>
 
-        <div class="table">
-            <table id="addthis_data_posts_table" style="display:none">
-                <colgroup><col width="90%"/><col width="10%"/></colgroup>
-                <tbody id="addthis_data_posts">
-                </tbody>
-            </table>
-            <table id="addthis_data_services_table" style="display:none">
-                <colgroup><col width="40%"/><col width="10%"/><col width="40%"/><col width="10%"/></colgroup>
-                <tbody id="addthis_data_services">
-                </tbody>
-            </table>
+            <div class="table">
+                <table id="addthis_data_posts_table" style="display:none">
+                    <colgroup><col width="90%"/><col width="10%"/></colgroup>
+                    <tbody id="addthis_data_posts">
+                    </tbody>
+                </table>
+                <table id="addthis_data_services_table" style="display:none">
+                    <colgroup><col width="40%"/><col width="10%"/><col width="40%"/><col width="10%"/></colgroup>
+                    <tbody id="addthis_data_services">
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <script type="text/javascript">
@@ -180,7 +183,7 @@ function register_addthis_settings() {
 /**
 * Adds WP filter so we can append the AddThis button to post content.
 */
-function addthis_init($username=null, $style=null)
+function addthis_init()
 {
     global $addthis_settings;
 
@@ -230,14 +233,13 @@ function addthis_init($username=null, $style=null)
     $product = get_option('addthis_product');
 
 
-    if (!isset($style)) $style = get_option('addthis_style');
+    $style = get_option('addthis_style');
     if (strlen($style) == 0) $style = 'share';
     $addthis_settings['style'] = $style;
 
     $addthis_settings['menu_type'] = get_option('addthis_menu_type');
 
-    if (!isset($username)) $username = get_option('addthis_username');
-    $addthis_settings['username'] = $username;
+    $addthis_settings['username'] = get_option('addthis_username');
     $addthis_settings['fallback_username'] = get_option('addthis_fallback_username');
 
     $addthis_settings['password'] = get_option('addthis_password');
@@ -253,9 +255,7 @@ function addthis_init($username=null, $style=null)
         $val = get_option("addthis_$opt");
         if (isset($val) && strlen($val)) $addthis_settings['customization'] .= "var addthis_$opt = '$val';";
     }
-    $addthis_options = get_option('addthis_options');
-    if (strlen($addthis_options) == 0) $addthis_options = 'email,favorites,print,delicious,digg,google,myspace,live,facebook,stumbleupon,twitter,more';
-    $addthis_settings['options'] = $addthis_options;
+    $addthis_settings['options'] = get_option('addthis_options');
 
     add_action('widgets_init', 'addthis_widget_init');
 
@@ -297,47 +297,53 @@ function addthis_social_widget($content, $sidebar = false)
         else if (is_category() && !$addthis_settings['showoncats']) return $content;
     }
 
-    $pub = urlencode($addthis_settings['username']);
-    if (!isset($pub)) {
-        $pub = $addthis_settings['fallback_username'];
+    $pub = ($addthis_settings['username']);
+    if (!$pub) {
+        $pub = ($addthis_settings['fallback_username']);
     }
-    $link  = $sidebar ? '[URL]' : urlencode(get_permalink());
-    $title = $sidebar ? '[TITLE]' : urlencode(the_title());
+    $pub = urlencode($pub);
+
+    $link  = urlencode($sidebar ? get_bloginfo('url') : get_permalink());
+    $title = urlencode($sidebar ? get_bloginfo('title') : the_title());
     $addthis_options = $addthis_settings['options'];
 
-    $content .= "\n<!-- AddThis Button BEGIN -->\n";
+    $content .= "\n<!-- AddThis Button BEGIN -->\n".'<script type="text/javascript">';
+
     if (strlen($addthis_settings['customization'])) 
     {
-        $content .= '<script type="text/javascript">' . ($addthis_settings['customization']);
+        $content .= ($addthis_settings['customization']);
     }
 
     if ($addthis_settings['menu_type'] === 'dropdown')
     {
-        $content .= "var_addthis_options = '$addthis_options';\n</script>\n";
+        if (strlen($addthis_options)) $content .= "var_addthis_options = '$addthis_options';\n";
         $content .= <<<EOF
-<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;pub=$pub" class="addthis_button" addthis:url="$link" addthis:title="$title">
+</script>
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button" addthis:url="$link" addthis:title="$title">
 EOF;
-        $content .= addthis_get_button_img() . '</a><script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pub='.$pub.'"></script></div>';
+        $content .= addthis_get_button_img() . '</a><script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
     }
     else if ($addthis_settings['menu_type'] === 'toolbox')
     {
         $content .= "\n</script>\n";
         $content .= <<<EOF
-<div class="addthis_container addthis_toolbox addthis_default_style" addthis:url="$link" addthis:title="$title"><a href="http://www.addthis.com/bookmark.php?v=250&amp;pub=$pub" class="addthis_button_compact">Share</a><span class="addthis_separator">|</span>
+<div class="addthis_container addthis_toolbox addthis_default_style" addthis:url="$link" addthis:title="$title"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button_compact">Share</a><span class="addthis_separator">|</span>
 EOF;
+        if (!strlen($addthis_options)) $addthis_options = 'email,favorites,print,facebook,twitter';
         $addthis_options = split(',', $addthis_options);
         foreach ($addthis_options as $option) {
-           $option = trim($option);  
+            $option = trim($option);  
             if ($option != 'more') {
                 $content .= '<a class="addthis_button_'.$option.'"></a>';
             }
         }
-        $content .= '<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pub='.$pub.'"></script></div>';
+        $content .= '<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
     }
     else
     {
         $content .= <<<EOF
-<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;pub=$pub" onclick="window.open('http://www.addthis.com/bookmark.php?v=250&pub=$pub&amp;url=$link&amp;title=$title', 'ext_addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
+</script>
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" onclick="window.open('http://www.addthis.com/bookmark.php?v=250&username=$pub&amp;url=$link&amp;title=$title', 'ext_addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
 EOF;
         $content .= addthis_get_button_img() . '</a></div>';
     }
@@ -440,7 +446,7 @@ function addthis_plugin_options_php4() {
             </td>
         </tr>
         <tr>
-            <th scope="row"><?php _e("Show in sidebar only:", 'addthis_trans_domain' ); ?></th>
+            <th scope="row"><?php _e("Show in sidebar only:", 'addthis_trans_domain' ); ?><br/><span style="font-size:10px">(sidebar widget must be enabled)</span></th>
             <td><input type="checkbox" name="addthis_sidebar_only" value="true" <?php echo (get_option('addthis_sidebar_only') == 'true' ? 'checked' : ''); ?>/></td>
         </tr>
     </table>
@@ -473,10 +479,6 @@ function addthis_plugin_options_php4() {
         <tr>
             <th scope="row"><?php _e("Show on <a href=\"http://codex.wordpress.org/Pages\" target=\"blank\">pages</a>:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_showonpages" value="true" <?php echo (get_option('addthis_showonpages') !== '' ? 'checked' : ''); ?>/></td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e("Show on homepage:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_showonhome" value="true" <?php echo (get_option('addthis_showonhome') == 'true' ? 'checked' : ''); ?>/></td>
         </tr>
         <tr>
             <th scope="row"><?php _e("Show in archives:", 'addthis_trans_domain' ); ?></th>
