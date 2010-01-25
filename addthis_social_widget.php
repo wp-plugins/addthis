@@ -259,7 +259,7 @@ function addthis_init()
 
     add_action('widgets_init', 'addthis_widget_init');
 
-    if (get_wp_version() >= 2.7) {
+    if (get_wp_version() >= 2.7 && $addthis_settings['showstats']) {
         add_action('wp_dashboard_setup', 'addthis_dashboard_init' );
     }
 }
@@ -316,7 +316,7 @@ function addthis_social_widget($content, $sidebar = false)
 
     if ($addthis_settings['menu_type'] === 'dropdown')
     {
-        if (strlen($addthis_options)) $content .= "var_addthis_options = '$addthis_options';\n";
+        if (strlen($addthis_options)) $content .= "var addthis_options = '$addthis_options';\n";
         $content .= <<<EOF
 </script>
 <div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button" addthis:url="$link" addthis:title="$title">

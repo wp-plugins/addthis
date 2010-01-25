@@ -24,9 +24,11 @@ function addthis_populate_services_table(username, password, max, table_id, head
             function(data){
                 if (!data || data.length == 0) {
                     jQuery(header_id).text("No shares yesterday.");
+                    jQuery('#addthis_data_container').hide();
                     return;
                 }
                 if (data.error) {
+                    jQuery('#addthis_data_container').hide();
                     jQuery(header_id).text("Error connecting to AddThis.");
                     return;
                 } 
@@ -41,16 +43,21 @@ function addthis_populate_services_table(username, password, max, table_id, head
                     }
                 });
 
-                jQuery("<tr>").attr("class", "last").attr("id","at_data_total_services")
-                .append(jQuery("<td>").attr("class", "b").text("Total Shares:"))
-                .append(jQuery("<td>"))
-                .append(jQuery("<td>"))
-                .append(jQuery("<td>").attr("class", "t").text(at_total_shares))
-                .appendTo(table_id);
+                if (jQuery('#at_data_total_services').length) {
+                    jQuery('#at_data_total_services').text(at_total_shares);
+                } else {
+                    jQuery("<tr>").attr("class", "last")
+                    .append(jQuery("<td>").attr("class", "b").text("Total Shares:"))
+                    .append(jQuery("<td>"))
+                    .append(jQuery("<td>"))
+                    .append(jQuery("<td>").attr("id","at_data_total_services").attr("class", "t").text(at_total_shares))
+                    .appendTo(table_id);
+                }
 
-            jQuery("#at_post_total").text(at_total_shares);
-            jQuery('#addthis_tab_table').show();
-        });
+                jQuery("#at_post_total").text(at_total_shares);
+                jQuery('#addthis_tab_table').show();
+                jQuery(table_id+"_table").show();
+            });
 }
 
 function addthis_populate_posts_table(username, password, max, table_id, header_id) {
@@ -68,12 +75,16 @@ function addthis_populate_posts_table(username, password, max, table_id, header_
                         }
                     });
 
-            jQuery("<tr>").attr("class", "last").attr("id","at_data_total")
-                .append(jQuery("<td>").attr("class", "b").text("Total Shares:"))
-                .append(jQuery("<td id='at_post_total'>").attr("class", "t").text(at_total_shares))
-                .appendTo(table_id);
+                if (jQuery('#at_post_total').length) {
+                    jQuery('#at_post_total').text(at_total_shares);
+                } else {
+                    jQuery("<tr>").attr("class", "last").attr("id","at_data_total")
+                    .append(jQuery("<td>").attr("class", "b").text("Total Shares:"))
+                    .append(jQuery("<td id='at_post_total'>").attr("class", "t").text(at_total_shares))
+                    .appendTo(table_id);
+                }
 
-            jQuery('#addthis_tab_table').show();
-            jQuery(table_id+"_table").show();
+                jQuery('#addthis_tab_table').show();
+                jQuery(table_id+"_table").show();
         });
 }
