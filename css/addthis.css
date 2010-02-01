@@ -60,6 +60,10 @@ border-top:medium none;
 #dashboard_addthis table tr {
     padding:0;
 }
+#dashboard_addthis .atb {
+    font-weight:bold;
+}
+
 #dashboard_addthis td.b {
 font-family:Georgia,"Times New Roman","Bitstream Charter",Times,serif;
 padding-right:6px;
