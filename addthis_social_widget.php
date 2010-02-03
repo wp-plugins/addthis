@@ -304,7 +304,7 @@ function addthis_social_widget($content, $sidebar = false)
     $pub = urlencode($pub);
 
     $link  = urlencode($sidebar ? get_bloginfo('url') : get_permalink());
-    $title = urlencode($sidebar ? get_bloginfo('title') : the_title());
+    $title = urlencode($sidebar ? get_bloginfo('title') : the_title('', '', false));
     $addthis_options = $addthis_settings['options'];
 
     $content .= "\n<!-- AddThis Button BEGIN -->\n".'<script type="text/javascript">';
