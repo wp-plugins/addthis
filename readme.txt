@@ -72,6 +72,8 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 = 1.6.0 =
 * Added <a href="http://addthis.com/toolbox">toolbox</a> support
-For WP 2.7+ only:
- * Added support for displaying sharing analytics to WordPress dashboard
+* Added WPMU support
+* For WP 2.7+ only:
+ * Added support for displaying basic sharing metrics in the WordPress dashboard
+ * Updated settings management to use nonces
 
