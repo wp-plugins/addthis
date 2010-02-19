@@ -2,17 +2,17 @@
 Contributors: _mjk_
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget
 Requires at least: 2.3
-Tested up to: 2.7
-Stable tag: 1.5.4
+Tested up to: 2.9.1
+Stable tag: 1.6.2
 
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with many popular services. 
 
 == Description ==
-Help your visitor promote your site! The AddThis Social Bookmarking Widget allows your users to bookmark your site easily with over 45 popular services, and to share it with friends via email. Our button is small, unobtrusive, quick to load and recognized all over the web.
+Help your visitor promote your site! The AddThis Social Bookmarking Widget allows your users to bookmark your site easily with over 200 popular <a href="http://www.addthis.com/services">services</a>, and to share it with friends via email. Our button is small, unobtrusive, quick to load and recognized all over the web.
 
-Sign up for an AddThis.com account to see how your visitors are sharing your content: which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
+Sign up for a free AddThis.com account to see how your visitors are sharing your content: which services they're using for sharing, which content is shared the most, and more. 
 
-Over 120,000 sites have installed AddThis. Join us!
+Over 500,000 sites have installed AddThis. Join us!
 
 == Installation ==
 
@@ -36,6 +36,20 @@ No. You only need to create an account if you want to see how your users are sha
 
 If you've turned on the drop-down menu (which is recommended, as it's been shown to increase sharing/bookmarking rates), JavaScript must be enabled. We load the actual interface via JavaScript at run-time, which allows us to upgrade the core functionality of the menu itself automatically everywhere. 
 
+= Why use AddThis? =
+1. Ease of use. AddThis is easy to install, customize and localize. We've worked hard to make it the simplest, most recognized sharing tool on the internet.
+1. Performance. The AddThis menu code is tiny and fast. We constantly optimize its behavior and design to make sharing a snap.
+1. Peace of mind. AddThis gathers the best services on the internet so you don't have to, and backs them up with industrial strength analytics, code caching, active tech support and a thriving developer community.
+1. Flexibility. AddThis can be customized via API, and served securely via SSL. You can roll your own sharing toolbars with our toolbox. Share just about anything, anywhere -- your way.
+1. Global reach. AddThis sends content to more than 50 sharing services over 20 billion times a month in 20+ languages, to over half a billion unique users in countries all over the world.
+1. It's free!
+
+= Who else uses AddThis? =
+Over 500,000 sites have installed AddThis. With over half a billion unique users, AddThis is helping share content all over the world, in more than sixty languages. You might be surprised who's sharing their website using AddThis--<a href="http://addthis.com/features#partners">here are just a few</a>.
+
+= What services does AddThis support? =
+We currently support over 200 services, from email and blogging platforms to social networks and news aggregators, and we add new services every month. Want to know if your favorite service is supported? This list is accurate up to the minute: <a href="http://www.addthis.com/services">http://www.addthis.com/services</a>.
+
 == Screenshots ==
 
 1. The button on a sample post.
@@ -47,3 +61,17 @@ If you've turned on the drop-down menu (which is recommended, as it's been shown
 == PHP Version ==
 
 PHP 5+ is preferred; PHP 4 is supported.
+
+== Changelog ==
+
+= 1.6.2 =
+Fixed name conflict with get_wp_version() (renamed to addthis_get_wp_version()), affecting users with the k2 theme.
+
+= 1.6.1 =
+Fixed nondeterministic bug with the_title(), causing the title to occasionally appear in posts.
+
+= 1.6.0 =
+* Added <a href="http://addthis.com/toolbox">toolbox</a> support
+For WP 2.7+ only:
+ * Added support for displaying sharing analytics to WordPress dashboard
+
