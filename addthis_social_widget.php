@@ -27,7 +27,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 1.6.0
+* Version: 1.6.2
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com
@@ -81,7 +81,7 @@ function cuid()
 /**
 * Returns major.minor WordPress version.
 */
-function get_wp_version() {
+function addthis_get_wp_version() {
     return (float)substr(get_bloginfo('version'),0,3); 
 }
 
@@ -187,7 +187,7 @@ function addthis_init()
 {
     global $addthis_settings;
 
-    if (get_wp_version() >= 2.7) {
+    if (addthis_get_wp_version() >= 2.7) {
         if ( is_admin() ) {
             add_action( 'admin_init', 'register_addthis_settings' );
         }
@@ -259,7 +259,7 @@ function addthis_init()
 
     add_action('widgets_init', 'addthis_widget_init');
 
-    if (get_wp_version() >= 2.7 && $addthis_settings['showstats']) {
+    if (addthis_get_wp_version() >= 2.7 && $addthis_settings['showstats']) {
         add_action('wp_dashboard_setup', 'addthis_dashboard_init' );
     }
 }
@@ -405,7 +405,7 @@ function addthis_plugin_options_php4() {
     <form method="post" action="options.php">
     <?php 
         // use the old-school settings style in older versions of wordpress
-        if (get_wp_version() < 2.7) {
+        if (addthis_get_wp_version() < 2.7) {
             wp_nonce_field('update-options');
         } else {
             settings_fields('addthis'); 
@@ -459,7 +459,7 @@ function addthis_plugin_options_php4() {
     <table class="form-table">
         <?php
         // We can only support the dashboard widget for WordPress 2.7+
-        if (get_wp_version() >= 2.7) {
+        if (addthis_get_wp_version() >= 2.7) {
         ?>
         <tr>
             <th scope="row"><?php _e("Show stats in admin dashboard:", 'addthis_trans_domain' ); ?></th>
@@ -528,7 +528,7 @@ function addthis_plugin_options_php4() {
 
     <?php 
         // use the old-school settings style in older versions of wordpress
-        if (get_wp_version() < 2.7) {
+        if (addthis_get_wp_version() < 2.7) {
     ?>
     <input type="hidden" name="action" value="update" />
     <input type="hidden" name="page_options" value="addthis_username,addthis_password,addthis_show_stats,addthis_style,addthis_sidebar_only,addthis_menu_type,addthis_showonpages,addthis_showoncats,addthis_showonhome,addthis_showonarchives,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
