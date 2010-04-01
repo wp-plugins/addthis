@@ -27,7 +27,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 1.6.2
+* Version: 1.6.3a
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com
@@ -85,6 +85,12 @@ function addthis_get_wp_version() {
     return (float)substr(get_bloginfo('version'),0,3); 
 }
 
+/**
+* For templates, we need a wrapper for printing out the code on demand. 
+*/
+function addthis_print_widget() {
+    print addthis_social_widget('');
+}
 
 /**
 * Adds AddThis CSS to page. Only used for admin dashboard in WP 2.7 and higher.
@@ -172,6 +178,7 @@ function register_addthis_settings() {
     register_setting('addthis', 'addthis_showonpages');
     register_setting('addthis', 'addthis_showoncats');
     register_setting('addthis', 'addthis_showonhome');
+    register_setting('addthis', 'addthis_showonposts');
     register_setting('addthis', 'addthis_showonarchives');
     register_setting('addthis', 'addthis_language');
     register_setting('addthis', 'addthis_brand');
@@ -201,7 +208,6 @@ function addthis_init()
         add_action('admin_print_scripts', 'addthis_print_script');
     }
 
-    add_filter('the_content', 'addthis_social_widget');
     add_filter('admin_menu', 'addthis_admin_menu');
 
     add_option('addthis_username');
@@ -213,6 +219,7 @@ function addthis_init()
     add_option('addthis_isdropdown', 'true');
     add_option('addthis_menu_type', (get_option('addthis_isdropdown') !== 'true' ? 'static' : 'dropdown'));
     add_option('addthis_showonhome', 'true');
+    add_option('addthis_showonposts', 'true');
     add_option('addthis_showonpages', 'false');
     add_option('addthis_showoncats', 'false');
     add_option('addthis_showonarchives', 'false');
@@ -226,9 +233,13 @@ function addthis_init()
     $addthis_settings['sidebar_only'] = get_option('addthis_sidebar_only') === 'true';
     $addthis_settings['showstats'] = get_option('addthis_show_stats') === 'true';
     $addthis_settings['showonhome'] = !(get_option('addthis_showonhome') !== 'true');
+    $addthis_settings['showonposts'] = !(get_option('addthis_showonposts') !== 'true');
     $addthis_settings['showonpages'] = get_option('addthis_showonpages') === 'true';
     $addthis_settings['showonarchives'] = get_option('addthis_showonarchives') === 'true';
     $addthis_settings['showoncats'] = get_option('addthis_showoncats') === 'true';
+
+    if ($addthis_settings['showonposts']) add_filter('the_content', 'addthis_social_widget'); // true by default
+    add_action( 'addthis_widget', array(&$this, 'print_addthis_widget'));
     
     $product = get_option('addthis_product');
 
@@ -488,6 +499,10 @@ function addthis_plugin_options_php4() {
             <th scope="row"><?php _e("Show in categories:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_showoncats" value="true" <?php echo (get_option('addthis_showoncats') == 'true' ? 'checked' : ''); ?>/></td>
         </tr>
+        <tr>
+            <th scope="row"><?php _e("Show at end of posts:", 'addthis_trans_domain' ); ?><br/><span style="font-size:10px">(insert <code>&lt;?php do_action( 'addthis_widget' ); ?&gt;</code> into your template to place it dynamically)</th>
+            <td><input type="checkbox" name="addthis_showonposts" value="true" <?php echo (get_option('addthis_showonposts') == 'true' ? 'checked' : ''); ?>/></td>
+        </tr>
         <tr valign="top">
             <td colspan="2"></td>
         </tr>
@@ -531,7 +546,7 @@ function addthis_plugin_options_php4() {
         if (addthis_get_wp_version() < 2.7) {
     ?>
     <input type="hidden" name="action" value="update" />
-    <input type="hidden" name="page_options" value="addthis_username,addthis_password,addthis_show_stats,addthis_style,addthis_sidebar_only,addthis_menu_type,addthis_showonpages,addthis_showoncats,addthis_showonhome,addthis_showonarchives,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
+    <input type="hidden" name="page_options" value="addthis_username,addthis_password,addthis_show_stats,addthis_style,addthis_sidebar_only,addthis_menu_type,addthis_showonpages,addthis_showoncats,addthis_showonhome,addthis_showonposts,addthis_showonarchives,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
     <?php 
         }
     ?>
