@@ -170,6 +170,7 @@ function register_addthis_settings() {
     register_setting('addthis', 'addthis_username');
     register_setting('addthis', 'addthis_fallback_username');
     register_setting('addthis', 'addthis_password');
+    register_setting('addthis', 'addthis_append_data');
     register_setting('addthis', 'addthis_show_stats');
     register_setting('addthis', 'addthis_style');
     register_setting('addthis', 'addthis_sidebar_only');
@@ -218,6 +219,7 @@ function addthis_init()
     add_option('addthis_product', 'menu');
     add_option('addthis_isdropdown', 'true');
     add_option('addthis_menu_type', (get_option('addthis_isdropdown') !== 'true' ? 'static' : 'dropdown'));
+    add_option('addthis_append_data', 'false');
     add_option('addthis_showonhome', 'true');
     add_option('addthis_showonposts', 'true');
     add_option('addthis_showonpages', 'false');
@@ -258,7 +260,7 @@ function addthis_init()
     $language = get_option('addthis_language');
     $addthis_settings['language'] = $language;
 
-    $advopts = array('brand', 'language', 'header_background', 'header_color');
+    $advopts = array('brand', 'append_data', 'language', 'header_background', 'header_color');
     $addthis_settings['customization'] = '';
     for ($i = 0; $i < count($advopts); $i++)
     {
@@ -318,7 +320,7 @@ function addthis_social_widget($content, $sidebar = false)
     $title = urlencode($sidebar ? get_bloginfo('title') : the_title('', '', false));
     $addthis_options = $addthis_settings['options'];
 
-    $content .= "\n<!-- AddThis Button BEGIN -->\n".'<script type="text/javascript">';
+    $content .= "\n<!-- AddThis Button BEGIN -->\n".'<script type="text/javascript">'."\n//<!--";
 
     if (strlen($addthis_settings['customization'])) 
     {
@@ -329,6 +331,7 @@ function addthis_social_widget($content, $sidebar = false)
     {
         if (strlen($addthis_options)) $content .= "var addthis_options = '$addthis_options';\n";
         $content .= <<<EOF
+//-->
 </script>
 <div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button" addthis:url="$link" addthis:title="$title">
 EOF;
@@ -336,7 +339,7 @@ EOF;
     }
     else if ($addthis_settings['menu_type'] === 'toolbox')
     {
-        $content .= "\n</script>\n";
+        $content .= "\n//-->\n</script>\n";
         $content .= <<<EOF
 <div class="addthis_container addthis_toolbox addthis_default_style" addthis:url="$link" addthis:title="$title"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button_compact">Share</a><span class="addthis_separator">|</span>
 EOF;
@@ -484,6 +487,10 @@ function addthis_plugin_options_php4() {
         }
         ?>
         <tr>
+            <th scope="row"><?php _e("Track <a href=\"http://www.addthis.com/blog/2010/03/11/clickback-analytics-measure-traffic-back-to-your-site-from-addthis/\" target=\"_blank\">clickbacks</a>:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_append_data" value="true" <?php echo (get_option('addthis_append_data') == 'true' ? 'checked' : ''); ?>/></td>
+        </tr>
+        <tr>
             <th scope="row"><?php _e("Show on homepage:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_showonhome" value="true" <?php echo (get_option('addthis_showonhome') == 'true' ? 'checked' : ''); ?>/></td>
         </tr>
@@ -546,7 +553,7 @@ function addthis_plugin_options_php4() {
         if (addthis_get_wp_version() < 2.7) {
     ?>
     <input type="hidden" name="action" value="update" />
-    <input type="hidden" name="page_options" value="addthis_username,addthis_password,addthis_show_stats,addthis_style,addthis_sidebar_only,addthis_menu_type,addthis_showonpages,addthis_showoncats,addthis_showonhome,addthis_showonposts,addthis_showonarchives,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
+    <input type="hidden" name="page_options" value="addthis_username,addthis_password,addthis_show_stats,addthis_style,addthis_sidebar_only,addthis_menu_type,addthis_showonpages,addthis_showoncats,addthis_showonhome,addthis_append_data,addthis_showonposts,addthis_showonarchives,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
     <?php 
         }
     ?>
