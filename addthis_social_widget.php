@@ -42,7 +42,7 @@ $addthis_settings['username'] = '';
 $addthis_settings['fallback_username'] = '';
 $addthis_settings['style'] = 'share';
 
-$addthis_languages = array('af'=>'Afrikaaner', 'ar'=>'Arabic', 'zh'=>'Chinese', 'cs'=>'Czech', 'da'=>'Danish', 'nl'=>'Dutch', 'en'=>'English', 'fa'=>'Farsi', 'fi'=>'Finnish', 'fr'=>'French', 'ga'=>'Gaelic', 'de'=>'German', 'el'=>'Greek', 'he'=>'Hebrew', 'hi'=>'Hindi', 'it'=>'Italian', 'ja'=>'Japanese', 'ko'=>'Korean', 'lv'=>'Latvian', 'lt'=>'Lithuanian', 'no'=>'Norwegian', 'pl'=>'Polish', 'pt'=>'Portugese', 'ro'=>'Romanian', 'ru'=>'Russian', 'sk'=>'Slovakian', 'sl'=>'Slovenian', 'es'=>'Spanish', 'sv'=>'Swedish', 'th'=>'Thai', 'ur'=>'Urdu', 'cy'=>'Welsh', 'vi'=>'Vietnamese');
+$addthis_languages = array(''=>'Automatic','af'=>'Afrikaaner', 'ar'=>'Arabic', 'zh'=>'Chinese', 'cs'=>'Czech', 'da'=>'Danish', 'nl'=>'Dutch', 'en'=>'English', 'fa'=>'Farsi', 'fi'=>'Finnish', 'fr'=>'French', 'ga'=>'Gaelic', 'de'=>'German', 'el'=>'Greek', 'he'=>'Hebrew', 'hi'=>'Hindi', 'it'=>'Italian', 'ja'=>'Japanese', 'ko'=>'Korean', 'lv'=>'Latvian', 'lt'=>'Lithuanian', 'no'=>'Norwegian', 'pl'=>'Polish', 'pt'=>'Portugese', 'ro'=>'Romanian', 'ru'=>'Russian', 'sk'=>'Slovakian', 'sl'=>'Slovenian', 'es'=>'Spanish', 'sv'=>'Swedish', 'th'=>'Thai', 'ur'=>'Urdu', 'cy'=>'Welsh', 'vi'=>'Vietnamese');
 
 $addthis_menu_types = array('static', 'dropdown', 'toolbox');
 
@@ -89,7 +89,7 @@ function addthis_get_wp_version() {
 * For templates, we need a wrapper for printing out the code on demand. 
 */
 function addthis_print_widget() {
-    print addthis_social_widget('');
+    echo addthis_social_widget('', true);
 }
 
 /**
@@ -230,7 +230,7 @@ function addthis_init()
     add_option('addthis_header_color');
     add_option('addthis_sidebar_only', 'false');
     add_option('addthis_brand');
-    add_option('addthis_language', 'en');
+    add_option('addthis_language', '');
 
     $addthis_settings['sidebar_only'] = get_option('addthis_sidebar_only') === 'true';
     $addthis_settings['showstats'] = get_option('addthis_show_stats') === 'true';
@@ -241,7 +241,7 @@ function addthis_init()
     $addthis_settings['showoncats'] = get_option('addthis_showoncats') === 'true';
 
     if ($addthis_settings['showonposts']) add_filter('the_content', 'addthis_social_widget'); // true by default
-    add_action( 'addthis_widget', array(&$this, 'print_addthis_widget'));
+    add_action( 'addthis_widget', 'addthis_print_widget');
     
     $product = get_option('addthis_product');
 
@@ -335,7 +335,7 @@ function addthis_social_widget($content, $sidebar = false)
 </script>
 <div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button" addthis:url="$link" addthis:title="$title">
 EOF;
-        $content .= addthis_get_button_img() . '</a><script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
+        $content .= ($addthis_settings['language'] == '' ? '' /* no hardcoded image -- we'll choose the language automatically */ : addthis_get_button_img()) . '</a><script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
     }
     else if ($addthis_settings['menu_type'] === 'toolbox')
     {
@@ -362,6 +362,7 @@ EOF;
         $content .= addthis_get_button_img() . '</a></div>';
     }
     $content .= "\n<!-- AddThis Button END -->";
+
     return $content;
 }
 
