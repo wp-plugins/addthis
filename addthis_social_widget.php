@@ -27,18 +27,24 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 1.5.5
+* Version: 1.6.3
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com
 */
-$addthis_settings = array(array('isdropdown', 'true'),
-                          array('customization', ''), 
-                          array('language', 'en'), 
-                          array('username', ''), 
-                          array('style', 'share'));
 
-$addthis_languages = array('zh'=>'Chinese', 'da'=>'Danish', 'nl'=>'Dutch', 'en'=>'English', 'fi'=>'Finnish', 'fr'=>'French', 'de'=>'German', 'he'=>'Hebrew', 'it'=>'Italian', 'ja'=>'Japanese', 'ko'=>'Korean', 'no'=>'Norwegian', 'pl'=>'Polish', 'pt'=>'Portugese', 'ru'=>'Russian', 'es'=>'Spanish', 'sv'=>'Swedish');
+$addthis_settings = array();
+$addthis_settings['isdropdown'] = 'true';
+$addthis_settings['customization'] = '';
+$addthis_settings['menu_type'] = 'dropdown';
+$addthis_settings['language'] = 'en';
+$addthis_settings['username'] = '';
+$addthis_settings['fallback_username'] = '';
+$addthis_settings['style'] = 'share';
+
+$addthis_languages = array(''=>'Automatic','af'=>'Afrikaaner', 'ar'=>'Arabic', 'zh'=>'Chinese', 'cs'=>'Czech', 'da'=>'Danish', 'nl'=>'Dutch', 'en'=>'English', 'fa'=>'Farsi', 'fi'=>'Finnish', 'fr'=>'French', 'ga'=>'Gaelic', 'de'=>'German', 'el'=>'Greek', 'he'=>'Hebrew', 'hi'=>'Hindi', 'it'=>'Italian', 'ja'=>'Japanese', 'ko'=>'Korean', 'lv'=>'Latvian', 'lt'=>'Lithuanian', 'no'=>'Norwegian', 'pl'=>'Polish', 'pt'=>'Portugese', 'ro'=>'Romanian', 'ru'=>'Russian', 'sk'=>'Slovakian', 'sl'=>'Slovenian', 'es'=>'Spanish', 'sv'=>'Swedish', 'th'=>'Thai', 'ur'=>'Urdu', 'cy'=>'Welsh', 'vi'=>'Vietnamese');
+
+$addthis_menu_types = array('static', 'dropdown', 'toolbox');
 
 $addthis_styles = array(
                       'share' => array('img'=>'lg-share-%lang%.gif', 'w'=>125, 'h'=>16),
@@ -51,21 +57,171 @@ $addthis_styles = array(
                         , 'custom' => array('img'=>'http://example.com/button.gif', 'w'=>16, 'h'=>16) */
                     );
 
+// Pre-2.6 compatibility
+if ( ! defined( 'WP_CONTENT_URL' ) )
+      define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
+if ( ! defined( 'WP_CONTENT_DIR' ) )
+      define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
+if ( ! defined( 'WP_PLUGIN_URL' ) )
+      define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
+if ( ! defined( 'WP_PLUGIN_DIR' ) )
+      define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
+
+/**
+* Generates unique IDs
+*/
+function cuid()
+{
+    $mt  = dechex(mt_rand(0,min(0xffffffff,mt_getrandmax())));
+    $now = dechex(time());
+    $cuid =  $now . str_pad($mt, 8, '0', STR_PAD_LEFT);
+    return $cuid;
+} 
+
+/**
+* Returns major.minor WordPress version.
+*/
+function addthis_get_wp_version() {
+    return (float)substr(get_bloginfo('version'),0,3); 
+}
+
+/**
+* For templates, we need a wrapper for printing out the code on demand. 
+*/
+function addthis_print_widget() {
+    echo addthis_social_widget('', true);
+}
+
+/**
+* Adds AddThis CSS to page. Only used for admin dashboard in WP 2.7 and higher.
+*/
+function addthis_print_style() {
+    wp_enqueue_style( 'addthis' );
+}
+
+/**
+* Adds AddThis script to page. Only used for admin dashboard in WP 2.7 and higher.
+*/
+function addthis_print_script() {
+    wp_enqueue_script( 'addthis' );
+}
+
+/**
+* Our admin dashboard widget shows yesterday's top shared content and top shared-to services.
+* Data is fetched via AJAX. We assume jQuery is available on any WP install supporting 
+* dashboard widgets.
+*
+* @see js/addthis.js
+* @see js/addthis.css
+*/
+function addthis_render_dashboard_widget() {
+    global $addthis_settings;
+    $username = urlencode($addthis_settings['username']);
+    $password = urlencode($addthis_settings['password']);
+
+    echo <<<ENDHTML
+        <p id="addthis_header" class="sub">Loading...</p>
+        <div id="addthis_data_container">
+            <div class="sub">
+                <table id="addthis_tab_table" style="display:none">
+                    <colgroup><col width="25%"/><col width="25%"/><col width="50%"/></colgroup>
+                    <tr>
+                        <td><a id="addthis_posts_tab" class="addthis-tab atb-active" href="#" onclick="return addthis_toggle_tabs(false)">Top Content</a></td>
+                        <td><a id="addthis_services_tab" class="addthis-tab" href="#" onclick="return addthis_toggle_tabs(true)">Top Services</a></td>
+                        <td style="text-align:right;"><a href="http://addthis.com/myaccount">View all stats &raquo;</a></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="table">
+                <table id="addthis_data_posts_table" style="display:none">
+                    <colgroup><col width="90%"/><col width="10%"/></colgroup>
+                    <tbody id="addthis_data_posts">
+                    </tbody>
+                </table>
+                <table id="addthis_data_services_table" style="display:none">
+                    <colgroup><col width="40%"/><col width="10%"/><col width="40%"/><col width="10%"/></colgroup>
+                    <tbody id="addthis_data_services">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+        jQuery(document).ready(function(jQuery) {
+            addthis_populate_posts_table("{$username}","{$password}", 5 /* max rows to show in table */, '#addthis_data_posts', '#addthis_header');
+            addthis_populate_services_table("{$username}","{$password}", 10 /* max rows to show in table */, '#addthis_data_services', '#addthis_header');
+        });
+        </script>
+ENDHTML;
+} 
+
+/**
+* Initialize the dashboard widget.
+*/
+function addthis_dashboard_init() {
+    wp_add_dashboard_widget('dashboard_addthis', 'AddThis', 'addthis_render_dashboard_widget');   
+} 
+
+/**
+* Formally registers AddThis settings. Only called in WP 2.7+.
+*/
+function register_addthis_settings() {
+    register_setting('addthis', 'addthis_username');
+    register_setting('addthis', 'addthis_fallback_username');
+    register_setting('addthis', 'addthis_password');
+    register_setting('addthis', 'addthis_append_data');
+    register_setting('addthis', 'addthis_show_stats');
+    register_setting('addthis', 'addthis_style');
+    register_setting('addthis', 'addthis_sidebar_only');
+    register_setting('addthis', 'addthis_isdropdown');
+    register_setting('addthis', 'addthis_menu_type');
+    register_setting('addthis', 'addthis_showonpages');
+    register_setting('addthis', 'addthis_showoncats');
+    register_setting('addthis', 'addthis_showonhome');
+    register_setting('addthis', 'addthis_showonposts');
+    register_setting('addthis', 'addthis_showonarchives');
+    register_setting('addthis', 'addthis_language');
+    register_setting('addthis', 'addthis_brand');
+    register_setting('addthis', 'addthis_options');
+    register_setting('addthis', 'addthis_header_background');
+    register_setting('addthis', 'addthis_header_color');
+}
 
 /**
 * Adds WP filter so we can append the AddThis button to post content.
 */
-function addthis_init($username=null, $style=null)
+function addthis_init()
 {
     global $addthis_settings;
 
-    add_filter('the_content', 'addthis_social_widget');
+    if (addthis_get_wp_version() >= 2.7) {
+        if ( is_admin() ) {
+            add_action( 'admin_init', 'register_addthis_settings' );
+        }
+    }
+
+    if (function_exists('wp_register_style')) {
+        wp_register_style( 'addthis', WP_PLUGIN_URL . '/addthis/css/addthis.css');
+        wp_register_script( 'addthis', WP_PLUGIN_URL . '/addthis/js/addthis.js');
+    
+        add_action('admin_print_styles', 'addthis_print_style');
+        add_action('admin_print_scripts', 'addthis_print_script');
+    }
+
     add_filter('admin_menu', 'addthis_admin_menu');
 
     add_option('addthis_username');
-    add_option('addthis_options', 'email, favorites, digg, delicious, myspace, google, facebook, reddit, live, more');
+    add_option('addthis_show_stats', 'false');
+    add_option('addthis_password');
+    add_option('addthis_fallback_username', 'wp-'.cuid());
+    add_option('addthis_options'); // no default value, so that we can update as times change
+    add_option('addthis_product', 'menu');
     add_option('addthis_isdropdown', 'true');
+    add_option('addthis_menu_type', (get_option('addthis_isdropdown') !== 'true' ? 'static' : 'dropdown'));
+    add_option('addthis_append_data', 'false');
     add_option('addthis_showonhome', 'true');
+    add_option('addthis_showonposts', 'true');
     add_option('addthis_showonpages', 'false');
     add_option('addthis_showoncats', 'false');
     add_option('addthis_showonarchives', 'false');
@@ -74,26 +230,37 @@ function addthis_init($username=null, $style=null)
     add_option('addthis_header_color');
     add_option('addthis_sidebar_only', 'false');
     add_option('addthis_brand');
-    add_option('addthis_language', 'en');
+    add_option('addthis_language', '');
 
     $addthis_settings['sidebar_only'] = get_option('addthis_sidebar_only') === 'true';
-    $addthis_settings['isdropdown'] = get_option('addthis_isdropdown') === 'true';
+    $addthis_settings['showstats'] = get_option('addthis_show_stats') === 'true';
     $addthis_settings['showonhome'] = !(get_option('addthis_showonhome') !== 'true');
+    $addthis_settings['showonposts'] = !(get_option('addthis_showonposts') !== 'true');
     $addthis_settings['showonpages'] = get_option('addthis_showonpages') === 'true';
     $addthis_settings['showonarchives'] = get_option('addthis_showonarchives') === 'true';
     $addthis_settings['showoncats'] = get_option('addthis_showoncats') === 'true';
+
+    if ($addthis_settings['showonposts']) add_filter('the_content', 'addthis_social_widget'); // true by default
+    add_action( 'addthis_widget', 'addthis_print_widget');
     
-    if (!isset($style)) $style = get_option('addthis_style');
+    $product = get_option('addthis_product');
+
+
+    $style = get_option('addthis_style');
     if (strlen($style) == 0) $style = 'share';
     $addthis_settings['style'] = $style;
 
-    if (!isset($username)) $username = get_option('addthis_username');
-    $addthis_settings['username'] = $username;
+    $addthis_settings['menu_type'] = get_option('addthis_menu_type');
+
+    $addthis_settings['username'] = get_option('addthis_username');
+    $addthis_settings['fallback_username'] = get_option('addthis_fallback_username');
+
+    $addthis_settings['password'] = get_option('addthis_password');
 
     $language = get_option('addthis_language');
     $addthis_settings['language'] = $language;
 
-    $advopts = array('brand', 'language', 'header_background', 'header_color', 'options');
+    $advopts = array('brand', 'append_data', 'language', 'header_background', 'header_color');
     $addthis_settings['customization'] = '';
     for ($i = 0; $i < count($advopts); $i++)
     {
@@ -101,8 +268,13 @@ function addthis_init($username=null, $style=null)
         $val = get_option("addthis_$opt");
         if (isset($val) && strlen($val)) $addthis_settings['customization'] .= "var addthis_$opt = '$val';";
     }
+    $addthis_settings['options'] = get_option('addthis_options');
 
     add_action('widgets_init', 'addthis_widget_init');
+
+    if (addthis_get_wp_version() >= 2.7 && $addthis_settings['showstats']) {
+        add_action('wp_dashboard_setup', 'addthis_dashboard_init' );
+    }
 }
 
 function addthis_widget_init()
@@ -138,30 +310,59 @@ function addthis_social_widget($content, $sidebar = false)
         else if (is_category() && !$addthis_settings['showoncats']) return $content;
     }
 
-    $pub = $addthis_settings['username'];
-    $link  = $sidebar ? '[URL]' : urlencode(get_permalink());
-    $title = $sidebar ? '[TITLE]' : urlencode(get_the_title($id));
+    $pub = ($addthis_settings['username']);
+    if (!$pub) {
+        $pub = ($addthis_settings['fallback_username']);
+    }
+    $pub = urlencode($pub);
 
-    $content .= "\n<!-- AddThis Button BEGIN -->\n";
-    if ($addthis_settings['isdropdown'])
+    $link  = urlencode($sidebar ? get_bloginfo('url') : get_permalink());
+    $title = urlencode($sidebar ? get_bloginfo('title') : the_title('', '', false));
+    $addthis_options = $addthis_settings['options'];
+
+    $content .= "\n<!-- AddThis Button BEGIN -->\n".'<script type="text/javascript">'."\n//<!--";
+
+    if (strlen($addthis_settings['customization'])) 
     {
-        if (isset($pub) || strlen($addthis_settings['customization'])) 
-        {
-            $content .= '<script type="text/javascript">' . (isset($pub) ? "\nvar addthis_pub = '$pub';\n" : "\n") . ($addthis_settings['customization']) . "\n</script>\n";
-        }
+        $content .= ($addthis_settings['customization']);
+    }
+
+    if ($addthis_settings['menu_type'] === 'dropdown')
+    {
+        if (strlen($addthis_options)) $content .= "var addthis_options = '$addthis_options';\n";
         $content .= <<<EOF
-<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250" onmouseover="return addthis_open(this, '', '$link', '$title')" onmouseout="addthis_close()" onclick="return addthis_sendto()">
+//-->
+</script>
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button" addthis:url="$link" addthis:title="$title">
 EOF;
-        $content .= addthis_get_button_img() . '</a><script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js"></script></div>';
+        $content .= ($addthis_settings['language'] == '' ? '' /* no hardcoded image -- we'll choose the language automatically */ : addthis_get_button_img()) . '</a><script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
+    }
+    else if ($addthis_settings['menu_type'] === 'toolbox')
+    {
+        $content .= "\n//-->\n</script>\n";
+        $content .= <<<EOF
+<div class="addthis_container addthis_toolbox addthis_default_style" addthis:url="$link" addthis:title="$title"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button_compact">Share</a><span class="addthis_separator">|</span>
+EOF;
+        if (!strlen($addthis_options)) $addthis_options = 'email,favorites,print,facebook,twitter';
+        $addthis_options = split(',', $addthis_options);
+        foreach ($addthis_options as $option) {
+            $option = trim($option);  
+            if ($option != 'more') {
+                $content .= '<a class="addthis_button_'.$option.'"></a>';
+            }
+        }
+        $content .= '<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
     }
     else
     {
         $content .= <<<EOF
-<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250" onclick="window.open('http://www.addthis.com/bookmark.php?v=250&pub=$pub&amp;url=$link&amp;title=$title', 'addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
+</script>
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" onclick="window.open('http://www.addthis.com/bookmark.php?v=250&username=$pub&amp;url=$link&amp;title=$title', 'ext_addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
 EOF;
         $content .= addthis_get_button_img() . '</a></div>';
     }
     $content .= "\n<!-- AddThis Button END -->";
+
     return $content;
 }
 
@@ -188,7 +389,7 @@ function addthis_get_button_img()
 
     if (!isset($addthis_styles[$btnStyle])) $btnStyle = 'share';
     $btnRecord = $addthis_styles[$btnStyle];
-    $btnUrl = (strpos(trim($btnRecord['img']), 'http://') !== 0 ? "http://s7.addthis.com/static/btn/" : "") . $btnRecord['img'];
+    $btnUrl = (strpos(trim($btnRecord['img']), 'http://') !== 0 ? "http://s7.addthis.com/static/btn/v2/" : "") . $btnRecord['img'];
          
     if (strpos($btnUrl, '%lang%') !== false)
     {
@@ -210,13 +411,21 @@ function addthis_plugin_options_php4() {
     global $addthis_styles;
     global $addthis_languages;
     global $addthis_settings;
+    global $addthis_menu_types;
 
 ?>
     <div class="wrap">
     <h2>AddThis</h2>
 
     <form method="post" action="options.php">
-    <?php wp_nonce_field('update-options'); ?>
+    <?php 
+        // use the old-school settings style in older versions of wordpress
+        if (addthis_get_wp_version() < 2.7) {
+            wp_nonce_field('update-options');
+        } else {
+            settings_fields('addthis'); 
+        }
+    ?>
 
     <h3>Required</h3>
     <table class="form-table">
@@ -224,7 +433,20 @@ function addthis_plugin_options_php4() {
             <th scope="row"><?php _e("AddThis username:", 'addthis_trans_domain' ); ?></th>
             <td><input type="text" name="addthis_username" value="<?php echo get_option('addthis_username'); ?>" /></td>
         </tr>
-        <tr valign="top">
+        <tr>
+            <th scope="row"><?php _e("Menu type:", 'addthis_trans_domain' ); ?></th>
+            <td>
+                <select name="addthis_menu_type" onchange="document.getElementById('at_buttonstyle').style.display = (this.value !== 'toolbox');">
+                <?php
+                    $curmenutype = get_option('addthis_menu_type');
+                    foreach ($addthis_menu_types as $type)
+                    {
+                        echo "<option value=\"$type\"". ($type == $curmenutype ? " selected":""). ">$type</option>";
+                    }
+                ?>
+                </select>
+        </tr>
+        <tr valign="top" id="at_buttonstyle" style="display:<?php echo ($curmenutype != 'toolbox') ? 'block' : 'none'; ?> ?>">
             <th scope="row"><?php _e("Button style:", 'addthis_trans_domain' ); ?></th>
             <td>
                 <select name="addthis_style">
@@ -239,11 +461,7 @@ function addthis_plugin_options_php4() {
             </td>
         </tr>
         <tr>
-            <th scope="row"><?php _e("Use dropdown menu:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_isdropdown" value="true" <?php echo (get_option('addthis_isdropdown') == 'true' ? 'checked' : ''); ?>/></td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e("Show in sidebar only:", 'addthis_trans_domain' ); ?></th>
+            <th scope="row"><?php _e("Show in sidebar only:", 'addthis_trans_domain' ); ?><br/><span style="font-size:10px">(sidebar widget must be enabled)</span></th>
             <td><input type="checkbox" name="addthis_sidebar_only" value="true" <?php echo (get_option('addthis_sidebar_only') == 'true' ? 'checked' : ''); ?>/></td>
         </tr>
     </table>
@@ -254,16 +472,32 @@ function addthis_plugin_options_php4() {
 
     <h3>Advanced</h3>
     <table class="form-table">
-        <tr valign="top">
-            <td colspan="2">See <a href="http://addthis.com/customization">our customization docs</a>.</td>
-        </tr>
+        <?php
+        // We can only support the dashboard widget for WordPress 2.7+
+        if (addthis_get_wp_version() >= 2.7) {
+        ?>
         <tr>
-            <th scope="row"><?php _e("Show on <a href=\"http://codex.wordpress.org/Pages\" target=\"blank\">pages</a>:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_showonpages" value="true" <?php echo (get_option('addthis_showonpages') !== '' ? 'checked' : ''); ?>/></td>
+            <th scope="row"><?php _e("Show stats in admin dashboard:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_show_stats" value="true" onchange="document.getElementById('password_row').style.display = (this.checked ? '' : 'none');" <?php echo (get_option('addthis_show_stats') !== '' ? 'checked' : ''); ?>/></td>
+        </tr>
+        <tr id="password_row" style="<?php echo (get_option('addthis_show_stats') !== '' ? '' : 'display:none'); ?>">
+            <th scope="row"><?php _e("AddThis password:", 'addthis_trans_domain' ); ?><br/><span style="font-size:10px">(required for displaying stats)</span></th>
+            <td><input type="password" name="addthis_password" value="<?php echo get_option('addthis_password'); ?>"/></td>
+        </tr>
+        <?php
+        }
+        ?>
+        <tr>
+            <th scope="row"><?php _e("Track <a href=\"http://www.addthis.com/blog/2010/03/11/clickback-analytics-measure-traffic-back-to-your-site-from-addthis/\" target=\"_blank\">clickbacks</a>:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_append_data" value="true" <?php echo (get_option('addthis_append_data') == 'true' ? 'checked' : ''); ?>/></td>
         </tr>
         <tr>
             <th scope="row"><?php _e("Show on homepage:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_showonhome" value="true" <?php echo (get_option('addthis_showonhome') == 'true' ? 'checked' : ''); ?>/></td>
+        </tr>
+        <tr>
+            <th scope="row"><?php _e("Show on <a href=\"http://codex.wordpress.org/Pages\" target=\"blank\">pages</a>:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_showonpages" value="true" <?php echo (get_option('addthis_showonpages') !== '' ? 'checked' : ''); ?>/></td>
         </tr>
         <tr>
             <th scope="row"><?php _e("Show in archives:", 'addthis_trans_domain' ); ?></th>
@@ -273,13 +507,23 @@ function addthis_plugin_options_php4() {
             <th scope="row"><?php _e("Show in categories:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_showoncats" value="true" <?php echo (get_option('addthis_showoncats') == 'true' ? 'checked' : ''); ?>/></td>
         </tr>
+        <tr>
+            <th scope="row"><?php _e("Show at end of posts:", 'addthis_trans_domain' ); ?><br/><span style="font-size:10px">(insert <code>&lt;?php do_action( 'addthis_widget' ); ?&gt;</code> into your template to place it dynamically)</th>
+            <td><input type="checkbox" name="addthis_showonposts" value="true" <?php echo (get_option('addthis_showonposts') == 'true' ? 'checked' : ''); ?>/></td>
+        </tr>
+        <tr valign="top">
+            <td colspan="2"></td>
+        </tr>
+        <tr valign="top">
+            <td colspan="2">For more details on the following options, see <a href="http://addthis.com/customization">our customization docs</a>.</td>
+        </tr>
         <tr valign="top">
             <th scope="row"><?php _e("Brand:", 'addthis_trans_domain' ); ?></th>
             <td><input type="text" name="addthis_brand" value="<?php echo get_option('addthis_brand'); ?>" /></td>
         </tr>
         <tr valign="top">
-            <th scope="row"><?php _e("Drop-down options (comma-separated):", 'addthis_trans_domain' ); ?></th>
-            <td><input type="text" name="addthis_options" value="<?php echo get_option('addthis_options'); ?>" size="100"/></td>
+            <th scope="row"><?php _e("Dropdown/Toolbox Services:", 'addthis_trans_domain'); ?> <br/> <span style="font-size:10px">(comma-separated)</span></th>
+            <td><input type="text" name="addthis_options" value="<?php echo get_option('addthis_options'); ?>" size="80"/></td>
         </tr>
         <tr valign="top">
             <th scope="row"><?php _e("Language:", 'addthis_trans_domain' ); ?></th>
@@ -305,9 +549,15 @@ function addthis_plugin_options_php4() {
         </tr>
     </table>
 
+    <?php 
+        // use the old-school settings style in older versions of wordpress
+        if (addthis_get_wp_version() < 2.7) {
+    ?>
     <input type="hidden" name="action" value="update" />
-    <input type="hidden" name="page_options" value="addthis_username,addthis_style,addthis_sidebar_only,addthis_isdropdown,addthis_showonpages,addthis_showoncats,addthis_showonhome,addthis_showonarchives,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
-
+    <input type="hidden" name="page_options" value="addthis_username,addthis_password,addthis_show_stats,addthis_style,addthis_sidebar_only,addthis_menu_type,addthis_showonpages,addthis_showoncats,addthis_showonhome,addthis_append_data,addthis_showonposts,addthis_showonarchives,addthis_language,addthis_brand,addthis_options,addthis_header_background,addthis_header_color"/>
+    <?php 
+        }
+    ?>
     <p class="submit">
     <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
     </p>
