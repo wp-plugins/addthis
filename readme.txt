@@ -68,6 +68,7 @@ PHP 5+ is preferred; PHP 4 is supported.
 * Added template tags. &lt;?php do_action( 'addthis_widget' ); ?&gt; in your template will print an AddThis button or toolbox, per your configuration.
 * Added <a href="http://addthis.com/blog/2010/03/11/clickback-analytics-measure-traffic-back-to-your-site-from-addthis/">clickback</a> tracking.
 * Added "Automatic" language option. We'll auto-translate the AddThis button and menu into our supported languages depending on your users' settings.
+* Fixed script showing up in some trackback summaries. 
 
 = 1.6.2 =
 Fixed name conflict with get_wp_version() (renamed to addthis_get_wp_version()), affecting users with the k2 theme.
