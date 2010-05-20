@@ -27,7 +27,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 1.6.3
+* Version: 1.6.4
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com
@@ -320,11 +320,11 @@ function addthis_social_widget($content, $sidebar = false)
     $title = urlencode($sidebar ? get_bloginfo('title') : the_title('', '', false));
     $addthis_options = $addthis_settings['options'];
 
-    $content .= "\n<!-- AddThis Button BEGIN -->\n".'<script type="text/javascript">'."\n//<!--";
+    $content .= "\n<!-- AddThis Button BEGIN -->\n".'<script type="text/javascript">'."\n//<!--\n";
 
     if (strlen($addthis_settings['customization'])) 
     {
-        $content .= ($addthis_settings['customization']);
+        $content .= ($addthis_settings['customization']) . "\n";
     }
 
     if ($addthis_settings['menu_type'] === 'dropdown')
@@ -356,6 +356,7 @@ EOF;
     else
     {
         $content .= <<<EOF
+//-->
 </script>
 <div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" onclick="window.open('http://www.addthis.com/bookmark.php?v=250&username=$pub&amp;url=$link&amp;title=$title', 'ext_addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
 EOF;
@@ -373,6 +374,7 @@ function addthis_get_button_img()
 {
     global $addthis_settings;
     global $addthis_styles;
+    $language = $addthis_settings['language'];
 
     $btnStyle = $addthis_settings['style'];
     if ($addthis_settings['language'] != 'en')
@@ -390,10 +392,10 @@ function addthis_get_button_img()
     if (!isset($addthis_styles[$btnStyle])) $btnStyle = 'share';
     $btnRecord = $addthis_styles[$btnStyle];
     $btnUrl = (strpos(trim($btnRecord['img']), 'http://') !== 0 ? "http://s7.addthis.com/static/btn/v2/" : "") . $btnRecord['img'];
-         
+        
     if (strpos($btnUrl, '%lang%') !== false)
     {
-        $btnUrl = str_replace('%lang%',$addthis_settings['language'], $btnUrl);
+        $btnUrl = str_replace('%lang%', strlen($language) ? $language : 'en', $btnUrl);
     }
     $btnWidth = $btnRecord['w'];
     $btnHeight = $btnRecord['h'];
@@ -522,7 +524,7 @@ function addthis_plugin_options_php4() {
             <td><input type="text" name="addthis_brand" value="<?php echo get_option('addthis_brand'); ?>" /></td>
         </tr>
         <tr valign="top">
-            <th scope="row"><?php _e("Dropdown/Toolbox Services:", 'addthis_trans_domain'); ?> <br/> <span style="font-size:10px">(comma-separated)</span></th>
+            <th scope="row"><?php _e("Dropdown/Toolbox Services:", 'addthis_trans_domain'); ?> <br/> <span style="font-size:10px">(comma-separated <a href="http://addthis.com/services">service codes</a>)</span></th>
             <td><input type="text" name="addthis_options" value="<?php echo get_option('addthis_options'); ?>" size="80"/></td>
         </tr>
         <tr valign="top">
