@@ -64,6 +64,10 @@ PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
 
+= 1.6.4 =
+* Fixed parse bug with "static" menu option
+* Fixed regression of brand option
+
 = 1.6.3 = 
 * Added template tags. &lt;?php do_action( 'addthis_widget' ); ?&gt; in your template will print an AddThis button or toolbox, per your configuration.
 * Added <a href="http://addthis.com/blog/2010/03/11/clickback-analytics-measure-traffic-back-to-your-site-from-addthis/">clickback</a> tracking.
