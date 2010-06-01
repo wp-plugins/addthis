@@ -8,11 +8,15 @@ Stable tag: 1.6.4
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with many popular services. 
 
 == Description ==
-Help your visitor promote your site! The AddThis Social Bookmarking Widget allows your users to bookmark your site easily with over 250 popular <a href="http://www.addthis.com/services">services</a>, and to share it with friends via email. Our button is small, unobtrusive, quick to load and recognized all over the web.
+Help your visitor promote your site! The AddThis Social Bookmarking Widget allows your users to bookmark your site easily with over 295 popular <a href="http://www.addthis.com/services">services</a>, and to share it with friends via email. Our button is small, unobtrusive, quick to load and recognized all over the web.
 
 Sign up for a free AddThis.com account to see how your visitors are sharing your content: which services they're using for sharing, which content is shared the most, and more. 
 
 Over 900,000 sites have installed AddThis. Join us!
+
+
+
+<a href="http://www.addthis.com/blog">AddThis Blog</a> | <a href="http://www.addthis.com/privacy">Privacy Policy</a>
 
 == Installation ==
 
@@ -48,7 +52,7 @@ If you've turned on the drop-down menu (which is recommended, as it's been shown
 Over 900,000 sites have installed AddThis. With over half a billion unique users, AddThis is helping share content all over the world, in more than sixty languages. You might be surprised who's sharing their website using AddThis--<a href="http://addthis.com/features#partners">here are just a few</a>.
 
 = What services does AddThis support? =
-We currently support over 250 services, from email and blogging platforms to social networks and news aggregators, and we add new services every month. Want to know if your favorite service is supported? This list is accurate up to the minute: <a href="http://www.addthis.com/services">http://www.addthis.com/services</a>.
+We currently support over 295 services, from email and blogging platforms to social networks and news aggregators, and we add new services every month. Want to know if your favorite service is supported? This list is accurate up to the minute: <a href="http://www.addthis.com/services">http://www.addthis.com/services</a>.
 
 == Screenshots ==
 
