@@ -14,6 +14,10 @@ Sign up for a free AddThis.com account to see how your visitors are sharing your
 
 Over 900,000 sites have installed AddThis. Join us!
 
+
+
+<a href="http://www.addthis.com/blog">AddThis Blog</a> | <a href="http://www.addthis.com/privacy">Privacy Policy</a>
+
 == Installation ==
 
 1. Upload `addthis_social_widget.php` to the `/wp-content/plugins/` directory
