@@ -88,8 +88,8 @@ function addthis_get_wp_version() {
 /**
 * For templates, we need a wrapper for printing out the code on demand. 
 */
-function addthis_print_widget() {
-    echo addthis_social_widget('', true);
+function addthis_print_widget($url, $title) {
+    echo addthis_social_widget('', true, $url, $title);
 }
 
 /**
@@ -241,7 +241,7 @@ function addthis_init()
     $addthis_settings['showoncats'] = get_option('addthis_showoncats') === 'true';
 
     if ($addthis_settings['showonposts']) add_filter('the_content', 'addthis_social_widget'); // true by default
-    add_action( 'addthis_widget', 'addthis_print_widget');
+    add_action( 'addthis_widget', 'addthis_print_widget', 10, 2);
     
     $product = get_option('addthis_product');
 
@@ -294,12 +294,12 @@ function addthis_sidebar_widget($args)
 /**
 * Appends AddThis button to post content.
 */
-function addthis_social_widget($content, $sidebar = false)
+function addthis_social_widget($content, $onSidebar = false, $url = null, $title = null)
 {
     global $addthis_settings;
 
     // add nothing to RSS feed or search results; control adding to static/archive/category pages
-    if (!$sidebar) 
+    if (!$onSidebar) 
     {
         if ($addthis_settings['sidebar_only'] == 'true') return $content;
         else if (is_feed()) return $content;
@@ -316,8 +316,8 @@ function addthis_social_widget($content, $sidebar = false)
     }
     $pub = urlencode($pub);
 
-    $link  = urlencode($sidebar ? get_bloginfo('url') : get_permalink());
-    $title = urlencode($sidebar ? get_bloginfo('title') : the_title('', '', false));
+    $link  = !is_null($url) ? $url : ($onSidebar ? get_bloginfo('url') : get_permalink());
+    $title = !is_null($title) ? $title : ($onSidebar ? get_bloginfo('title') : the_title('', '', false));
     $addthis_options = $addthis_settings['options'];
 
     $content .= "\n<!-- AddThis Button BEGIN -->\n".'<script type="text/javascript">'."\n//<!--\n";
@@ -355,6 +355,8 @@ EOF;
     }
     else
     {
+        $link = urlencode($link);
+        $title = urlencode($title);
         $content .= <<<EOF
 //-->
 </script>
