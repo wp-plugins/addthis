@@ -279,8 +279,11 @@ function addthis_init()
 
 function addthis_widget_init()
 {
-    if ( function_exists('register_sidebar_widget') )
+    if ( function_exists('wp_register_sidebar_widget') ) {
+        wp_register_sidebar_widget('addthis-widget', 'AddThis Widget', 'addthis_sidebar_widget');
+    } else if ( function_exists('register_sidebar_widget') ) {
         register_sidebar_widget('AddThis Widget', 'addthis_sidebar_widget');
+    }
 }
 
 function addthis_sidebar_widget($args) 
