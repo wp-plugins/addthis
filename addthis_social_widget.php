@@ -323,7 +323,10 @@ function addthis_social_widget($content, $onSidebar = false, $url = null, $title
     $title = !is_null($title) ? $title : ($onSidebar ? get_bloginfo('title') : the_title('', '', false));
     $addthis_options = $addthis_settings['options'];
 
-    $content .= "\n<!-- AddThis Button BEGIN -->\n".'<script type="text/javascript">'."\n//<!--\n";
+    $content .= "\n<!-- AddThis Button BEGIN -->\n"
+                .'<script type="text/javascript">'
+                ."\n//<!--\n"
+                ."var addthis_product = 'wpp-250';\n";
 
     if (strlen($addthis_settings['customization'])) 
     {
