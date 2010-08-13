@@ -325,7 +325,7 @@ function addthis_social_widget($content, $onSidebar = false, $url = null, $title
 
     $content .= "\n<!-- AddThis Button BEGIN -->\n"
                 .'<script type="text/javascript">'
-                ."\n//<!--\n"
+                ."\n"
                 ."var addthis_product = 'wpp-250';\n";
 
     if (strlen($addthis_settings['customization'])) 
@@ -337,7 +337,6 @@ function addthis_social_widget($content, $onSidebar = false, $url = null, $title
     {
         if (strlen($addthis_options)) $content .= "var addthis_options = '$addthis_options';\n";
         $content .= <<<EOF
-//-->
 </script>
 <div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button" addthis:url="$link" addthis:title="$title">
 EOF;
