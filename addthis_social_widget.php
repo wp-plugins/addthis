@@ -365,7 +365,7 @@ EOF;
         $content .= <<<EOF
 //-->
 </script>
-<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" onclick="window.open('http://www.addthis.com/bookmark.php?v=250&username=$pub&amp;url=$link&amp;title=$title', 'ext_addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
+<div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" onclick="window.open('http://www.addthis.com/bookmark.php?v=250&amp;username=$pub&amp;url=$link&amp;title=$title', 'ext_addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
 EOF;
         $content .= addthis_get_button_img() . '</a></div>';
     }
