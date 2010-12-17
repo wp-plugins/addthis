@@ -23,7 +23,7 @@ function addthis_toggle_tabs(servicesOn) {
 function addthis_populate_services_table(username, password, max, table_id, header_id) {
     if (!at_populated_svcs) {
         // load service json
-        jQuery.getJSON("http://api.addthis.com/analytics/1.0/pub/shares/service.json?suppress_response_codes=true&username="+encodeURIComponent(username)+"&password="+encodeURIComponent(password)+"&callback=?", 
+        jQuery.getJSON("//api.addthis.com/analytics/1.0/pub/shares/service.json?suppress_response_codes=true&username="+encodeURIComponent(username)+"&password="+encodeURIComponent(password)+"&callback=?", 
             function(data){
                 if (!data || data.length == 0) {
                     jQuery(header_id).text("No shares yesterday.");
@@ -32,7 +32,7 @@ function addthis_populate_services_table(username, password, max, table_id, head
                 }
                 if (data.error) {
                     jQuery('#addthis_data_container').hide();
-                    jQuery(header_id).text("Error connecting to AddThis.");
+                    jQuery(header_id).text("Error connecting to AddThis: " + data.error.message);
                     return;
                 } 
                 jQuery(header_id).text("Yesterday At a Glance");
@@ -67,7 +67,7 @@ function addthis_populate_services_table(username, password, max, table_id, head
 function addthis_populate_posts_table(username, password, max, table_id, header_id) {
     if (!at_populated_content) {
         // get the top content data
-        jQuery.getJSON("http://api.addthis.com/analytics/1.0/pub/shares/content.json?suppress_response_codes=true&username="+encodeURIComponent(username)+"&password="+encodeURIComponent(password)+"&callback=?", 
+        jQuery.getJSON("//api.addthis.com/analytics/1.0/pub/shares/content.json?suppress_response_codes=true&username="+encodeURIComponent(username)+"&password="+encodeURIComponent(password)+"&callback=?", 
             function(data){
                 var other = 0;
                 jQuery.each(data, function(i,item){
