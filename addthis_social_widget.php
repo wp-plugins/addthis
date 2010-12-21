@@ -343,7 +343,7 @@ function addthis_social_widget($content, $onSidebar = false, $url = null, $title
 </script>
 <div class="addthis_container"><a href="http://www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button" addthis:url="$link" addthis:title="$title">
 EOF;
-        $content .= ($addthis_settings['language'] == '' ? '' /* no hardcoded image -- we'll choose the language automatically */ : addthis_get_button_img()) . '</a><script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
+        $content .= ($addthis_settings['language'] == '' ? '' /* no hardcoded image -- we'll choose the language automatically */ : addthis_get_button_img()) . '</a><script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
     }
     else if ($addthis_settings['menu_type'] === 'toolbox')
     {
@@ -359,7 +359,7 @@ EOF;
                 $content .= '<a class="addthis_button_'.$option.'"></a>';
             }
         }
-        $content .= '<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
+        $content .= '<script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
     }
     else
     {
@@ -401,7 +401,7 @@ function addthis_get_button_img()
 
     if (!isset($addthis_styles[$btnStyle])) $btnStyle = 'share';
     $btnRecord = $addthis_styles[$btnStyle];
-    $btnUrl = (strpos(trim($btnRecord['img']), 'http://') !== 0 ? "http://s7.addthis.com/static/btn/v2/" : "") . $btnRecord['img'];
+    $btnUrl = (strpos(trim($btnRecord['img']), 'http://') !== 0 ? "//s7.addthis.com/static/btn/v2/" : "") . $btnRecord['img'];
         
     if (strpos($btnUrl, '%lang%') !== false)
     {
