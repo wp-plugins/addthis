@@ -27,7 +27,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 1.6.7
+* Version: 1.6.8
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com
@@ -58,14 +58,13 @@ $addthis_styles = array(
                     );
 
 // Pre-2.6 compatibility
-if ( ! defined( 'WP_CONTENT_URL' ) )
-      define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
-if ( ! defined( 'WP_CONTENT_DIR' ) )
+if ( ! defined( 'WP_CONTENT_URL' ) ) {
+    define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
+}
+if ( ! defined( 'WP_CONTENT_DIR' ) )i
       define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
 if ( ! defined( 'WP_PLUGIN_URL' ) )
       define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
-if ( ! defined( 'WP_PLUGIN_DIR' ) )
-      define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
 /**
 * Generates unique IDs
@@ -202,8 +201,12 @@ function addthis_init()
     }
 
     if (function_exists('wp_register_style')) {
-        wp_register_style( 'addthis', WP_PLUGIN_URL . '/addthis/css/addthis.css');
-        wp_register_script( 'addthis', WP_PLUGIN_URL . '/addthis/js/addthis.js');
+        $pluginUrl = WP_PLUGIN_URL;
+        if (isset($_SERVER) && isset($_SERVER['HTTPS'])) {
+            $pluginUrl = str_replace('http:', 'https:', $pluginUrl);
+        }
+        wp_register_style( 'addthis', $pluginUrl . '/addthis/css/addthis.css');
+        wp_register_script( 'addthis', $pluginUrl . '/addthis/js/addthis.js');
     
         add_action('admin_print_styles', 'addthis_print_style');
         add_action('admin_print_scripts', 'addthis_print_script');
