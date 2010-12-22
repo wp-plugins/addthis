@@ -75,7 +75,7 @@ PHP 5+ is preferred; PHP 4 is supported.
 
 = 1.6.5 =
 * Added support for arbitrary URL and title in template tag as optional parameters
- * i.e., <?php do_action( 'addthis_widget', $url, $title); ?>
+ * i.e., &lt;?php do_action( 'addthis_widget', $url, $title); ?&gt;
  * Can be called, for example, with get_permalink() and the_title() within a post loop, or some other URL if necessary
 
 = 1.6.4 =
