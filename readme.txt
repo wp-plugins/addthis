@@ -1,8 +1,8 @@
 === AddThis ===
-Contributors: _mjk_
+Contributors: _mjk_, jorbin
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget
-Requires at least: 2.3
-Tested up to: 3.0.1
+Requires at least: 2.9
+Tested up to: 3.1.0
 Stable tag: 1.6.8
 
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with many popular services. 
@@ -16,9 +16,21 @@ Optionally, sign up for a free AddThis.com account to see how your visitors are 
 
 == Installation ==
 
-1. Upload `addthis_social_widget.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. (Optional) Customize the plugin in the Settings > AddThis menu
+
+For an automatic installation through WordPress:
+
+1. Go to the 'Add New' plugins screen in your WordPress admin area
+1. Search for 'AddThis'
+1. Click 'Install Now' and activate the plugin
+
+For a manual installation via FTP:
+
+1. Upload the addthis folder to the `/wp-content/plugins/` directory
+1. Activate the plugin through the 'Plugins' screen in your WordPress admin area
+
+To upload the plugin through WordPress, instead of FTP:
+
+1. Upload the downloaded zip file on the 'Add New' plugins screen (see the 'Upload' tab) in your WordPress admin area and activate.
 
 Note: due to confusion, there are no longer separate versions for PHP4 and PHP5.
 
@@ -34,7 +46,7 @@ No. You only need to create an account if you want to see how your users are sha
 
 = Is JavaScript required? =
 
-If you've turned on the drop-down menu (which is recommended, as it's been shown to increase sharing/bookmarking rates), JavaScript must be enabled. We load the actual interface via JavaScript at run-time, which allows us to upgrade the core functionality of the menu itself automatically everywhere. 
+All of the options required through this plugin require javascript.   JavaScript must be enabled. We load the actual interface via JavaScript at run-time, which allows us to upgrade the core functionality of the menu itself automatically everywhere. 
 
 = Why use AddThis? =
 1. Ease of use. AddThis is easy to install, customize and localize. We've worked hard to make it the simplest, most recognized sharing tool on the internet.
@@ -63,7 +75,15 @@ We currently support over 295 services, from email and blogging platforms to soc
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
-= 1.6.7 =
+=2.0.0=
+* Redesigned Settings page
+* Update sharing widgets options
+* Add Share Counter options
+* Redisigned Admin Dashboard Widget
+* Update sidebar widget to extend WP_Widget
+
+
+=1.6.7 =
 * Using wp_register_sidebar_widget() in WordPress installs that support it
 
 = 1.6.6 =
