@@ -73,15 +73,14 @@ We currently support over 295 services, from email and blogging platforms to soc
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
-=2.0.0=
+= 2.0.0 =
 * Redesigned Settings page
-* Update sharing widgets options
-* Add Share Counter options
-* Redisigned Admin Dashboard Widget
-* Update sidebar widget to extend WP_Widget
+* Added Share Counter option
+* Redesigned Admin Dashboard widget
+* Updated sharing widget options
+* Updated sidebar widget to extend WP_Widget
 
-
-=1.6.7 =
+= 1.6.7 =
 * Using wp_register_sidebar_widget() in WordPress installs that support it
 
 = 1.6.6 =
