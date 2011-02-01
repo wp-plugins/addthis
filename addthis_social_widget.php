@@ -27,7 +27,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.0-beta
+* Version: 2.0.1
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -78,7 +78,7 @@ $addthis_new_styles = array(
 
 
 define( 'addthis_style_default' , 'small_toolbox_with_share');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.0.0-beta');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.0.1');
 /**
  * Converts our old many options in to one beautiful array
  *
@@ -713,7 +713,6 @@ function addthis_sidebar_widget($args)
 // essentially replace wp_trim_excerpt until we have something better to use here
 function addthis_remove_tag($content, $text = '')
 {
-    
     $raw_excerpt = $text;
     if ( '' == $text ) {
         $text = get_the_content('');
@@ -734,14 +733,46 @@ function addthis_remove_tag($content, $text = '')
         } else {
             $text = implode(' ', $words);
         }
-        return addthis_display_social_widget($text, false);
+        return addthis_display_social_widget($text, false, false);
+}
+    else
+    {
+        return addthis_display_social_widget($content, true, true);
+    }
+}
+
+function addthis_late_widget($link_text)
+{
+    remove_filter('get_the_excerpt', 'addthis_late_widget');
+
+    global $addthis_styles, $addthis_new_styles;
+    $styles = array_merge($addthis_styles, $addthis_new_styles);
+    
+    $url = get_permalink();
+    $url_above = '';
+    $url_below = '';
+    if ( isset($_GET['preview']) &&  $_GET['preview'] == 1 && $options = get_transient('addthis_settings') )
+        $preview = true;
+    else
+        $options = get_option('addthis_settings');
+    
+
+    if ( isset ($styles[$options['below']]) && has_excerpt() && ! is_attachment()   )
+    {    
+        $below = apply_filters('addthis_below_content', $styles[$options['below']]['src']);
+        $url_below =  ($styles[$options['below']] != 'button') ? "addthis:url='$url'" : $url;
     }
     else
     {
-        return $content;
+        $below = '';
     }
+    return  $link_text .' <br />' . sprintf($below, $url_below);
+
+
 }
-function addthis_display_social_widget($content, $filtered = true)
+
+
+function addthis_display_social_widget($content, $filtered = true, $below_excerpt = false)
 {
     global $addthis_styles, $addthis_new_styles;
     $styles = array_merge($addthis_styles, $addthis_new_styles);
@@ -768,8 +799,8 @@ function addthis_display_social_widget($content, $filtered = true)
     else
         $display = false;
 
-
-
+    remove_filter('wp_trim_excerpt', 'addthis_remove_tag', 9, 2);
+    remove_filter('get_the_excerpt', 'addthis_late_widget');
 $url = get_permalink();
 $url_above = '';
 $url_below = '';
@@ -785,7 +816,7 @@ $url_below = '';
     else
         $above = '';
     
-    if ($options['below'] != 'none' && $display)
+    if ($options['below'] != 'none' && $display && ! $below_excerpt  )
     {
         if (isset ($styles[$options['below']]))
         {    
@@ -794,6 +825,12 @@ $url_below = '';
         }
 
     }
+    elseif ($below_excerpt && $display && $options['below'] != 'none'  )
+    {
+        $below = '';
+        add_filter('get_the_excerpt', 'addthis_late_widget', 14);
+    }
+
     else
         $below = '';
 
@@ -803,7 +840,7 @@ $url_below = '';
     {
         $content = sprintf($above, $url_above).'<br/>'  . $content .' <br />' . sprintf($below, $url_below); 
         if ($filtered == true)
-            add_filter('wp_trim_excerpt', 'addthis_remove_tag', 9);
+            add_filter('wp_trim_excerpt', 'addthis_remove_tag', 11, 2);
     }
     
     return $content;
