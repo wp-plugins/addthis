@@ -913,13 +913,18 @@ function addthis_output_script()
     if ( isset($options['addthis_brand']) )
         $addthis_config['ui_cobrand'] = $options['addthis_brand'];
 
+
     $addthis_config = apply_filters('addthis_config_js_var', $addthis_config);
 
 
     if (! empty ($addthis_config) )
         $script .= 'var addthis_config = '. json_encode($addthis_config) .';';
-    
+
+    $script .= apply_filters('addthis_additional_javascript', '');
+
     $script .= '</script>';
+    
+
     $script .= '<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script>';
             
     echo $script;
@@ -1219,6 +1224,12 @@ function addthis_plugin_options_php4() {
         <tr valign="top">
             <td colspan="2">For more details on the following options, see <a href="http://addthis.com/customization">our customization docs</a>.</td>
         </tr>
+        <?php /*
+        <tr valign="top">
+            <th scope="row"><?php _e("Custimize Toolboxes:", 'addthis_trans_domain' ); ?><span class='description'><?php _e("AddThis personalizes the services displayed for each visitor to your site. Since doing that, we have noticed that <a href='http://www.addthis.com/blog/2011/01/27/double-your-shares-with-the-personalized-toolbox/'>sharing has increased 200%</a>", 'addthis_trans_domain' ); ?> </span></th>
+            <td><input type="text" name="addthis_settings[addthis_brand]" value="<?php echo $addthis_options; ?>" /></td>
+        </tr>
+        */ ?>
         <tr valign="top">
             <th scope="row"><?php _e("Brand:", 'addthis_trans_domain' ); ?></th>
             <td><input type="text" name="addthis_settings[addthis_brand]" value="<?php echo $addthis_brand; ?>" /></td>
