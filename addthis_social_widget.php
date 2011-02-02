@@ -69,7 +69,7 @@ $addthis_new_styles = array(
     ), // facebook tweet share counter
     'simple_button' => array('src' => '<div class="addthis_toolbox addthis_default_style " %s><a href="http://addthis/bookmark.php?v=250&amp;username=xa-4d2b47f81ddfbdce" class="addthis_button_compact">Share</a></div>', 'img' => 'share.jpg', 'name' => 'Share Button', 'above' => 'hidden ', 'below' => 'hidden'
     ), // Plus sign share
-    'button' => array( 'src' => '<a class="addthis_button" href="http://addthis/bookmark.php?v=250&amp;username=xa-4d2b4cee71601c7c&amp;url=%s"><img src="http://cache.addthis.com/cachefly/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a>', 'img' => 'button.jpg', 'name' => 'Classic Share Button', 'above' => 'hidden ', 'below' => 'hidden'
+    'button' => array( 'src' => '<a class="addthis_button" href="http://addthis/bookmark.php?v=250&amp;username=xa-4d2b4cee71601c7c" %s><img src="http://cache.addthis.com/cachefly/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a>', 'img' => 'button.jpg', 'name' => 'Classic Share Button', 'above' => 'hidden ', 'below' => 'hidden'
     ), // classic
     'share_counter' => array( 'src' => '<div class="addthis_toolbox addthis_default_style " %s  ><a class="addthis_counter"></a></div>', 'img' => 'share_counter.png', 'name' => 'Share Counter', 'above' => 'hidden ', 'below' => 'hidden' 
     ),
@@ -760,6 +760,7 @@ function addthis_late_widget($link_text)
     $styles = array_merge($addthis_styles, $addthis_new_styles);
     
     $url = get_permalink();
+    $title = get_the_title();
     $url_above = '';
     $url_below = '';
     if ( isset($_GET['preview']) &&  $_GET['preview'] == 1 && $options = get_transient('addthis_settings') )
@@ -771,7 +772,8 @@ function addthis_late_widget($link_text)
     if ( isset ($styles[$options['below']]) && has_excerpt() && ! is_attachment()   )
     {    
         $below = apply_filters('addthis_below_content', $styles[$options['below']]['src']);
-        $url_below =  ($styles[$options['below']] != 'button') ? "addthis:url='$url'" : $url;
+        $url_below =  "addthis:url='$url' ";
+        $url_below .=  "addthis:title='$title'"; 
     }
     else
     {
@@ -823,6 +825,7 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     remove_filter('wp_trim_excerpt', 'addthis_remove_tag', 9, 2);
     remove_filter('get_the_excerpt', 'addthis_late_widget');
 $url = get_permalink();
+$title = get_the_title();
 $url_above = '';
 $url_below = '';
     // Still here?  Well let's add some social goodness
@@ -831,7 +834,8 @@ $url_below = '';
         if (isset ($styles[$options['above']]))
         {
             $above = apply_filters('addthis_above_content',  $styles[$options['above']]['src']);
-            $url_above =  ($styles[$options['above']] != 'button') ? "addthis:url='$url'" : $url;
+            $url_above =  "addthis:url='$url' ";
+            $url_above .= "addthis:title='$title'"; 
         }
     }
     else
@@ -842,7 +846,8 @@ $url_below = '';
         if (isset ($styles[$options['below']]))
         {    
             $below = apply_filters('addthis_below_content', $styles[$options['below']]['src']);
-            $url_below =  ($styles[$options['below']] != 'button') ? "addthis:url='$url'" : $url;
+            $url_below =  "addthis:url='$url' ";
+            $url_below .= "addthis:title='$title'"; 
         }
 
     }
