@@ -771,6 +771,16 @@ function addthis_late_widget($link_text)
 
 }
 
+add_filter('get_the_excerpt', 'addthis_display_social_widget_excerpt');
+
+function addthis_display_social_widget_excerpt($content)
+{
+    if ( has_excerpt() )
+        return addthis_display_social_widget($content, true, true);
+    else
+        return $content;
+}
+
 
 function addthis_display_social_widget($content, $filtered = true, $below_excerpt = false)
 {
@@ -866,7 +876,7 @@ function addthis_output_script()
     
     $script = "\n<!-- AddThis Button Begin -->\n"
              .'<script type="text/javascript">'
-             ."var addthis_product = 'wpp-250';\n";
+             ."var addthis_product = 'wpp-251';\n";
 
     $pub = (isset($options['username'])) ? $options['username'] : false ;
     if (!$pub) {
