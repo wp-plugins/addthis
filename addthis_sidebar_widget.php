@@ -38,8 +38,8 @@ class AddThisSidebarWidget extends WP_Widget {
         if ($title)
                 echo $before_title . $title . $after_title;
        
-        echo $addthis_new_styles[$instance['style']]['src'];
-        echo addthis_output_script();        
+        echo apply_filters('addthis_sidebar_style_output',  $addthis_new_styles[$instance['style']]['src']);
+        
         echo $after_widget;
     
     }
