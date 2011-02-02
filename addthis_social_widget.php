@@ -734,10 +734,10 @@ function addthis_remove_tag($content, $text = '')
             $text = implode(' ', $words);
         }
         return addthis_display_social_widget($text, false, false);
-}
+    }
     else
     {
-        return addthis_display_social_widget($content, true, true);
+        return $content;
     }
 }
 
@@ -784,6 +784,7 @@ function addthis_display_social_widget_excerpt($content)
 
 function addthis_display_social_widget($content, $filtered = true, $below_excerpt = false)
 {
+
     global $addthis_styles, $addthis_new_styles;
     $styles = array_merge($addthis_styles, $addthis_new_styles);
 
