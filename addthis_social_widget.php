@@ -629,6 +629,16 @@ function register_addthis_settings() {
     register_setting('addthis', 'addthis_settings', 'addthis_save_settings');
 
 }
+/*
+ * Used to make sure excerpts above the head aren't displayed wrong
+*/
+function addthis_add_content_filters()
+{
+   
+    add_filter('get_the_excerpt', 'addthis_display_social_widget_excerpt');
+    add_filter('the_content', 'addthis_display_social_widget', 15);
+}
+
 
 /**
 * Adds WP filter so we can append the AddThis button to post content.
@@ -636,6 +646,8 @@ function register_addthis_settings() {
 function addthis_init()
 {
     global $addthis_settings;
+
+    add_action( 'wp_head', 'addthis_add_content_filters');
 
     if (addthis_get_wp_version() >= 2.7) {
         if ( is_admin() ) {
@@ -659,7 +671,6 @@ function addthis_init()
         ! is_array( $options ) )
         addthis_options_200();
 
-    add_filter('the_content', 'addthis_display_social_widget', 15);
 
     add_action( 'addthis_widget', 'addthis_print_widget', 10, 2);
     
@@ -771,7 +782,6 @@ function addthis_late_widget($link_text)
 
 }
 
-add_filter('get_the_excerpt', 'addthis_display_social_widget_excerpt');
 
 function addthis_display_social_widget_excerpt($content)
 {
