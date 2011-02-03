@@ -3,7 +3,7 @@ Contributors: _mjk_, jorbin
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget
 Requires at least: 2.9
 Tested up to: 3.1.0
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with many popular services. 
 
@@ -73,6 +73,14 @@ We currently support over 295 services, from email and blogging platforms to soc
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+
+= 2.0.1 =
+* Fix theme compatablity issues
+* Fix excerpts bug
+* Add option to not display on excerpts
+* Restore option to customize services
+* Add more filters
+
 = 2.0.0 =
 * Redesigned Settings page
 * Added Share Counter option
@@ -116,6 +124,9 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+
+= 2.0.1 =
+Bug Fixes, more filters, small tweak to options
 
 = 2.0.0 =
 More and better options for sharing widgets.  Redesigned analytics dashboard widget and interface.  

@@ -1276,7 +1276,14 @@ function addthis_plugin_options_php4() {
             <td colspan="2">For more details on the following options, see <a href="http://addthis.com/customization">our customization docs</a>.</td>
         </tr>
         <tr valign="top">
-            <th scope="row"><?php _e("Custimize Toolboxes:", 'addthis_trans_domain' ); ?><span class='description'><?php _e("AddThis normally personalizes the services displayed for each visitor to your site. Since doing that, we have noticed that <a href='http://www.addthis.com/blog/2011/01/27/double-your-shares-with-the-personalized-toolbox/'>sharing has increased 200%</a>", 'addthis_trans_domain' ); ?> </span></th>
+            <th scope="row"><?php _e("Custom service list:", 'addthis_trans_domain' ); ?><br /><span class='description'><?php _e(
+            'Important: AddThis optimizes your list of services based on popularity and language, and personalizes the list for each user. You may decrease sharing by over-riding these features.'
+            , 'addthis_trans_domain') ?>
+            </span></th>
+              <td><input size='60' type="text" name="addthis_settings[addthis_options]" value="<?php echo $addthis_options; ?>" /><br />
+              <span class='description'><?php _e('Enter a comma-separated list of <a href="http://addthis.com/services">service codes</a>', 'addthis_trans_domain' ); ?></span>
+              </td>  
+              
         </tr>
         <tr valign="top">
             <th scope="row"><?php _e("Brand:", 'addthis_trans_domain' ); ?></th>
