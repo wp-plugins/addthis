@@ -379,7 +379,8 @@ function addthis_render_dashboard_widget() {
     $yesterday['shares'] = $yesterday['shares'][0]->shares;
     $yesterday['clickbacks'] = json_decode($stats['clickbacksday']['body']);
     $yesterday['clickbacks'] = $yesterday['clickbacks'][0]->clickbacks;
-    $yesterday['viral'] = ($yesterday['shares'] > 0) ? $yesterday['clickbacks'] / $yesterday['shares'] * 100 : 0;   
+    $yesterday['viral'] = ($yesterday['shares'] > 0 && $yesterday['clickbacks'] > 0 ) ? $yesterday['clickbacks'] / $yesterday['shares'] * 100 . '%' : 'n/a';
+    
     if (! $yesterday['clickbacks'] ) $yesterday['clickbacks'] = 0;
     if (! $yesterday['shares'] ) $yesterday['shares'] = 0;
  
@@ -395,7 +396,7 @@ function addthis_render_dashboard_widget() {
     {
         $lastweek['clickbacks'] += $clickback->clickbacks;
     }
-    $lastweek['viral'] = ($lastweek['shares'] > 0 ) ? $lastweek['clickbacks'] / $lastweek['shares'] * 100 : 0;
+    $lastweek['viral'] = ($lastweek['shares'] > 0 && $lastweek['clickbacks'] > 0 ) ? $lastweek['clickbacks'] / $lastweek['shares'] * 100 . '%' : 'n/a';
 
     $decodedLastMonth = json_decode($stats['sharesmonth']['body']);
     $lastmonth['shares'] = 0;
@@ -409,7 +410,7 @@ function addthis_render_dashboard_widget() {
     {
         $lastmonth['clickbacks'] += $clickback->clickbacks;
     }
-    $lastmonth['viral'] = ($lastmonth['shares'] > 0 ) ? $lastmonth['clickbacks'] / $lastmonth['shares'] * 100 : 0;
+    $lastmonth['viral'] = ($lastmonth['shares'] > 0 && $lastmonth['clickbacks'] ) ? $lastmonth['clickbacks'] / $lastmonth['shares'] * 100 . '%' : 'n/a';
 
 
     $services['shares'] = json_decode($stats['shares/servicemonth']['body']);
@@ -446,6 +447,7 @@ foreach (array('yesterday', 'lastweek', 'lastmonth') as $timePeriod )
 {
     $stats = $$timePeriod;
     $tab++;
+    $viral = ( $stats['viral'] != 'n/a' ) ? number_format( $stats['viral'],2) .'%' : $stats['viral'];
     echo '<div id="tab'.$tab.'">';
 
     echo 
@@ -454,7 +456,8 @@ foreach (array('yesterday', 'lastweek', 'lastmonth') as $timePeriod )
             <tr>';
     echo '<td><div class="atw-cell"><h3>'. $stats['shares'].'</h3>Shares</div></td>';
     echo '<td><div class="atw-cell"><h3>'. $stats['clickbacks'].'</h3>Clicks</div></td>';
-    echo '<td><div class="atw-cell"><h3>'.number_format( $stats['viral'],2)  .'%</h3>Viral Lift</div></td>';
+    echo '<td><div class="atw-cell"><h3>'.  $viral .'</h3>Viral Lift</div></td>';
+    
     echo '</tr>';
     echo '</table>';
     echo '</div>';
@@ -798,15 +801,16 @@ function addthis_late_widget($link_text)
         $options = get_option('addthis_settings');
     
 
-    if ( isset ($styles[$options['below']]) && has_excerpt() && ! is_attachment()   )
+    $url_below =  "addthis:url='$url' ";
+    $url_below .=  "addthis:title='$title'"; 
+
+if ( isset ($styles[$options['below']]) && has_excerpt() && ! is_attachment()   )
     {    
         $below = apply_filters('addthis_below_content', $styles[$options['below']]['src']);
-        $url_below =  "addthis:url='$url' ";
-        $url_below .=  "addthis:title='$title'"; 
     }
     else
     {
-        $below = '';
+        $below = apply_filters('addthis_below_content','' );
     }
     return  $link_text .' <br />' . sprintf($below, $url_below);
 
@@ -859,36 +863,35 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
 
     remove_filter('wp_trim_excerpt', 'addthis_remove_tag', 9, 2);
     remove_filter('get_the_excerpt', 'addthis_late_widget');
-$url = get_permalink();
-$title = get_the_title();
-$url_above = '';
-$url_below = '';
+    $url = get_permalink();
+    $title = get_the_title();
+    $url_above =  "addthis:url='$url' ";
+    $url_above .= "addthis:title='$title'"; 
+    $url_below =  "addthis:url='$url' ";
+    $url_below .= "addthis:title='$title'"; 
+
     // Still here?  Well let's add some social goodness
     if (  $options['above'] != 'none' && $display  )
     {
         if (isset ($styles[$options['above']]))
         {
             $above = apply_filters('addthis_above_content',  $styles[$options['above']]['src']). '<br />';
-            $url_above =  "addthis:url='$url' ";
-            $url_above .= "addthis:title='$title'"; 
         }
     }
     else
-        $above = '';
+        $above = apply_filters('addthis_above_content','' );
     
     if ($options['below'] != 'none' && $display && ! $below_excerpt  )
     {
         if (isset ($styles[$options['below']]))
         {    
             $below = apply_filters('addthis_below_content', $styles[$options['below']]['src']). '<br />';
-            $url_below =  "addthis:url='$url' ";
-            $url_below .= "addthis:title='$title'"; 
         }
 
     }
     elseif ($below_excerpt && $display && $options['below'] != 'none'  )
     {
-        $below = '';
+        $below = apply_filters('addthis_below_content','' );
         if ($options['addthis_showonexcerpts'] == true )  
             add_filter('get_the_excerpt', 'addthis_late_widget', 14);
     }
