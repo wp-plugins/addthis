@@ -369,8 +369,8 @@ function addthis_render_dashboard_widget() {
         '&password='.$password;
         $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) ); 
     }
-         
-        set_transient('addthis_dashboard_stats', $stats, '600');
+        if ($stats['sharesday']['response']['code'] == 200) 
+            set_transient('addthis_dashboard_stats', $stats, '600');
     
     }
     if ($stats['sharesday']['response']['code'] == 200 && $stats['sharesmonth']['body'] != '[]' )
@@ -551,6 +551,7 @@ global $addthis_styles, $addthis_new_styles;
 
 $styles = array_merge($addthis_styles, $addthis_new_styles);
 
+
 $options = array();
 
 // Sanitize username and password
@@ -581,10 +582,12 @@ elseif ($data['below'] == 'none')
 
 
 // All the checkbox fields
-foreach (array('addthis_show_stats', 'addthis_append_data', 'addthis_showonhome', 'addthis_showonpages', 'addthis_showonarchives', 'addthis_showoncats') as $field)
+foreach (array('addthis_show_stats', 'addthis_append_data', 'addthis_showonhome', 'addthis_showonpages', 'addthis_showonarchives', 'addthis_showoncats', 'addthis_showonexcerpts') as $field)
 {
     if ( isset($data[$field]) &&  $data[$field] == true)
         $options[$field] = true; 
+    else
+        $options[$field] = false;
 
 }
 
@@ -595,6 +598,8 @@ if ( isset ($data['addthis_brand']) && strlen($data['addthis_brand'])  != 0  )
     $options['addthis_brand'] = sanitize_text_field($data['addthis_brand']);
 
 //[addthis_options] => 
+if ( isset ($data['addthis_options']) && strlen($data['addthis_options'])  != 0  )
+    $options['addthis_options'] = str_replace(' ', '', esc_js($data['addthis_options']));
 
 //[addthis_language] => 
 if ( isset ($data['addthis_language']))
@@ -634,8 +639,14 @@ function register_addthis_settings() {
 */
 function addthis_add_content_filters()
 {
-   
-    add_filter('get_the_excerpt', 'addthis_display_social_widget_excerpt');
+    if ( isset($_GET['preview']) &&  $_GET['preview'] == 1 && $options = get_transient('addthis_settings') )
+        $preview = true;
+    else
+        $options = get_option('addthis_settings');
+    
+    if ($options['addthis_showonexcerpts'] == true )
+        add_filter('get_the_excerpt', 'addthis_display_social_widget_excerpt');
+    
     add_filter('the_content', 'addthis_display_social_widget', 15);
 }
 
@@ -724,10 +735,18 @@ function addthis_sidebar_widget($args)
 // essentially replace wp_trim_excerpt until we have something better to use here
 function addthis_remove_tag($content, $text = '')
 {
+
+
+    if ( isset($_GET['preview']) &&  $_GET['preview'] == 1 && $options = get_transient('addthis_settings') )
+        $preview = true;
+    else
+        $options = get_option('addthis_settings');
+
+
     $raw_excerpt = $text;
     if ( '' == $text ) {
-        $text = get_the_content('');
 
+        $text = get_the_content('');
         $text = strip_shortcodes( $text );
         remove_filter('the_content', 'addthis_display_social_widget', 15); 
        
@@ -744,6 +763,8 @@ function addthis_remove_tag($content, $text = '')
         } else {
             $text = implode(' ', $words);
         }
+        if ($options['addthis_showonexcerpts'] == false)
+            return $text;
         return addthis_display_social_widget($text, false, false);
     }
     else
@@ -756,6 +777,14 @@ function addthis_late_widget($link_text)
 {
     remove_filter('get_the_excerpt', 'addthis_late_widget');
 
+    if ( isset($_GET['preview']) &&  $_GET['preview'] == 1 && $options = get_transient('addthis_settings') )
+        $preview = true;
+    else
+        $options = get_option('addthis_settings');
+    
+    if ($options['addthis_showonexcerpts'] == false)
+        return $link_text;
+    
     global $addthis_styles, $addthis_new_styles;
     $styles = array_merge($addthis_styles, $addthis_new_styles);
     
@@ -787,7 +816,13 @@ function addthis_late_widget($link_text)
 
 function addthis_display_social_widget_excerpt($content)
 {
-    if ( has_excerpt() )
+    if ( isset($_GET['preview']) &&  $_GET['preview'] == 1 && $options = get_transient('addthis_settings') )
+        $preview = true;
+    else
+        $options = get_option('addthis_settings');
+   
+
+    if ( has_excerpt() && $options['addthis_showonexcerpts'] == true )
         return addthis_display_social_widget($content, true, true);
     else
         return $content;
@@ -833,7 +868,7 @@ $url_below = '';
     {
         if (isset ($styles[$options['above']]))
         {
-            $above = apply_filters('addthis_above_content',  $styles[$options['above']]['src']);
+            $above = apply_filters('addthis_above_content',  $styles[$options['above']]['src']). '<br />';
             $url_above =  "addthis:url='$url' ";
             $url_above .= "addthis:title='$title'"; 
         }
@@ -845,7 +880,7 @@ $url_below = '';
     {
         if (isset ($styles[$options['below']]))
         {    
-            $below = apply_filters('addthis_below_content', $styles[$options['below']]['src']);
+            $below = apply_filters('addthis_below_content', $styles[$options['below']]['src']). '<br />';
             $url_below =  "addthis:url='$url' ";
             $url_below .= "addthis:title='$title'"; 
         }
@@ -854,7 +889,8 @@ $url_below = '';
     elseif ($below_excerpt && $display && $options['below'] != 'none'  )
     {
         $below = '';
-        add_filter('get_the_excerpt', 'addthis_late_widget', 14);
+        if ($options['addthis_showonexcerpts'] == true )  
+            add_filter('get_the_excerpt', 'addthis_late_widget', 14);
     }
 
     else
@@ -864,7 +900,7 @@ $url_below = '';
 
     if ($display) 
     {
-        $content = sprintf($above, $url_above).'<br/>'  . $content .' <br />' . sprintf($below, $url_below); 
+        $content = sprintf($above, $url_above) . $content . sprintf($below, $url_below); 
         if ($filtered == true)
             add_filter('wp_trim_excerpt', 'addthis_remove_tag', 11, 2);
     }
@@ -925,7 +961,8 @@ function addthis_output_script()
     if (! empty ($addthis_config) )
         $script .= 'var addthis_config = '. json_encode($addthis_config) .';';
 
-    $script .= apply_filters('addthis_additional_javascript', '');
+    if (isset($options['addthis_options']) && strlen($options['addthis_options']) != 0)
+    $script .= 'var addthis_options = "'.$options['addthis_options'].'"';
 
     $script .= '</script>';
     
@@ -1097,7 +1134,9 @@ function addthis_admin_menu()
         'toolbox'   => '',
         'addthis_language'  => '',
         'addthis_header_background' => '',
-        'addthis_header_color' => ''
+        'addthis_header_color' => '',
+        'addthis_options' => '',
+        'addthis_showonexcerpts' => true
     );
 
 function addthis_plugin_options_php4() {
@@ -1223,18 +1262,19 @@ function addthis_plugin_options_php4() {
             <th scope="row"><?php _e("Show in categories:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_settings[addthis_showoncats]" value="true" <?php echo ( $addthis_showoncats == true ? 'checked="checked"' : ''); ?>/></td>
         </tr>
+        <tr>
+            <th scope="row"><?php _e("Show on excerpts:", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_settings[addthis_showonexcerpts]" value="true" <?php echo ( $addthis_showonexcerpts == true ? 'checked="checked"' : ''); ?>/></td>
+        </tr>
         <tr valign="top">
             <td colspan="2"></td>
         </tr>
         <tr valign="top">
             <td colspan="2">For more details on the following options, see <a href="http://addthis.com/customization">our customization docs</a>.</td>
         </tr>
-        <?php /*
         <tr valign="top">
-            <th scope="row"><?php _e("Custimize Toolboxes:", 'addthis_trans_domain' ); ?><span class='description'><?php _e("AddThis personalizes the services displayed for each visitor to your site. Since doing that, we have noticed that <a href='http://www.addthis.com/blog/2011/01/27/double-your-shares-with-the-personalized-toolbox/'>sharing has increased 200%</a>", 'addthis_trans_domain' ); ?> </span></th>
-            <td><input type="text" name="addthis_settings[addthis_brand]" value="<?php echo $addthis_options; ?>" /></td>
+            <th scope="row"><?php _e("Custimize Toolboxes:", 'addthis_trans_domain' ); ?><span class='description'><?php _e("AddThis normally personalizes the services displayed for each visitor to your site. Since doing that, we have noticed that <a href='http://www.addthis.com/blog/2011/01/27/double-your-shares-with-the-personalized-toolbox/'>sharing has increased 200%</a>", 'addthis_trans_domain' ); ?> </span></th>
         </tr>
-        */ ?>
         <tr valign="top">
             <th scope="row"><?php _e("Brand:", 'addthis_trans_domain' ); ?></th>
             <td><input type="text" name="addthis_settings[addthis_brand]" value="<?php echo $addthis_brand; ?>" /></td>
