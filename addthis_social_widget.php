@@ -994,8 +994,10 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     else
         $display = false;
 
-    if ( get_post_meta($post->ID, 'addthis_exclude', true) == 'true'   )
+    $custom_fields = get_post_custom($post->ID);
+    if (isset ($custom_fields['addthis_exclude']) && $custom_fields['addthis_exclude'][0] ==  'true')
         $display = false;
+
 
     remove_filter('wp_trim_excerpt', 'addthis_remove_tag', 9, 2);
     remove_filter('get_the_excerpt', 'addthis_late_widget');
