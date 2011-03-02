@@ -74,6 +74,15 @@ PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
 
+= 2.0.2 =
+* Bug Fixes
+* Added additional paramater to 
+* Ability to specify custom toolboxes for both above and below
+* Added additional paramater to do_action('addthis_widget').  Paramaters are now:
+* * url (use get_permalink() if you are calling it inside the loop)
+* * title (use the_title() if calling inside the loop)
+* * Style (specify the style to display) See $addthis_new_styles for the styles.  may also pass an arra (see addthis_custom_toolbox for array values to pass)
+
 = 2.0.1 =
 * Fix theme compatablity issues
 * Fix excerpts bug
