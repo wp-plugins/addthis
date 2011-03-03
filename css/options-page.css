@@ -82,3 +82,39 @@ height: 36px;
 padding: 14px 6px 15px 0;
 width: 36px;
 }
+.at_custom_input{
+float: left;
+
+}
+.at_custom_label{
+width: 200px;
+padding-left: 4px;
+float: left;
+}
+.above_option_custom li,
+.below_option_custom li{
+height: 4.6em;
+padding-left: 30px;
+}
+.above_option_custom li span.description,
+.below_option_custom li span.description{
+clear:both;
+float:left;
+}
+
+.at_do_custom{
+float:left;
+clear:both;
+width: 15px;
+margin-left: 0;
+margin-right: 0;
+padding-left: 0;
+padding-right: 0;
+}
+
+.above_option, .below_option{
+clear:both;
+}
+.nocheck .at_custom_label{
+margin-left:15px;
+}

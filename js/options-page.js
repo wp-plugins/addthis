@@ -41,10 +41,8 @@ jQuery(document).ready(function($) {
             action: 'at_save_transient',
             value : stuff
         };
-        
 
         jQuery.post(ajaxurl, data, function(response) {
-
             // Fix for WP 2.9's version of lightbox 
             if ( typeof tb_click != 'undefined' &&  $.isFunction(tb_click.call))
             {
@@ -77,12 +75,12 @@ jQuery(document).ready(function($) {
     });
 
     $('#above_more').click( function() {
-        $('#above .hidden').removeClass('hidden');
+        $('#above .select_row').removeClass('hidden');
         $(this).hide();
         return false;
     });
     $('#below_more').click( function() {
-        $('#below .hidden').removeClass('hidden');
+        $('#below .select_row').removeClass('hidden');
         $(this).hide();
         return false;
     });
@@ -106,6 +104,36 @@ jQuery(document).ready(function($) {
     $('input[name="addthis_settings[show_below]"]').change( function() {
         $('.below_option').toggleClass('hide');
     });
+
+
+    var aboveCustom = $('#above_custom_button'); 
+    var aboveCustomShow = function(){
+        if ( aboveCustom.attr('checked') != 'undefined' &&  aboveCustom.attr('checked') == true)
+        {
+            $('.above_option_custom').removeClass('hidden');
+        }
+        else
+        {
+            $('.above_option_custom').addClass('hidden');
+        }
+    };
+    var belowCustom = $('#below_custom_button'); 
+    var belowCustomShow = function(){
+        if ( belowCustom.attr('checked') != 'undefined' &&  belowCustom.attr('checked') == true)
+        {
+            $('.below_option_custom').removeClass('hidden');
+        }
+        else
+        {
+            $('.below_option_custom').addClass('hidden');
+        }
+    };
+
+    aboveCustomShow();
+    belowCustomShow();
+
+    $('input[name="addthis_settings[above]"]').change( function(){aboveCustomShow();} );
+    $('input[name="addthis_settings[below]"]').change( function(){belowCustomShow();} );
 
 
 });
