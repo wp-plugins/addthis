@@ -1139,7 +1139,7 @@ function addthis_output_script()
     $script .= '</script>';
     
 
-    $script .= '<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script>';
+    $script .= '<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid='.$pub.'"></script>';
             
     echo $script;
 }
