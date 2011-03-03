@@ -271,13 +271,16 @@ function addthis_custom_toolbox($options, $url, $title)
         foreach ($services as $service)
         {
             $service = trim($service);
-            $button .= '<a class="addthis_button_'.$service.'"></a>';
+            if ($service == 'more')
+                $button .= '<a class="addthis_button_compact"></a>';
+            else
+                $button .= '<a class="addthis_button_'.$service.'"></a>';
         }
     }
     
     if (isset($options['preferred']) && is_numeric($options['preferred']))
     {
-        for ($a = 1; $a < $options['preferred']; $a++)
+        for ($a = 1; $a <= $options['preferred']; $a++)
         {
             $button .= '<a class="addthis_button_preferred_'.$a.'"></a>';
         }
@@ -435,7 +438,7 @@ function addthis_render_dashboard_widget() {
     $domain = str_replace(array('http://', 'https://'), '', $domain);
   
     if (isset($options['profile']))
-        $profile = urlencode('&pubid='.$options['profile']);
+        $profile = '&pubid='.urlencode($options['profile']);
     else
         $profile = '';
     
@@ -464,7 +467,7 @@ function addthis_render_dashboard_widget() {
         '&username='.$username.
         '&password='.$password.
         $profile;
-        $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) ); 
+        $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) );
     }
         if ($stats['sharesday']['response']['code'] == 200) 
             set_transient('addthis_dashboard_stats', $stats, '600');
@@ -704,7 +707,7 @@ elseif ($data['below'] = 'custom')
     $options['below_custom_size'] =  ( $data['below_custom_size'] == '16' || $data['below_custom_size'] == 32 ) ? $data['below_custom_size'] : '' ;
     $options['below_custom_services'] = sanitize_text_field( $data['below_custom_services'] );
     $options['below_custom_preferred'] = sanitize_text_field( $data['below_custom_preferred'] );
-    $options['below_custom_more'] = ($data['below_custom_more'] == 'true') ? 'true' : 'false' ;
+    $options['below_custom_more'] = isset($data['below_custom_more']); 
 }
 
 
@@ -1136,7 +1139,7 @@ function addthis_output_script()
     $script .= '</script>';
     
 
-    $script .= '<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script>';
+    $script .= '<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid='.$pub.'"></script>';
             
     echo $script;
 }
@@ -1398,7 +1401,7 @@ function addthis_plugin_options_php4() {
                 echo "<li><input $above_do_custom_services class='at_do_custom'  type='checkbox' name='addthis_settings[above_do_custom_services]' value='true' /><span class='at_custom_label'>Services to always show:</span><input class='at_custom_input' name='addthis_settings[above_custom_services]' value='$above_custom_services'/><br/><span class='description'>Enter a comma-separated list of <a href='http://addthis.com/services'>service codes</a> </span></li>";
                 echo "<li><input type='checkbox' $above_do_custom_preferred class='at_do_custom'  name='addthis_settings[above_do_custom_preferred]' value='true' /><span class='at_custom_label'>Auto Personalized:</span>
                     <select name='addthis_settings[above_custom_preferred]' class='at_custom_input'>";
-                    for($i=0; $i <= 12; $i++)
+                    for($i=0; $i <= 11; $i++)
                     {
                         $selected = '';
                         if ($above_custom_preferred == $i)
@@ -1452,7 +1455,7 @@ function addthis_plugin_options_php4() {
                 echo "<li><input class='at_do_custom'  type='checkbox' $below_do_custom_services  name='addthis_settings[below_do_custom_services]' value='true' /><span class='at_custom_label'>Services to always show:</span><input class='at_custom_input' name='addthis_settings[below_custom_services]' value='$below_custom_services'/><br/><span class='description'>Enter a comma-separated list of <a href='http://addthis.com/services'>service codes</a> </span></li>";
                 echo "<li><input type='checkbox' class='at_do_custom' $below_do_custom_preferred name='addthis_settings[below_do_custom_preferred]' value='true' /><span class='at_custom_label'>Auto Personalized:</span>
                     <select name='addthis_settings[below_custom_preferred]' class='at_custom_input'>";
-                    for($i=0; $i <= 12; $i++)
+                    for($i=0; $i <= 11; $i++)
                     {
                         $selected = '';
                         if ($below_custom_preferred == $i)
@@ -1462,6 +1465,7 @@ function addthis_plugin_options_php4() {
 
                     }
                 echo "</select><br/><span class='description'>Enter the number of automatticly user personalized items you want displayed</span></li>";
+               
                 $below_custom_more = ($below_custom_more) ? 'checked="checked""' : '';
                 
                 echo "<li><input $below_custom_more type='checkbox' class='at_do_custom' name='addthis_settings[below_custom_more]' value='true' /><span class='at_custom_label'>More</span><br/><span class='description'>Display our iconic orange plus sign that offers sharing to over 300 destinations</span></li>";
