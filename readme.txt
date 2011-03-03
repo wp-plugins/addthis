@@ -16,7 +16,6 @@ Optionally, sign up for a free AddThis.com account to see how your visitors are 
 
 == Installation ==
 
-
 For an automatic installation through WordPress:
 
 1. Go to the 'Add New' plugins screen in your WordPress admin area
