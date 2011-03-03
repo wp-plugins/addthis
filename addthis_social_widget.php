@@ -280,7 +280,7 @@ function addthis_custom_toolbox($options, $url, $title)
     
     if (isset($options['preferred']) && is_numeric($options['preferred']))
     {
-        for ($a = 1; $a < $options['preferred']; $a++)
+        for ($a = 1; $a <= $options['preferred']; $a++)
         {
             $button .= '<a class="addthis_button_preferred_'.$a.'"></a>';
         }
