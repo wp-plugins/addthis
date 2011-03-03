@@ -76,6 +76,26 @@ $addthis_new_styles = array(
 );
 
 
+add_filter('the_title', 'at_title_check');
+function at_title_check($title)
+{
+    
+    global $addthis_did_filters_added;
+    
+    if (!isset ($addthis_did_filters_added) || $addthis_did_filters_added != true)
+    { 
+        addthis_add_content_filters(); 
+        add_filter('the_content', 'addthis_script_to_content');
+    }
+
+
+    return $title;
+}
+function addthis_script_to_content($content)
+{
+    addthis_output_script();
+    return $content;
+}
 
 define( 'addthis_style_default' , 'small_toolbox_with_share');
 define( 'ADDTHIS_PLUGIN_VERSION', '2.0.2');
@@ -770,6 +790,10 @@ function register_addthis_settings() {
 */
 function addthis_add_content_filters()
 {
+
+    global $addthis_did_filters_added;
+    $addthis_did_filters_added = true;
+
     if ( isset($_GET['preview']) &&  $_GET['preview'] == 1 && $options = get_transient('addthis_settings') )
         $preview = true;
     else
