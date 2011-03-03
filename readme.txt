@@ -1,6 +1,5 @@
-=== AddThis ===
 Contributors: _mjk_, jorbin
-Tags: share, addthis, social, bookmark, sharing, bookmarking, widget
+Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz
 Requires at least: 2.9
 Tested up to: 3.1.0
 Stable tag: 2.0.1
@@ -74,6 +73,9 @@ PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
 
+= 2.0.3 =
+* plugin should still work if theme doesn't have wp_head and wp_footer
+
 = 2.0.2 =
 * Bug Fixes
 * set addthis_exclude custom field to 'true' to not display addthis on that post / page 
@@ -136,6 +138,12 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+
+= 2.0.3 = 
+Still work in themes that don't have wp_head and wp_footer
+
+= 2.0.2 =
+Bug Fixes, enhanced customization
 
 = 2.0.1 =
 Bug Fixes, more filters, small tweak to options
