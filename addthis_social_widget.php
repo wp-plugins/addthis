@@ -676,11 +676,15 @@ elseif ($data['above'] == 'none')
 }
 elseif ($data['above'] = 'custom')
 {
+
+    $options['above_do_custom_services'] = isset($data['above_do_custom_services']) ;
+    $options['above_do_custom_preferred'] = isset($data['above_do_custom_preferred']) ;
+
     $options['above'] = 'custom';
     $options['above_custom_size'] =  ( $data['above_custom_size'] == '16' || $data['above_custom_size'] == 32 ) ? $data['above_custom_size'] : '' ;
     $options['above_custom_services'] = sanitize_text_field( $data['above_custom_services'] );
-    $options['above_custom_preferred'] = sanitize_text_field( $data['above_custom_preferred'] );
-    $options['above_custom_more'] = ($data['above_custom_more'] == 'true') ? 'true' : 'false' ;
+    $options['above_custom_preferred'] = (int) $data['above_custom_preferred'] ;
+    $options['above_custom_more'] = isset($data['above_custom_more']);
 }
 
 if ( isset ($data['show_below']) )
@@ -693,6 +697,9 @@ elseif ($data['below'] == 'none')
 }
 elseif ($data['below'] = 'custom')
 {
+    $options['below_do_custom_services'] = isset($data['below_do_custom_services']) ;
+    $options['below_do_custom_preferred'] = isset($data['below_do_custom_preferred']) ;
+    
     $options['below'] = 'custom';
     $options['below_custom_size'] =  ( $data['below_custom_size'] == '16' || $data['below_custom_size'] == 32 ) ? $data['below_custom_size'] : '' ;
     $options['below_custom_services'] = sanitize_text_field( $data['below_custom_services'] );
@@ -928,12 +935,12 @@ function addthis_late_widget($link_text)
 
     if (has_excerpt() && ! is_attachment() && isset($options['below']) && $options['below'] == 'custom')
     {
-        $belowOptions = array(
-            'size' => $options['below_custom_size'] ,
-            'services' => $options['below_custom_services'] ,
-            'preferred' => $options['below_custom_preferred'] ,
-            'more' => $options['below_custom_more']
-        );
+        $belowOptions['size'] = $options['below_custom_size'];
+        if ($options['below_do_custom_services'])
+            $belowOptions['services'] = $options['below_custom_services'];
+        if ($options['below_do_custom_preferred'])
+            $belowOptions['preferred'] = $options['below_custom_preferred'];
+        $belowOptions['more'] = $options['below_custom_more'];
         return $link_text . apply_filters('addthis_below_content',  addthis_custom_toolbox($belowOptions, $url, $title) );
     }
     
@@ -1017,12 +1024,12 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
         }
         elseif ($options['above'] == 'custom')
         {
-            $aboveOptions = array(
-                'size' => $options['above_custom_size'] ,
-                'services' => $options['above_custom_services'] ,
-                'preferred' => $options['above_custom_preferred'] ,
-                'more' => $options['above_custom_more']
-            );
+            $aboveOptions['size'] = $options['above_custom_size'];
+            if ($options['above_do_custom_services']) 
+                $aboveOptions['services'] = $options['above_custom_services'];
+            if ($options['above_do_custom_preferred']) 
+                $aboveOptions['preferred'] = $options['above_custom_preferred'];
+            $aboveOptions['more'] = $options['above_custom_more'];
             $above = apply_filters('addthis_above_content',  addthis_custom_toolbox($aboveOptions, $url, $title) );
         }
     }
@@ -1039,12 +1046,10 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
         }
         elseif ($options['below'] == 'custom')
         {
-            $belowOptions = array(
-                'size' => $options['below_custom_size'] ,
-                'services' => $options['below_custom_services'] ,
-                'preferred' => $options['below_custom_preferred'] ,
-                'more' => $options['below_custom_more']
-            );
+            $belowOptions['size'] = $options['below_custom_size'];
+            $belowOptions['services'] = $options['below_custom_services'];
+            $belowOptions['preferred'] = $options['below_custom_preferred'];
+            $belowOptions['more'] = $options['below_custom_more'];
             $below = apply_filters('addthis_below_content',  addthis_custom_toolbox($belowOptions, $url, $title) );
         }
     }
@@ -1381,18 +1386,32 @@ function addthis_plugin_options_php4() {
                     $class = '';
                 }
 
-                echo "<p class='above_option select_row $class '><input $checked type='radio' value='custom' name='addthis_settings[above]' id='above_custom_button' /> Custom</input></p>";
+                echo "<div class='above_option select_row $class '><input $checked type='radio' value='custom' name='addthis_settings[above]' id='above_custom_button' /> Custom / Build your own</input>";
 
-                echo "<p class='above_option_custom hidden'>";
+                echo "<ul class='above_option_custom hidden'>";
                 $above_custom_16 = ($above_custom_size == 16) ? 'selected="selected"' : '' ;
                 $above_custom_32 = ($above_custom_size == 32) ? 'selected="selected"' : '' ;
-                echo "Size:<select name='addthis_settings[above_custom_size]'><option value='16' $above_custom_16 >16x16</option><option value='32' $above_custom_32 >32x32</option></select>";
-                echo "Services:<input name='addthis_settings[above_custom_services]' value='$above_custom_services'/>";
-                echo "Preferred:<input name='addthis_settings[above_custom_preferred]' value='$above_custom_preferred'/>";
-                $above_custom_more_true = ($above_custom_more == true) ? 'selected="selected"' : '';
-                $above_custom_more_false = ($above_custom_more == false) ? 'selected="selected"' : '';
-                echo "more:<select name='addthis_settings[above_custom_more]'><option value='true'>Yes</option><option value='false'>No</option></select>";
-                echo "</p>";
+                $above_do_custom_services = ($above_do_custom_services) ? 'checked="checked"' : '';
+                $above_do_custom_preferred = ($above_do_custom_preferred) ? 'checked="checked"' : '';
+
+                echo "<li class='nocheck'><span class='at_custom_label'>Size:</span><select name='addthis_settings[above_custom_size]'><option value='16' $above_custom_16 >16x16</option><option value='32' $above_custom_32 >32x32</option></select><br/><span class='description'>The size of the icons you want to display</span></li>";
+                echo "<li><input $above_do_custom_services class='at_do_custom'  type='checkbox' name='addthis_settings[above_do_custom_services]' value='true' /><span class='at_custom_label'>Services to always show:</span><input class='at_custom_input' name='addthis_settings[above_custom_services]' value='$above_custom_services'/><br/><span class='description'>Enter a comma-separated list of <a href='http://addthis.com/services'>service codes</a> </span></li>";
+                echo "<li><input type='checkbox' $above_do_custom_preferred class='at_do_custom'  name='addthis_settings[above_do_custom_preferred]' value='true' /><span class='at_custom_label'>Auto Personalized:</span>
+                    <select name='addthis_settings[above_custom_preferred]' class='at_custom_input'>";
+                    for($i=0; $i <= 12; $i++)
+                    {
+                        $selected = '';
+                        if ($above_custom_preferred == $i)
+                            $selected = 'selected="selected"';
+
+                        echo '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
+
+                    }
+                echo "</select><br/><span class='description'>Enter the number of automatticly user personalized items you want displayed</span></li>";
+               $above_custom_more = ( $above_custom_more ) ? 'checked="checked"' : '';
+                
+                echo "<li><input $above_custom_more type='checkbox' class='at_do_custom' name='addthis_settings[above_custom_more]' value='true' /><span class='at_custom_label'>More</span><br/><span class='description'>Display our iconic orange plus sign that offers sharing to over 300 destinations</span></li>";
+                echo "</ul></div>";
                 
                 ?>
                
@@ -1421,20 +1440,32 @@ function addthis_plugin_options_php4() {
                     $checked = 'checked="checked"';
                     $class = '';
                 }
+                echo "<div class='below_option select_row $class '><input $checked type='radio' value='custom' name='addthis_settings[below]' id='below_custom_button' /> Custom / Build your own</input>";
 
-                echo "<p class='below_option select_row $class '><input $checked type='radio' value='custom' name='addthis_settings[below]' />Custom</input></p>";
-            
-                echo "<p class='below_option_custom hidden'>";
+                echo "<ul class='below_option_custom hidden'>";
                 $below_custom_16 = ($below_custom_size == 16) ? 'selected="selected"' : '' ;
                 $below_custom_32 = ($below_custom_size == 32) ? 'selected="selected"' : '' ;
-                echo "Size:<select name='addthis_settings[below_custom_size]'><option value='16' $below_custom_16 >16x16</option><option value='32' $below_custom_32 >32x32</option></select>";
-                echo "Services:<input name='addthis_settings[below_custom_services]' value='$below_custom_services'/>";
-                echo "Preferred:<input name='addthis_settings[below_custom_preferred]' value='$below_custom_preferred'/>";
-                $below_custom_more_true = ($below_custom_more == true) ? 'selected="selected"' : '';
-                $below_custom_more_false = ($below_custom_more == false) ? 'selected="selected"' : '';
-                echo "more:<select name='addthis_settings[below_custom_more]'><option value='true'>Yes</option><option value='false'>No</option></select>";
-                echo "</p>";
+                $below_do_custom_services = ($below_do_custom_services) ? 'checked="checked"' : '';
+                $below_do_custom_preferred = ($below_do_custom_preferred) ? 'checked="checked"' : '';
                 
+                echo "<li class='nocheck'><span class='at_custom_label'>Size:</span><select name='addthis_settings[below_custom_size]'><option value='16' $below_custom_16 >16x16</option><option value='32' $below_custom_32 >32x32</option></select><br/><span class='description'>The size of the icons you want to display</span></li>";
+                echo "<li><input class='at_do_custom'  type='checkbox' $below_do_custom_services  name='addthis_settings[below_do_custom_services]' value='true' /><span class='at_custom_label'>Services to always show:</span><input class='at_custom_input' name='addthis_settings[below_custom_services]' value='$below_custom_services'/><br/><span class='description'>Enter a comma-separated list of <a href='http://addthis.com/services'>service codes</a> </span></li>";
+                echo "<li><input type='checkbox' class='at_do_custom' $below_do_custom_preferred name='addthis_settings[below_do_custom_preferred]' value='true' /><span class='at_custom_label'>Auto Personalized:</span>
+                    <select name='addthis_settings[below_custom_preferred]' class='at_custom_input'>";
+                    for($i=0; $i <= 12; $i++)
+                    {
+                        $selected = '';
+                        if ($below_custom_preferred == $i)
+                            $selected = 'selected="selected"';
+
+                        echo '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
+
+                    }
+                echo "</select><br/><span class='description'>Enter the number of automatticly user personalized items you want displayed</span></li>";
+                $below_custom_more = ($below_custom_more) ? 'checked="checked""' : '';
+                
+                echo "<li><input $below_custom_more type='checkbox' class='at_do_custom' name='addthis_settings[below_custom_more]' value='true' /><span class='at_custom_label'>More</span><br/><span class='description'>Display our iconic orange plus sign that offers sharing to over 300 destinations</span></li>";
+                echo "</ul></div>";
             
             ?>
             <a class="below_option" href="#below_more" id="below_more">additional style options</a>
