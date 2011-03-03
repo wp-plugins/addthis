@@ -435,7 +435,7 @@ function addthis_render_dashboard_widget() {
     $domain = str_replace(array('http://', 'https://'), '', $domain);
   
     if (isset($options['profile']))
-        $profile = urlencode('&pubid='.$options['profile']);
+        $profile = '&pubid='.urlencode($options['profile']);
     else
         $profile = '';
     
@@ -464,7 +464,7 @@ function addthis_render_dashboard_widget() {
         '&username='.$username.
         '&password='.$password.
         $profile;
-        $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) ); 
+        $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) );
     }
         if ($stats['sharesday']['response']['code'] == 200) 
             set_transient('addthis_dashboard_stats', $stats, '600');
