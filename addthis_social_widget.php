@@ -489,6 +489,17 @@ function addthis_render_dashboard_widget() {
         $profile;
         $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) );
     }
+
+        foreach($stats as $response)
+        {
+            if (is_wp_error($response) )
+            {
+                echo "There was an error retrieving your stats from the AddThis servers.  Please wait and try again in a few moments\n";
+                echo "Error Code:" . $response->get_error_code();
+                exit;
+            }
+        }
+
         if ($stats['sharesday']['response']['code'] == 200) 
             set_transient('addthis_dashboard_stats', $stats, '600');
     
@@ -608,8 +619,13 @@ elseif($stats['sharesday']['response']['code'] == 200){
         <ul>
 ENDHTML;
 }
+elseif ($stats['sharesday']['response']['code'] == 401){
+    echo "I'm sorry, but we seemed to encounter an error. Please ensure that your password, username and pubid are correct.";
+
+}
+
 else{
-    echo "I'm sorry, but we seemed to encounter an error. This could be because your password is not accurate.  Please check and update it.";
+    echo "I'm sorry, but we seemed to have encountered an error when requesting your analytics.  Please wait a few moments and try again.";
 }
 die();
 } 
@@ -1028,10 +1044,12 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     else
         $display = false;
 
-    $custom_fields = get_post_custom($post->ID);
-    if (isset ($custom_fields['addthis_exclude']) && $custom_fields['addthis_exclude'][0] ==  'true')
-        $display = false;
-
+    if ( is_object($post) )
+    {
+        $custom_fields = get_post_custom($post->ID);
+        if (isset ($custom_fields['addthis_exclude']) && $custom_fields['addthis_exclude'][0] ==  'true')
+            $display = false;
+    }
 
     remove_filter('wp_trim_excerpt', 'addthis_remove_tag', 9, 2);
     remove_filter('get_the_excerpt', 'addthis_late_widget');
