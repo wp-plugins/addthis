@@ -206,7 +206,6 @@ function addthis_options_210()
     $options = get_option('addthis_settings'); 
     if ( isset( $options['username'] ) )
         $options['profile'] = $options['username'];
-    $$options['dbversion'] == '210';
 
     update_option( 'addthis_settings', $options); 
 
