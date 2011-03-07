@@ -73,6 +73,10 @@ PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
 
+= 2.0.4 = 
+* Fix conflict with other plugins
+* Prevent button js from appearing in feeds
+
 = 2.0.3 =
 * plugin should still work if theme doesn't have wp_head and wp_footer
 
@@ -138,6 +142,8 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+= 2.0.4 =
+Fix conflict with other plugins and other bug fixes
 
 = 2.0.3 = 
 Still work in themes that don't have wp_head and wp_footer
