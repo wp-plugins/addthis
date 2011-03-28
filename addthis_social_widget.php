@@ -774,7 +774,7 @@ if ( isset ($data['addthis_brand']) && strlen($data['addthis_brand'])  != 0  )
 
 //[addthis_options] => 
 if ( isset ($data['addthis_options']) && strlen($data['addthis_options'])  != 0  )
-    $options['addthis_options'] = str_replace(' ', '', esc_js($data['addthis_options']));
+    $options['addthis_options'] = str_replace(' ', '', esc_js( strtolower( $data['addthis_options'] )  ));
 
 //[addthis_language] => 
 if ( isset ($data['addthis_language']))
