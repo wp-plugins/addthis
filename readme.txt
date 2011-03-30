@@ -73,6 +73,10 @@ PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
 
+= 2.0.5 =
+* force service codes to be lowercase
+* If opting out of clickback tracking, set config to force opting out
+
 = 2.0.4 = 
 * Fix conflict with other plugins
 * Prevent button js from appearing in feeds
@@ -142,6 +146,9 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+= 2.0.5 =
+Force service codes to be lowercase and If opting out of clickback tracking, set config to force opting out
+
 = 2.0.4 =
 Fix conflict with other plugins and other bug fixes
 

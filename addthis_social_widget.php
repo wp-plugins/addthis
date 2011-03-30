@@ -27,7 +27,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.0.4
+* Version: 2.0.5
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -107,7 +107,7 @@ function addthis_script_to_content($content)
 }
 
 define( 'addthis_style_default' , 'small_toolbox_with_share');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.0.4');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.0.5');
 /**
  * Converts our old many options in to one beautiful array
  *
@@ -302,7 +302,7 @@ function addthis_custom_toolbox($options, $url, $title)
             if ($service == 'more')
                 $button .= '<a class="addthis_button_compact"></a>';
             else
-                $button .= '<a class="addthis_button_'.$service.'"></a>';
+                $button .= '<a class="addthis_button_'.strtolower($service).'"></a>';
         }
     }
     
@@ -1146,7 +1146,7 @@ function addthis_output_script($return = false )
     
     $script = "\n<!-- AddThis Button Begin -->\n"
              .'<script type="text/javascript">'
-             ."var addthis_product = 'wpp-254';\n";
+             ."var addthis_product = 'wpp-255';\n";
 
 
     $pub = (isset($options['profile'])) ? $options['profile'] : false ;
@@ -1160,7 +1160,9 @@ function addthis_output_script($return = false )
 
     if ( isset($options['addthis_append_data']) &&  $options['addthis_append_data'] == true)
         $addthis_config["data_track_clickback"] = true;
-      
+    else
+        $addthis_config["data_track_clickback"] = false;
+
     if ( isset($options['addthis_language']) && strlen($options['addthis_language']) == 2)
         $addthis_config['ui_language'] = $options['addthis_language'];
         
