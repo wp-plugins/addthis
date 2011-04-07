@@ -27,7 +27,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.0.3.1
+* Version: 2.0.5
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -87,18 +87,27 @@ function at_title_check($title)
         addthis_add_content_filters(); 
         add_filter('the_content', 'addthis_script_to_content');
     }
-
+    else
+    {
+    }
 
     return $title;
 }
+
 function addthis_script_to_content($content)
 {
-    addthis_output_script();
-    return $content;
+    global $addthis_did_script_output;
+
+    if (!isset($addthis_did_script_output) )
+    {
+        $addthis_did_script_output = true;
+        $content .= addthis_output_script(true);
+    }
+    return $content ;
 }
 
 define( 'addthis_style_default' , 'small_toolbox_with_share');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.0.4');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.0.5');
 /**
  * Converts our old many options in to one beautiful array
  *
@@ -197,7 +206,6 @@ function addthis_options_210()
     $options = get_option('addthis_settings'); 
     if ( isset( $options['username'] ) )
         $options['profile'] = $options['username'];
-    $$options['dbversion'] == '210';
 
     update_option( 'addthis_settings', $options); 
 
@@ -294,7 +302,7 @@ function addthis_custom_toolbox($options, $url, $title)
             if ($service == 'more')
                 $button .= '<a class="addthis_button_compact"></a>';
             else
-                $button .= '<a class="addthis_button_'.$service.'"></a>';
+                $button .= '<a class="addthis_button_'.strtolower($service).'"></a>';
         }
     }
     
@@ -351,7 +359,7 @@ function addthis_admin_notices(){
     elseif ( ( ! isset($options['username']) ||  $options['username'] == false) && ! get_user_meta($user_id, 'addthis_nag_username_ignore'))
     {
         echo '<div class="updated addthis_setup_nag"><p>'; 
-        printf( __('Sign up for AddThis and add your username/password to recieve analytics about how people are sharing your content.<br /> <a href="%1$s">Enter username and password</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%2$s target="_blank">Sign Up</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%3$s">Ignore this notice</a>'), admin_url('options-general.php?page=addthis/addthis_social_widget.php'), 'https://www.addthis.com/register',  '?addthis_nag_username_ignore=0');
+        printf( __('Sign up for AddThis and add your username/password to recieve analytics about how people are sharing your content.<br /> <a href="%1$s">Enter username and password</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%2$s" target="_blank">Sign Up</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%3$s">Ignore this notice</a>'), admin_url('options-general.php?page=addthis/addthis_social_widget.php'), 'https://www.addthis.com/register?profile=wpp',  '?addthis_nag_username_ignore=0');
         echo "</p></div>";
     }
     elseif ( (get_user_meta($user_id, 'addthis_nag_updated_options') == true  ) ) 
@@ -488,9 +496,36 @@ function addthis_render_dashboard_widget() {
         '&password='.$password.
         $profile;
         $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) );
+    
+        if ( is_wp_error( $stats[$metric.$dimension.$period] ) )
+        {
+                echo "There was an error retrieving your stats from the AddThis servers.  Please wait and try again in a few moments\n";
+                echo "Error Code:" . $response->get_error_code();
+                exit;
+        }
+        
+        else if ($stats[$metric.$dimension.$period]['response']['code'] == 401 )
+        {
+                echo "The Username / Password / Profile combination you presented is not valid.<br />";
+                echo "Please confirm that you have correctly entered your AddThis username, password and profile id.";
+                exit;
+        }
+        else if ( $stats[$metric.$dimension.$period]['response']['code'] == 500)
+        {
+                echo "Something has gone terribly wrong! This should never happen, but somehow did.  We are working to correct it right now.  We will get everything up again soon";
+                exit;
+        }
+
+        else if ($stats[$metric.$dimension.$period]['response']['code'] == 501 )  
+        { 
+                echo "There was an error retrieving your analytics. If you wait a momeent and try again, you should be all set ";
+                exit;
+        }
+
     }
-        if ($stats['sharesday']['response']['code'] == 200) 
-            set_transient('addthis_dashboard_stats', $stats, '600');
+
+    if (  $stats['sharesday']['response']['code'] == 200) 
+        set_transient('addthis_dashboard_stats', $stats, '600');
     
     }
     if ($stats['sharesday']['response']['code'] == 200 && $stats['sharesmonth']['body'] != '[]' )
@@ -608,8 +643,13 @@ elseif($stats['sharesday']['response']['code'] == 200){
         <ul>
 ENDHTML;
 }
+elseif ($stats['sharesday']['response']['code'] == 401){
+    echo "I'm sorry, but we seemed to encounter an error. Please ensure that your password, username and pubid are correct.";
+
+}
+
 else{
-    echo "I'm sorry, but we seemed to encounter an error. This could be because your password is not accurate.  Please check and update it.";
+    echo "I'm sorry, but we seemed to have encountered an error when requesting your analytics.  Please wait a few moments and try again.";
 }
 die();
 } 
@@ -750,7 +790,7 @@ if ( isset ($data['addthis_brand']) && strlen($data['addthis_brand'])  != 0  )
 
 //[addthis_options] => 
 if ( isset ($data['addthis_options']) && strlen($data['addthis_options'])  != 0  )
-    $options['addthis_options'] = str_replace(' ', '', esc_js($data['addthis_options']));
+    $options['addthis_options'] = str_replace(' ', '', esc_js( strtolower( $data['addthis_options'] )  ));
 
 //[addthis_language] => 
 if ( isset ($data['addthis_language']))
@@ -1003,7 +1043,7 @@ function addthis_display_social_widget_excerpt($content)
 function addthis_display_social_widget($content, $filtered = true, $below_excerpt = false)
 {
 
-    global $addthis_styles, $addthis_new_styles;
+    global $addthis_styles, $addthis_new_styles, $post;
     $styles = array_merge($addthis_styles, $addthis_new_styles);
 
 
@@ -1027,7 +1067,6 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
         $display = true;
     else
         $display = false;
-
     $custom_fields = get_post_custom($post->ID);
     if (isset ($custom_fields['addthis_exclude']) && $custom_fields['addthis_exclude'][0] ==  'true')
         $display = false;
@@ -1112,7 +1151,7 @@ add_action('wp_footer', 'addthis_output_script');
  *
  * @return mixed
 */
-function addthis_output_script()
+function addthis_output_script($return = false )
 {
     global $addthis_settings;
 
@@ -1123,7 +1162,7 @@ function addthis_output_script()
     
     $script = "\n<!-- AddThis Button Begin -->\n"
              .'<script type="text/javascript">'
-             ."var addthis_product = 'wpp-253';\n";
+             ."var addthis_product = 'wpp-255';\n";
 
 
     $pub = (isset($options['profile'])) ? $options['profile'] : false ;
@@ -1137,7 +1176,9 @@ function addthis_output_script()
 
     if ( isset($options['addthis_append_data']) &&  $options['addthis_append_data'] == true)
         $addthis_config["data_track_clickback"] = true;
-      
+    else
+        $addthis_config["data_track_clickback"] = false;
+
     if ( isset($options['addthis_language']) && strlen($options['addthis_language']) == 2)
         $addthis_config['ui_language'] = $options['addthis_language'];
         
@@ -1168,6 +1209,8 @@ function addthis_output_script()
 
     if ( ! is_admin() && ! is_feed() )
         echo $script;
+    elseif ($return == true &&  ! is_admin() && ! is_feed() )
+        return $script;
 }
 
 
@@ -1562,7 +1605,7 @@ function addthis_plugin_options_php4() {
             , 'addthis_trans_domain') ?>
             </span></th>
               <td><input size='60' type="text" name="addthis_settings[addthis_options]" value="<?php echo $addthis_options; ?>" /><br />
-              <span class='description'><?php _e('Enter a comma-separated list of <a href="http://addthis.com/services">service codes</a>', 'addthis_trans_domain' ); ?></span>
+              <span class='description'><?php _e('Enter a comma-separated list of <a href="http://addthis.com/services/list">service codes</a>', 'addthis_trans_domain' ); ?></span>
               </td>  
               
         </tr>
