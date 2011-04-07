@@ -359,7 +359,7 @@ function addthis_admin_notices(){
     elseif ( ( ! isset($options['username']) ||  $options['username'] == false) && ! get_user_meta($user_id, 'addthis_nag_username_ignore'))
     {
         echo '<div class="updated addthis_setup_nag"><p>'; 
-        printf( __('Sign up for AddThis and add your username/password to recieve analytics about how people are sharing your content.<br /> <a href="%1$s">Enter username and password</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%2$s target="_blank">Sign Up</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%3$s">Ignore this notice</a>'), admin_url('options-general.php?page=addthis/addthis_social_widget.php'), 'https://www.addthis.com/register',  '?addthis_nag_username_ignore=0');
+        printf( __('Sign up for AddThis and add your username/password to recieve analytics about how people are sharing your content.<br /> <a href="%1$s">Enter username and password</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%2$s" target="_blank">Sign Up</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%3$s">Ignore this notice</a>'), admin_url('options-general.php?page=addthis/addthis_social_widget.php'), 'https://www.addthis.com/register?profile=wpp',  '?addthis_nag_username_ignore=0');
         echo "</p></div>";
     }
     elseif ( (get_user_meta($user_id, 'addthis_nag_updated_options') == true  ) ) 
@@ -1605,7 +1605,7 @@ function addthis_plugin_options_php4() {
             , 'addthis_trans_domain') ?>
             </span></th>
               <td><input size='60' type="text" name="addthis_settings[addthis_options]" value="<?php echo $addthis_options; ?>" /><br />
-              <span class='description'><?php _e('Enter a comma-separated list of <a href="http://addthis.com/services">service codes</a>', 'addthis_trans_domain' ); ?></span>
+              <span class='description'><?php _e('Enter a comma-separated list of <a href="http://addthis.com/services/list">service codes</a>', 'addthis_trans_domain' ); ?></span>
               </td>  
               
         </tr>
