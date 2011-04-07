@@ -496,20 +496,36 @@ function addthis_render_dashboard_widget() {
         '&password='.$password.
         $profile;
         $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) );
-    }
-
-        foreach($stats as $response)
+    
+        if ( is_wp_error( $stats[$metric.$dimension.$period] ) )
         {
-            if (is_wp_error($response) )
-            {
                 echo "There was an error retrieving your stats from the AddThis servers.  Please wait and try again in a few moments\n";
                 echo "Error Code:" . $response->get_error_code();
                 exit;
-            }
+        }
+        
+        else if ($stats[$metric.$dimension.$period]['response']['code'] == 401 )
+        {
+                echo "The Username / Password / Profile combination you presented is not valid.<br />";
+                echo "Please confirm that you have correctly entered your AddThis username, password and profile id.";
+                exit;
+        }
+        else if ( $stats[$metric.$dimension.$period]['response']['code'] == 500)
+        {
+                echo "Something has gone terribly wrong! This should never happen, but somehow did.  We are working to correct it right now.  We will get everything up again soon";
+                exit;
         }
 
-        if ($stats['sharesday']['response']['code'] == 200) 
-            set_transient('addthis_dashboard_stats', $stats, '600');
+        else if ($stats[$metric.$dimension.$period]['response']['code'] == 501 )  
+        { 
+                echo "There was an error retrieving your analytics. If you wait a momeent and try again, you should be all set ";
+                exit;
+        }
+
+    }
+
+    if (  $stats['sharesday']['response']['code'] == 200) 
+        set_transient('addthis_dashboard_stats', $stats, '600');
     
     }
     if ($stats['sharesday']['response']['code'] == 200 && $stats['sharesmonth']['body'] != '[]' )
