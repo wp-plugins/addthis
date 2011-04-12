@@ -72,6 +72,8 @@ We currently support over 295 services, from email and blogging platforms to soc
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 2.0.6 =
+* define ADDTHIS_NO_NOTICES to prevent admin notices from displaying
 
 = 2.0.5 =
 * force service codes to be lowercase

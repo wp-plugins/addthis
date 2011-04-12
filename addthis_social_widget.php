@@ -27,7 +27,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.0.5
+* Version: 2.0.6
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -107,7 +107,7 @@ function addthis_script_to_content($content)
 }
 
 define( 'addthis_style_default' , 'small_toolbox_with_share');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.0.5');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.0.6');
 /**
  * Converts our old many options in to one beautiful array
  *
@@ -345,6 +345,9 @@ add_action('admin_notices', 'addthis_admin_notices');
 function addthis_admin_notices(){
     if (! current_user_can('manage_options'))
         return;
+    
+    if ( defined('ADDTHIS_NO_NOTICES') && ADDTHIS_NO_NOTICES == true )
+        return;
     global $current_user;
     $user_id = $current_user->ID;
     $options = get_option('addthis_settings'); 
@@ -500,7 +503,7 @@ function addthis_render_dashboard_widget() {
         if ( is_wp_error( $stats[$metric.$dimension.$period] ) )
         {
                 echo "There was an error retrieving your stats from the AddThis servers.  Please wait and try again in a few moments\n";
-                echo "Error Code:" . $response->get_error_code();
+                echo "Error Code:" .  $stats[$metric.$dimension.$period]->get_error_code();
                 exit;
         }
         
@@ -1080,6 +1083,8 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     $url_above .= "addthis:title='$title'"; 
     $url_below =  "addthis:url='$url' ";
     $url_below .= "addthis:title='$title'"; 
+    $above = '';
+    $below = '';
 
     // Still here?  Well let's add some social goodness
     if (  $options['above'] != 'none' && $display  )
@@ -1134,7 +1139,10 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
 
     if ($display) 
     {
-        $content = sprintf($above, $url_above) . $content . sprintf($below, $url_below); 
+        if ( isset($above) )
+            $content = sprintf($above, $url_above) . $content;
+        if ( isset($below) )
+            $content = $content . sprintf($below, $url_below); 
         if ($filtered == true)
             add_filter('wp_trim_excerpt', 'addthis_remove_tag', 11, 2);
     }
@@ -1162,7 +1170,7 @@ function addthis_output_script($return = false )
     
     $script = "\n<!-- AddThis Button Begin -->\n"
              .'<script type="text/javascript">'
-             ."var addthis_product = 'wpp-255';\n";
+             ."var addthis_product = 'wpp-256';\n";
 
 
     $pub = (isset($options['profile'])) ? $options['profile'] : false ;
@@ -1463,8 +1471,8 @@ function addthis_plugin_options_php4() {
                 echo "<ul class='above_option_custom hidden'>";
                 $above_custom_16 = ($above_custom_size == 16) ? 'selected="selected"' : '' ;
                 $above_custom_32 = ($above_custom_size == 32) ? 'selected="selected"' : '' ;
-                $above_do_custom_services = ($above_do_custom_services) ? 'checked="checked"' : '';
-                $above_do_custom_preferred = ($above_do_custom_preferred) ? 'checked="checked"' : '';
+                $above_do_custom_services = ( isset( $above_do_custom_services ) && $above_do_custom_services  ) ? 'checked="checked"' : '';
+                $above_do_custom_preferred = ( isset( $above_do_custom_preferred ) &&  $above_do_custom_preferred ) ? 'checked="checked"' : '';
 
                 echo "<li class='nocheck'><span class='at_custom_label'>Size:</span><select name='addthis_settings[above_custom_size]'><option value='16' $above_custom_16 >16x16</option><option value='32' $above_custom_32 >32x32</option></select><br/><span class='description'>The size of the icons you want to display</span></li>";
                 echo "<li><input $above_do_custom_services class='at_do_custom'  type='checkbox' name='addthis_settings[above_do_custom_services]' value='true' /><span class='at_custom_label'>Services to always show:</span><input class='at_custom_input' name='addthis_settings[above_custom_services]' value='$above_custom_services'/><br/><span class='description'>Enter a comma-separated list of <a href='http://addthis.com/services'>service codes</a> </span></li>";
@@ -1517,8 +1525,8 @@ function addthis_plugin_options_php4() {
                 echo "<ul class='below_option_custom hidden'>";
                 $below_custom_16 = ($below_custom_size == 16) ? 'selected="selected"' : '' ;
                 $below_custom_32 = ($below_custom_size == 32) ? 'selected="selected"' : '' ;
-                $below_do_custom_services = ($below_do_custom_services) ? 'checked="checked"' : '';
-                $below_do_custom_preferred = ($below_do_custom_preferred) ? 'checked="checked"' : '';
+                $below_do_custom_services = ( isset( $below_do_custom_services ) &&   $below_do_custom_services) ? 'checked="checked"' : '';
+                $below_do_custom_preferred = ( isset( $below_do_custom_preferred ) &&  $below_do_custom_preferred) ? 'checked="checked"' : '';
                 
                 echo "<li class='nocheck'><span class='at_custom_label'>Size:</span><select name='addthis_settings[below_custom_size]'><option value='16' $below_custom_16 >16x16</option><option value='32' $below_custom_32 >32x32</option></select><br/><span class='description'>The size of the icons you want to display</span></li>";
                 echo "<li><input class='at_do_custom'  type='checkbox' $below_do_custom_services  name='addthis_settings[below_do_custom_services]' value='true' /><span class='at_custom_label'>Services to always show:</span><input class='at_custom_input' name='addthis_settings[below_custom_services]' value='$below_custom_services'/><br/><span class='description'>Enter a comma-separated list of <a href='http://addthis.com/services'>service codes</a> </span></li>";
