@@ -2,8 +2,8 @@
 Contributors: _mjk_, jorbin
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz
 Requires at least: 2.9
-Tested up to: 3.1.0
-Stable tag: 2.0.3
+Tested up to: 3.1.1
+Stable tag: 2.0.5
 
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with many popular services. 
 
@@ -72,6 +72,16 @@ We currently support over 295 services, from email and blogging platforms to soc
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 2.0.6 =
+* define ADDTHIS_NO_NOTICES to prevent admin notices from displaying
+
+= 2.0.5 =
+* force service codes to be lowercase
+* If opting out of clickback tracking, set config to force opting out
+
+= 2.0.4 = 
+* Fix conflict with other plugins
+* Prevent button js from appearing in feeds
 
 = 2.0.3 =
 * plugin should still work if theme doesn't have wp_head and wp_footer
@@ -138,6 +148,11 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+= 2.0.5 =
+Force service codes to be lowercase and If opting out of clickback tracking, set config to force opting out
+
+= 2.0.4 =
+Fix conflict with other plugins and other bug fixes
 
 = 2.0.3 = 
 Still work in themes that don't have wp_head and wp_footer
