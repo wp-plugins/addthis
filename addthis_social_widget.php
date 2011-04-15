@@ -841,11 +841,13 @@ function addthis_add_content_filters()
         $preview = true;
     else
         $options = get_option('addthis_settings');
-    
-    if ($options['addthis_showonexcerpts'] == true )
-        add_filter('get_the_excerpt', 'addthis_display_social_widget_excerpt');
-    
-    add_filter('the_content', 'addthis_display_social_widget', 15);
+   
+    if ( ! empty( $options) ){
+        if ($options['addthis_showonexcerpts'] == true )
+            add_filter('get_the_excerpt', 'addthis_display_social_widget_excerpt');
+        
+        add_filter('the_content', 'addthis_display_social_widget', 15);
+    }
 }
 
 
@@ -1708,5 +1710,17 @@ if (! function_exists('get_home_url'))
     }
 }
 
+/**
+ * Make sure the option gets added on registration
+ * @since 2.0.6
+ */
+
+function addthis_activation_hook(){
+    if ( get_option('addthis_settings') == false)
+        add_option('addthis_settings', array() );
+
+}
+
+register_activation_hook( __FILE__, 'addthis_activation_hook' );
 
 ?>
