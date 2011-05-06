@@ -1121,9 +1121,9 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     $custom_fields = get_post_custom($post->ID);
     if (isset ($custom_fields['addthis_exclude']) && $custom_fields['addthis_exclude'][0] ==  'true')
         $display = false;
-    if (  apply_filters('addthis_post_exclude', '__return_false') )
-        $display = false;
-
+    
+    $display = apply_filters('addthis_post_exclude', $display);
+    
     remove_filter('wp_trim_excerpt', 'addthis_remove_tag', 9, 2);
     remove_filter('get_the_excerpt', 'addthis_late_widget');
     $url = get_permalink();
@@ -1263,7 +1263,8 @@ function addthis_output_script($return = false )
         $script .= 'var addthis_config = '. json_encode($addthis_config) .';';
 
     if (isset($options['addthis_options']) && strlen($options['addthis_options']) != 0)
-    $script .= 'var addthis_options = "'.$options['addthis_options'].'"';
+    $script .= 'var addthis_options = "'.$options['addthis_options'].'";';
+    
     if (isset($options['addthis_twitter_template'])){
         $script .= 'if (typeof(addthis_share) == "undefined"){
                         var addthis_share = { templates: { twitter: "' . esc_js($options['addthis_twitter_template']) . '" } };
