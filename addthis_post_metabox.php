@@ -9,6 +9,14 @@ class addthis_post_metabox{
         add_meta_box('addthis', 'AddThis', array($this, 'post_metabox'), $screen, 'side', 'default'  );
         }
         add_action('save_post', array($this, 'save_post') );
+        
+        add_filter('default_hidden_meta_boxes', array($this,  'default_hidden_meta_boxes' )  );
+    }
+
+    function default_hidden_meta_boxes($hidden)
+    {
+        $hidden[] = 'addthis';
+        return $hidden;
     }
 
     function post_metabox(){

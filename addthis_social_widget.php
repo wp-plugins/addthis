@@ -26,7 +26,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.0.7
+* Version: 2.1.0
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -113,7 +113,7 @@ function addthis_script_to_content($content)
 }
 
 define( 'addthis_style_default' , 'small_toolbox_with_share');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.0.7');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.1.0');
 /**
  * Converts our old many options in to one beautiful array
  *
@@ -504,48 +504,52 @@ function addthis_render_dashboard_widget() {
     if (!  $stats = get_transient('addthis_dashboard_stats') )
     {
         add_filter('http_headers_useragent', 'addthis_plugin_useragent');
-    foreach ($requests as $request)
-    {
-        $dimension = $metric = $domain = $period = '';
-        extract($request);
-        $dimension = ($dimension != '') ? '/'.$dimension : '';                                                                
-        $url = 'https://api.addthis.com/analytics/1.0/pub/' . $metric . $dimension . '.json?'.
-        'domain='.$domain.'&period='.$period.
-        '&username='.$username.
-        '&password='.$password.
-        $profile;
-        $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) );
-  
-        if ( is_wp_error( $stats[$metric.$dimension.$period] ) )
+        foreach ($requests as $request)
         {
-                echo "There was an error retrieving your stats from the AddThis servers.  Please wait and try again in a few moments\n";
-                echo "Error Code:" .  $stats[$metric.$dimension.$period]->get_error_code();
-                exit;
+            $dimension = $metric = $domain = $period = '';
+            extract($request);
+            $dimension = ($dimension != '') ? '/'.$dimension : '';                                                                
+            $url = 'https://api.addthis.com/analytics/1.0/pub/' . $metric . $dimension . '.json?'.
+            'domain='.$domain.'&period='.$period.
+            '&username='.$username.
+            '&password='.$password.
+            $profile;
+            $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) );
+      
+            if ( is_wp_error( $stats[$metric.$dimension.$period] ) )
+            {
+                    echo "There was an error retrieving your stats from the AddThis servers.  Please wait and try again in a few moments\n";
+                    if (defined(WP_DEBUG) && WP_DEBUG == TRUE)
+                        echo "Error Code:" .  $stats[$metric.$dimension.$period]->get_error_code();
+                    
+                    exit;
+            }
+            
+            else if ($stats[$metric.$dimension.$period]['response']['code'] == 401 )
+            {
+                    echo "The Username / Password / Profile combination you presented is not valid.<br />";
+                    echo "Please confirm that you have correctly entered your AddThis username, password and profile id.";
+                    exit;
+            }
+            else if ( $stats[$metric.$dimension.$period]['response']['code'] == 500)
+            {
+                    echo "Something has gone terribly wrong! This should never happen, but somehow did.  We are working to correct it right now.  We will get everything up again soon";
+                    exit;
+            }
+
+            else if ($stats[$metric.$dimension.$period]['response']['code'] == 501 )  
+            { 
+                    echo "There was an error retrieving your analytics. If you wait a momeent and try again, you should be all set ";
+                    exit;
+            }
+            else if ($stats[$metric.$dimension.$period]['response']['code'] != 201 )
+            {
+            }
         }
+
+        if (  $stats['sharesday']['response']['code'] == 200) 
+            set_transient('addthis_dashboard_stats', $stats, '600');
         
-        else if ($stats[$metric.$dimension.$period]['response']['code'] == 401 )
-        {
-                echo "The Username / Password / Profile combination you presented is not valid.<br />";
-                echo "Please confirm that you have correctly entered your AddThis username, password and profile id.";
-                exit;
-        }
-        else if ( $stats[$metric.$dimension.$period]['response']['code'] == 500)
-        {
-                echo "Something has gone terribly wrong! This should never happen, but somehow did.  We are working to correct it right now.  We will get everything up again soon";
-                exit;
-        }
-
-        else if ($stats[$metric.$dimension.$period]['response']['code'] == 501 )  
-        { 
-                echo "There was an error retrieving your analytics. If you wait a momeent and try again, you should be all set ";
-                exit;
-        }
-
-    }
-
-    if (  $stats['sharesday']['response']['code'] == 200) 
-        set_transient('addthis_dashboard_stats', $stats, '600');
-    
     }
     if ($stats['sharesday']['response']['code'] == 200 && $stats['sharesmonth']['body'] != '[]' )
     {
@@ -607,7 +611,7 @@ function addthis_render_dashboard_widget() {
             }
 
 
-            $servicesCharts[$type] = '//chart.apis.google.com/chart?&chdlp=b&chs=118x145&cht=p3&chco=BA3A1C|F75C39|424242&'.
+            $servicesCharts[$type] = '//chart.apis.google.com/chart?&chdlp=b&chs=118x145&cht=p3&chco=BA3A1C|F75C39|424242&chf=bg,s,00000000&'.
                                         'chdl='.$firstLabel.'|'.$secondLabel.'|'.$thirdLabel.'&'.
                                         'chd=t:'.$firstAmount.','.$secondAmount.','.$thirdAmount; 
         }                                                         
@@ -640,32 +644,34 @@ function addthis_render_dashboard_widget() {
         echo '</div>';
     }
         echo "</div>";
-        echo "<hr />";
 
         echo "<div>";
         echo "</div>";
-        echo "<hr />";
         echo "<div id='tstab1'>";
-        echo "<h5> Most Shared URLs</h5>";
+        echo "<h5> Most Shared URLs (last month) </h5>";
         echo "<ul>";
-        foreach ($shareurls as $url)
+        $count = count($shareurls);
+        for($i = 0; ( $i < 5 && $i < $count ); $i++)
         {
-            echo "<li><span class='urlCount'>" .  $url->shares . "</span><span class='urlUrl'>". $url->url . "</span></li>";
+            $url = array_shift($shareurls);
+            $displayUrl = str_replace( array('http://', 'https://', $domain), '',$url->url);
+            echo "<li><span class='urlCount'>" .  $url->shares . "</span><span class='urlUrl'>". $displayUrl . "</span></li>";
         }
         echo "</ul>";
-        echo "<hr />";
         echo "<h5>Top Services for shares(last month)</h5>";
         echo "<img src='{$servicesCharts['shares']}' width='118' height='145' alt='share stats for the last month' />";
         echo "</div>";
         echo '<div id="tstab2">';
-        echo '<h5> Most Clicked URLs</h5>';
+        echo '<h5> Most Clicked URLs (last month) </h5>';
         echo "<ul>";
-        foreach ($shareurls as $url)
+        $count = count($clickbackurls);
+        for($i = 0; (  $i < 5 && $i < $count ); $i++)
         {
-            echo "<li><span class='urlCount'>" .  $url->shares . "</span><span class='urlUrl'>". $url->url . "</span></li>";
+            $url = array_shift($clickbackurls);
+            $displayUrl = str_replace( array('http://', 'https://', $domain), '',$url->url);
+            echo "<li><span class='urlCount'>" .  $url->clickbacks . "</span><span class='urlUrl'>". $displayUrl . "</span></li>";
         }
         echo "</ul>";
-        echo "<hr />";
         echo "<h5>Top Services for clicks(last month)</h5>";
         echo "<img src='{$servicesCharts['clickbacks']}' width='118' height='145' alt='share stats for the last month' />";
         echo "</div>";
