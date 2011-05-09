@@ -1242,7 +1242,7 @@ function addthis_output_script($return = false )
     else
         $addthis_config["data_track_clickback"] = false;
 
-    //*/
+    /*/
     if ( isset($options['addthis_addressbar']) &&  $options['addthis_addressbar'] == true)
         $addthis_config["data_track_addressbar"] = true;
     else
@@ -1654,7 +1654,7 @@ function addthis_plugin_options_php4() {
             <th scope="row"><?php _e("Track <a href=\"//www.addthis.com/blog/2010/03/11/clickback-analytics-measure-traffic-back-to-your-site-from-addthis/\" target=\"_blank\">clickbacks</a>:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_settings[addthis_append_data]" value="true" <?php echo $addthis_append_data == true ? 'checked="checked"' : ''; ?>/></td>
         </tr>
-       <?php //* ?>
+       <?php /* ?>
         <tr>
             <th scope="row"><?php _e("Track Address Bar Shares", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_settings[addthis_addressbar]" value="true" <?php echo ($addthis_addressbar  == true ? 'checked="checked"' : ''); ?>/></td>
