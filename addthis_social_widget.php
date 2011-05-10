@@ -118,7 +118,7 @@ define( 'ADDTHIS_PLUGIN_VERSION', '2.1.0');
  * Converts our old many options in to one beautiful array
  *
  */
-if ( apply_filters( 'at_do_options_upgrades', '__return_true') )
+if ( apply_filters( 'at_do_options_upgrades', '__return_true') || apply_filters( 'addthis_do_options_upgrades', '__return_true')   )
 {
     function addthis_options_200()
     {
@@ -776,8 +776,9 @@ if ( isset($data['addthis_profile']) )
 if ( isset($data['addthis_password']) )
     $options['password'] = sanitize_text_field($data['addthis_password']);
 
-
-if ( isset ($data['show_above']) )
+if (! isset($data['above']) ){
+}
+elseif ( isset ($data['show_above']) )
     $options['above'] = 'none';
 elseif ( isset($styles[$data['above']]) )
     $options['above'] = $data['above'];
@@ -797,8 +798,10 @@ elseif ($data['above'] = 'custom')
     $options['above_custom_preferred'] = (int) $data['above_custom_preferred'] ;
     $options['above_custom_more'] = isset($data['above_custom_more']);
 }
+if ( ! isset($data['above'] )){
 
-if ( isset ($data['show_below']) )
+}
+elseif ( isset ($data['show_below']) )
     $options['below'] = 'none';
 elseif ( isset($styles[$data['below']]) )
     $options['below'] = $data['below'];
@@ -908,7 +911,7 @@ function addthis_init()
 
     add_action( 'wp_head', 'addthis_add_content_filters');
 
-    if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', '__return_false')  ) {
+    if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', '__return_false') || apply_filters('addthis_assume_latest', '__return_false')   ) {
         if ( is_admin() ) {
             add_action( 'admin_init', 'register_addthis_settings' );
         }
@@ -918,7 +921,11 @@ function addthis_init()
 
     
     $script_location = apply_filters( 'at_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) . '/addthis/js/addthis.js' ;
+    $script_location = apply_filters( 'addthis_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) . '/addthis/js/addthis.js' ;
+
     $style_location = apply_filters( 'at_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) .'/addthis/css/addthis.css'   ;
+    $style_location = apply_filters( 'addthis_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) .'/addthis/css/addthis.css'   ;
+
 
     wp_register_style( 'addthis', $style_location );
     wp_register_script( 'addthis', $script_location , array('jquery-ui-tabs') );
@@ -928,7 +935,7 @@ function addthis_init()
 
     add_filter('admin_menu', 'addthis_admin_menu');
 
-    if ( apply_filters( 'at_do_options_upgrades', '__return_true') )
+    if ( apply_filters( 'at_do_options_upgrades', '__return_true') || apply_filters( 'addthis_do_options_upgrades', '__return_true')   )
     {
         if ( get_option('addthis_product') !== false  && ! is_array( $options ) )
             addthis_options_200();
@@ -1419,12 +1426,14 @@ EOF;
 function addthis_options_page_scripts()
 {
     $script_location = apply_filters( 'at_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) . '/addthis/js/options-page.js' ;
+    $script_location = apply_filters( 'addthis_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) . '/addthis/js/options-page.js' ;
     wp_enqueue_script( 'addthis_options_page_script',  $script_location , array('jquery-ui-tabs', 'thickbox'  ));  
 }
 
 function addthis_options_page_style()
 {
     $style_location = apply_filters( 'at_files_uri' ,  plugins_url('', basename(dirname(__FILE__))  )  ) . '/addthis/css/options-page.css' ;
+    $style_location = apply_filters( 'addthis_files_uri' ,  plugins_url('', basename(dirname(__FILE__))  )  ) . '/addthis/css/options-page.css' ;
     wp_enqueue_style( 'addthis_options_page_style', $style_location);
     wp_enqueue_style( 'thickbox' );
 }
@@ -1489,13 +1498,16 @@ function addthis_plugin_options_php4() {
     <form  id="addthis_settings" method="post" action="options.php">
     <?php 
         // use the old-school settings style in older versions of wordpress
-        if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', '__return_false')  ) {
+        if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', '__return_false') || apply_filters('addthis_assume_latest', '__return_false')   ) {
             settings_fields('addthis'); 
         } else {
             wp_nonce_field('update-options');
         }
         
-    $addthis_options = get_option('addthis_settings');
+        $addthis_options = get_option('addthis_settings');
+        if ($addthis_options == false)
+            add_option('addthis_settings', array() );
+
         foreach ( array( 'addthis_show_stats', 'addthis_append_data', 'addthis_showonhome', 'addthis_showonpages', 'addthis_showonarchives', 'addthis_showoncats' ) as $option)
         {                                                                                                                                                                                                                                                               
             if ( $addthis_options && ! isset($addthis_options[$option]) )
@@ -1521,6 +1533,7 @@ function addthis_plugin_options_php4() {
             <td id="above" colspan="2">
                 <p><?php _e("Above the post", 'addthis_trans_domain') ?>&nbsp;&nbsp;<span class="description"><input type="checkbox" name="addthis_settings[show_above]" <?php echo ('none' == $above) ? 'checked="checked"' : '';?> />&nbsp;none</span></p>
                 <?php  $imgLocationBase = apply_filters( 'at_files_uri',  plugins_url( '' , basename(dirname(__FILE__)))) . '/addthis/img/'  ;
+                 $imgLocationBase = apply_filters( 'addthis_files_uri',  plugins_url( '' , basename(dirname(__FILE__)))) . '/addthis/img/'  ;
                  foreach ($addthis_new_styles as $k => $v)
                 {
                     $class = 'hidden';
