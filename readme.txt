@@ -61,6 +61,9 @@ Over 1,200,000 sites have installed AddThis. With over a billion unique users, A
 = What services does AddThis support? =
 We currently support over 295 services, from email and blogging platforms to social networks and news aggregators, and we add new services every month. Want to know if your favorite service is supported? This list is accurate up to the minute: <a href="http://www.addthis.com/services">http://www.addthis.com/services</a>.
 
+= How do I remove AddThis from a page =
+In the screen options you can enable the AddThis meta box.  Check the box and save if you've already published that page or post to disable AddThis on that page or post.  
+
 == Screenshots ==
 
 1. The admin dashboard widget
@@ -72,6 +75,12 @@ We currently support over 295 services, from email and blogging platforms to soc
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 2.1.0 =
+* Add Twitter Template Option
+* Add Post Meta Box
+* Add top shared/clicked URLS to dashboard
+* More Filters
+
 = 2.0.6 =
 * define ADDTHIS_NO_NOTICES to prevent admin notices from displaying
 
