@@ -245,8 +245,15 @@ function addthis_get_wp_version() {
 * For templates, we need a wrapper for printing out the code on demand. 
 */
 function addthis_print_widget($url=null, $title=null, $style = addthis_style_default ) {
-    global $addthis_new_styles ; 
+    
+    global $addthis_styles, $addthis_new_styles;
+    $styles = array_merge($addthis_styles, $addthis_new_styles);
 
+    if ( isset($_GET['preview']) &&  $_GET['preview'] == 1 && $options = get_transient('addthis_settings') )
+        $preview = true;
+    else
+        $options = get_option('addthis_settings');
+    
     $identifier = addthis_get_identifier($url, $title);
 
 echo "\n<!-- AddThis Custom -->\n";
@@ -255,7 +262,16 @@ echo "\n<!-- AddThis Custom -->\n";
     if ( ! is_array($style) &&  isset($addthis_new_styles[$style]) ){
         echo sprintf($addthis_new_styles[$style]['src'], $identifier);
     }
-    
+    elseif ($style == 'above')
+    {
+        if ( isset ($styles[$options['above']]['src'] ))
+            echo sprintf($styles[$options['above']]['src'], $identifier);
+    }
+    elseif ($style == 'below')
+    {
+        if ( isset ($styles[$options['below']]['src'] ))
+            echo sprintf($styles[$options['below']]['src'], $identifier);
+    }
     elseif (is_array($style))
         echo addthis_custom_toolbox($style, $url, $title);
 echo "\n<!-- End AddThis Custom -->\n";
