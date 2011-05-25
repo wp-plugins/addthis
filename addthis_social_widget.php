@@ -1295,9 +1295,9 @@ function addthis_output_script($return = false )
     $script .= 'var addthis_options = "'.$options['addthis_options'].'";';
     
     if (isset($options['addthis_twitter_template'])){
-        $script .= 'if (typeof(addthis_share) == "undefined"){
-                        var addthis_share = { templates: { twitter: "' . esc_js($options['addthis_twitter_template']) . '" } };
-                    }';
+        $script .= 'if (typeof(addthis_share) == "undefined"){ '
+                   . apply_filters('addthis_share_js_var', '   var addthis_share = { templates: { twitter: "' . esc_js($options['addthis_twitter_template']) . '" } };')
+                  . ' }';
     }
 
     $script .= '</script>';
