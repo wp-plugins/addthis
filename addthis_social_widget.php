@@ -840,7 +840,7 @@ elseif ($data['below'] = 'custom')
 
 
 // All the checkbox fields
-foreach (array('addthis_show_stats', 'addthis_append_data', 'addthis_showonhome', 'addthis_showonpages', 'addthis_showonarchives', 'addthis_showoncats', 'addthis_showonexcerpts', 'addthis_addressbar') as $field)
+foreach (array('addthis_show_stats', 'addthis_append_data', 'addthis_showonhome', 'addthis_showonpages', 'addthis_showonarchives', 'addthis_showoncats', 'addthis_showonexcerpts', 'addthis_addressbar','addthis_508' ) as $field)
 {
     if ( isset($data[$field]) &&  $data[$field] == true)
         $options[$field] = true; 
@@ -852,6 +852,13 @@ foreach (array('addthis_show_stats', 'addthis_append_data', 'addthis_showonhome'
 //[addthis_twitter_template]
 if ( isset ($data['addthis_twitter_template']) && strlen($data['addthis_twitter_template'])  != 0  )
     $options['addthis_twitter_template'] = sanitize_text_field($data['addthis_twitter_template']);
+
+if (isset ($data['addthis_bitly_login']) && strlen($data['addthis_bitly_login']) != 0 )
+    $options['addthis_bitly_login'] = sanitize_text_field($data['addthis_bitly_login']);
+
+if (isset ($data['addthis_bitly_key']) && strlen($data['addthis_bitly_key']) != 0 )
+    $options['addthis_bitly_key'] = sanitize_text_field($data['addthis_bitly_key']);
+
 
 //[addthis_brand] => 
 
@@ -1284,6 +1291,8 @@ function addthis_output_script($return = false )
     if ( isset($options['addthis_brand']) )
         $addthis_config['ui_cobrand'] = $options['addthis_brand'];
 
+    if (isset($options['addthis_508']) && $options['addthis_508'] == true)
+        $addthis_config['ui_508_compliant'] = true;
 
     $addthis_config = apply_filters('addthis_config_js_var', $addthis_config);
 
@@ -1295,11 +1304,17 @@ function addthis_output_script($return = false )
     $script .= 'var addthis_options = "'.$options['addthis_options'].'";';
     
     if (isset($options['addthis_twitter_template'])){
-        $script .= 'if (typeof(addthis_share) == "undefined"){ '
-                   . apply_filters('addthis_share_js_var', '   var addthis_share = { templates: { twitter: "' . esc_js($options['addthis_twitter_template']) . '" } };')
-                  . ' }';
+        $addthis_share['templates']['twitter'] =  esc_js($options['addthis_twitter_template']);
+        
+    }
+    if (isset($options['addthis_bitly_login']) && isset($options['addthis_bitly_key']) ){
+        $addthis_share['url_transforms']['shorten']['twitter'] = 'bitly';
+        $addthis_share['shorteners']['bitly']['login'] = esc_js($options['addthis_bitly_login']);
+        $addthis_share['shorteners']['bitly']['apiKey'] = esc_js($options['addthis_bitly_key']);
     }
 
+    if (isset($addthis_share))
+        $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
     $script .= '</script>';
 
 
@@ -1492,6 +1507,9 @@ function addthis_admin_menu()
         'below_custom_preferred' => '',
         'below_custom_more' => '',
         'addthis_twitter_template' => '',
+        'addthis_508' => '',
+        'addthis_bitly_login' => '',
+        'addthis_bitly_key' => '',
     );
 
 function addthis_plugin_options_php4() {
@@ -1709,6 +1727,10 @@ function addthis_plugin_options_php4() {
             <th scope="row"><?php _e("Show on excerpts:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_settings[addthis_showonexcerpts]" value="true" <?php echo ( $addthis_showonexcerpts == true ? 'checked="checked"' : ''); ?>/></td>
         </tr>
+        <tr>
+            <th scope="row"><?php _e("Enable Enhanced Accessibility", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_settings[addthis_508]" value="true" <?php echo ( $addthis_508 == true ? 'checked="checked"' : ''); ?>/></td>
+        </tr>
         <tr valign="top">
             <td colspan="2"></td>
         </tr>
@@ -1729,8 +1751,16 @@ function addthis_plugin_options_php4() {
             <td><input type="text" name="addthis_settings[addthis_brand]" value="<?php echo $addthis_brand; ?>" /></td>
         </tr>
         <tr valign="top">
-            <th scope="row"><?php _e("<a href='http://www.addthis.com/help/client-api#configuration-sharing-templates'>Twitter Template</a>:", 'addthis_trans_domain' ); ?></th>
+            <th scope="row"><?php _e("<a href='http://www.addthis.com/help/client-api#configuration-sharing-templates'>Twitter Template</a>( not for tweet button) :", 'addthis_trans_domain' ); ?></th>
             <td><input type="text" name="addthis_settings[addthis_twitter_template]" value="<?php echo $addthis_twitter_template; ?>" /></td>
+        </tr>
+        <tr valign="top">
+            <th scope="row"><?php _e("Bitly Login", 'addthis_trans_domain' ); ?></th>
+            <td><input type="text" name="addthis_settings[addthis_bitly_login]" value="<?php echo $addthis_bitly_login; ?>" /></td>
+        </tr>
+        <tr valign="top">
+            <th scope="row"><?php _e("Bitly Key", 'addthis_trans_domain' ); ?></th>
+            <td><input type="text" name="addthis_settings[addthis_bitly_key]" value="<?php echo $addthis_bitly_key; ?>" /></td>
         </tr>
         <tr valign="top">
             <th scope="row"><?php _e("Language:", 'addthis_trans_domain' ); ?></th>
