@@ -26,7 +26,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.1.0
+* Version: 2.1.0.1
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -113,7 +113,7 @@ function addthis_script_to_content($content)
 }
 
 define( 'addthis_style_default' , 'small_toolbox_with_share');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.1.0');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.1.0.1');
 /**
  * Converts our old many options in to one beautiful array
  *
