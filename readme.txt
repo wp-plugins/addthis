@@ -75,10 +75,10 @@ In the screen options you can enable the AddThis meta box.  Check the box and sa
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
-=2.1.1 =
+= 2.1.1 =
 * Add Google +1
 
-=2.1.0 =
+= 2.1.0 =
 * Add Twitter Template Option
 * Add Post Meta Box
 * Add top shared/clicked URLS to dashboard
