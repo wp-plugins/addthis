@@ -57,6 +57,7 @@ $addthis_new_styles = array(
 
     'small_toolbox' => array( 'src' =>  '<div class="addthis_toolbox addthis_default_style addthis_" %s ><a class="addthis_button_preferred_1"></a><a class="addthis_button_preferred_2"></a><a class="addthis_button_preferred_3"></a><a class="addthis_button_preferred_4"></a><a class="addthis_button_compact"></a></div>', 'img' => 'toolbox-small.png', 'name' => 'Small Toolbox', 'above' => 'hidden ', 'below' => ''
     ), // 32x32
+    'plus_one_share_counter' => array( 'src' => '<div class="addthis_toolbox addthis_default_style" %s ><a class="addthis_button_google_plusone"></a><a class="addthis_counter addthis_pill_style"></a></div>', 'img' => 'plusone-share.gif', 'name' => 'Plus One and Share Counter', 'above'=> 'hidden', 'below'=>'hidden'), // +1
 
     'small_toolbox_with_share' => array( 'src' =>  '<div class="addthis_toolbox addthis_default_style " %s ><a href="//addthis.com/bookmark.php?v=250&amp;username=xa-4d2b47597ad291fb" class="addthis_button_compact">Share</a><span class="addthis_separator">|</span><a class="addthis_button_preferred_1"></a><a class="addthis_button_preferred_2"></a><a class="addthis_button_preferred_3"></a><a class="addthis_button_preferred_4"></a></div>', 'img' => 'small-toolbox.jpg', 'name' => 'Small Toolbox with Share first', 'above' => '', 'below' => 'hidden' 
     ), // Plus sign share | four buttons
@@ -494,7 +495,7 @@ function addthis_render_dashboard_widget() {
         return false;
     }
     $domain = get_home_url();
-   
+
 
     $domain = str_replace(array('http://', 'https://'), '', $domain);
   
@@ -516,7 +517,6 @@ function addthis_render_dashboard_widget() {
     array('metric' => 'shares', 'dimension' => 'url' , 'domain' => $domain, 'period' => 'month'),
     array('metric' => 'clickbacks', 'dimension' => 'url', 'domain' => $domain, 'period' => 'month'),
     );
-    
     if (!  $stats = get_transient('addthis_dashboard_stats') )
     {
         add_filter('http_headers_useragent', 'addthis_plugin_useragent');
@@ -525,13 +525,13 @@ function addthis_render_dashboard_widget() {
             $dimension = $metric = $domain = $period = '';
             extract($request);
             $dimension = ($dimension != '') ? '/'.$dimension : '';                                                                
-            $url = 'https://api.addthis.com/analytics/1.0/pub/' . $metric . $dimension . '.json?'.
+            $url = 'https://api-test.addthis.com/analytics/1.0/pub/' . $metric . $dimension . '.json?'.
             'domain='.$domain.'&period='.$period.
             '&username='.$username.
             '&password='.$password.
             $profile;
             $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) );
-      
+
             if ( is_wp_error( $stats[$metric.$dimension.$period] ) )
             {
                     echo "There was an error retrieving your stats from the AddThis servers.  Please wait and try again in a few moments\n";
@@ -1701,12 +1701,10 @@ function addthis_plugin_options_php4() {
             <th scope="row"><?php _e("Track <a href=\"//www.addthis.com/blog/2010/03/11/clickback-analytics-measure-traffic-back-to-your-site-from-addthis/\" target=\"_blank\">clickbacks</a>:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_settings[addthis_append_data]" value="true" <?php echo $addthis_append_data == true ? 'checked="checked"' : ''; ?>/></td>
         </tr>
-       <?php /* ?>
         <tr>
             <th scope="row"><?php _e("Track Address Bar Shares", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_settings[addthis_addressbar]" value="true" <?php echo ($addthis_addressbar  == true ? 'checked="checked"' : ''); ?>/></td>
         </tr>
-       <?php  //*/ ?>
         <tr>
             <th scope="row"><?php _e("Show on homepage:", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_settings[addthis_showonhome]" value="true" <?php echo ($addthis_showonhome  == true ? 'checked="checked"' : ''); ?>/></td>
