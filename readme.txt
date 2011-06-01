@@ -76,7 +76,7 @@ PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
 =2.1.1 =
-* Add Google Plus One
+* Add Google +1
 
 =2.1.0 =
 * Add Twitter Template Option
@@ -160,6 +160,9 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+= 2.1.1 =
+Add +1 to the options
+
 = 2.1.0 =
 More Features, More Filters, More Social Goodness
 
