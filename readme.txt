@@ -37,7 +37,7 @@ Note: due to confusion, there are no longer separate versions for PHP4 and PHP5.
 
 = Is AddThis free? =
 
-Yep! The features you see today on AddThis will always be free. 
+Yep! The features you see today on AddThis will always be free.
 
 = Do I need to create an account? =
 
@@ -75,6 +75,9 @@ In the screen options you can enable the AddThis meta box.  Check the box and sa
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 2.1.1 =
+* Add +1
+
 = 2.1.0 =
 * Add Twitter Template Option
 * Add Post Meta Box
