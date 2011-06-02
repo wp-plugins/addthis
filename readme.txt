@@ -31,7 +31,6 @@ To upload the plugin through WordPress, instead of FTP:
 
 1. Upload the downloaded zip file on the 'Add New' plugins screen (see the 'Upload' tab) in your WordPress admin area and activate.
 
-Note: due to confusion, there are no longer separate versions for PHP4 and PHP5.
 
 == Frequently Asked Questions ==
 
