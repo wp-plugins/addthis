@@ -31,8 +31,6 @@ To upload the plugin through WordPress, instead of FTP:
 
 1. Upload the downloaded zip file on the 'Add New' plugins screen (see the 'Upload' tab) in your WordPress admin area and activate.
 
-Note: due to confusion, there are no longer separate versions for PHP4 and PHP5.
-
 == Frequently Asked Questions ==
 
 = Is AddThis free? =
@@ -161,7 +159,7 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 == Upgrade Notice ==
 = 2.1.1 =
-Add +1 to the options
+Add +1 to the button options
 
 = 2.1.0 =
 More Features, More Filters, More Social Goodness

@@ -1822,4 +1822,25 @@ register_activation_hook( __FILE__, 'addthis_activation_hook' );
 
 require_once('addthis_post_metabox.php');
 
+// remove the generator tag if plus one is being used.  Hopefully only temp.
+add_action('wp_head', 'addthis_rm_genTag', 2);
+
+function addthis_rm_genTag(){
+   
+    if ( isset($_GET['preview']) &&  $_GET['preview'] == 1 && $options = get_transient('addthis_settings') )
+        $preview = true;
+    else
+        $options = get_option('addthis_settings');
+
+    if ($options['above'] =='plus_one_share_counter' || $options['below'] == 'plus_one_share_counter')
+        remove_action('wp_head', 'wp_generator');
+    elseif ($options['above'] == 'custom' && ( strpos( $options['above_custom_services'], 'google_plusone') !== false) ) 
+        remove_action('wp_head', 'wp_generator');
+    elseif ($options['below'] == 'custom' && ( strpos( $options['below_custom_services'], 'google_plusone') !== false) ) 
+        remove_action('wp_head', 'wp_generator');
+   
+
+}
+
+
 ?>
