@@ -12,6 +12,8 @@ Get more traffic back to your site by installing the AddThis WordPress plugin. W
 
 Optionally, sign up for a free AddThis.com account to see how your visitors are sharing your content: which services they're using for sharing, which content is shared the most, and more.
 
+Another options feature is Address Bar sharing. <a title="Address Bar Sharing Information" href="http://www.addthis.com/help/address-bar-sharing-analytics">Address Bar sharing analytics</a> give you the ability to track URLs that have been sent via emails, IMs and to forums using copy/paste. This captures a whole new segment of sharing that we have found to be up to 10x that of using social buttons. You now get a larger picture of where your direct traffic is coming from and how your users are really sharing your content.
+
 <a href="http://www.addthis.com/blog">AddThis Blog</a> | <a href="http://www.addthis.com/privacy">Privacy Policy</a>
 
 == Installation ==
