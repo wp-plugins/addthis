@@ -926,7 +926,7 @@ function addthis_init()
 
     add_action( 'wp_head', 'addthis_add_content_filters');
 
-    if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', '__return_false') || apply_filters('addthis_assume_latest', '__return_false')   ) {
+    if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', __return_false() ) || apply_filters('addthis_assume_latest', __return_false() )   ) {
         if ( is_admin() ) {
             add_action( 'admin_init', 'register_addthis_settings' );
         }
@@ -1448,7 +1448,7 @@ EOF;
 
 function addthis_options_page_scripts()
 {
-    $script = (addthis_get_wp_version() >= 3.2 || apply_filters('at_assume_latest', '__return_false') || apply_filters('addthis_assume_latest', '__return_false') ) ? 'options-page.32.js' : 'options-page.js';
+    $script = (addthis_get_wp_version() >= 3.2 || apply_filters('at_assume_latest', __return_false() ) || apply_filters('addthis_assume_latest', __return_false() ) ) ? 'options-page.32.js' : 'options-page.js';
 
     $script_location = apply_filters( 'at_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) . '/addthis/js/'.$script ;
     $script_location = apply_filters( 'addthis_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) . '/addthis/js/'.$script ;
@@ -1527,7 +1527,7 @@ function addthis_plugin_options_php4() {
     <form  id="addthis_settings" method="post" action="options.php">
     <?php 
         // use the old-school settings style in older versions of wordpress
-        if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', '__return_false') || apply_filters('addthis_assume_latest', '__return_false')   ) {
+        if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', __return_false() ) || apply_filters('addthis_assume_latest', __return_false() )   ) {
             settings_fields('addthis'); 
         } else {
             wp_nonce_field('update-options');
