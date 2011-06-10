@@ -26,11 +26,14 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.1.2
+* Version: 2.1.3
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
 */
+
+define( 'addthis_style_default' , 'small_toolbox_with_share');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.1.3');
 
 $addthis_settings = array();
 $addthis_settings['isdropdown'] = 'true';
@@ -112,8 +115,6 @@ function addthis_script_to_content($content)
     return $content ;
 }
 
-define( 'addthis_style_default' , 'small_toolbox_with_share');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.1.2');
 /**
  * Converts our old many options in to one beautiful array
  *
@@ -926,7 +927,7 @@ function addthis_init()
 
     add_action( 'wp_head', 'addthis_add_content_filters');
 
-    if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', '__return_false') || apply_filters('addthis_assume_latest', '__return_false')   ) {
+    if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', __return_false() ) || apply_filters('addthis_assume_latest', __return_false() )   ) {
         if ( is_admin() ) {
             add_action( 'admin_init', 'register_addthis_settings' );
         }
@@ -1026,9 +1027,13 @@ function addthis_remove_tag($content, $text = '')
 
         $text = get_the_content('');
         $text = strip_shortcodes( $text );
+
         remove_filter('the_content', 'addthis_display_social_widget', 15); 
        
         $text = apply_filters('the_content', $text);
+
+        add_filter('the_content', 'addthis_display_social_widget', 15);
+
         $text = str_replace(']]>', ']]&gt;', $text);
         $text = strip_tags($text);
         $excerpt_length = apply_filters('excerpt_length', 55); 
@@ -1247,7 +1252,7 @@ function addthis_output_script($return = false )
     
     $script = "\n<!-- AddThis Button Begin -->\n"
              .'<script type="text/javascript">'
-             ."var addthis_product = 'wpp-259';\n";
+             ."var addthis_product = 'wpp-260';\n";
 
 
     $pub = (isset($options['profile'])) ? $options['profile'] : false ;
@@ -1448,7 +1453,7 @@ EOF;
 
 function addthis_options_page_scripts()
 {
-    $script = (addthis_get_wp_version() >= 3.2 || apply_filters('at_assume_latest', '__return_false') || apply_filters('addthis_assume_latest', '__return_false') ) ? 'options-page.32.js' : 'options-page.js';
+    $script = (addthis_get_wp_version() >= 3.2 || apply_filters('at_assume_latest', __return_false() ) || apply_filters('addthis_assume_latest', __return_false() ) ) ? 'options-page.32.js' : 'options-page.js';
 
     $script_location = apply_filters( 'at_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) . '/addthis/js/'.$script ;
     $script_location = apply_filters( 'addthis_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) . '/addthis/js/'.$script ;
@@ -1527,7 +1532,7 @@ function addthis_plugin_options_php4() {
     <form  id="addthis_settings" method="post" action="options.php">
     <?php 
         // use the old-school settings style in older versions of wordpress
-        if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', '__return_false') || apply_filters('addthis_assume_latest', '__return_false')   ) {
+        if (addthis_get_wp_version() >= 2.7 || apply_filters('at_assume_latest', __return_false() ) || apply_filters('addthis_assume_latest', __return_false() )   ) {
             settings_fields('addthis'); 
         } else {
             wp_nonce_field('update-options');
