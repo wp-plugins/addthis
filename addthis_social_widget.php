@@ -1026,9 +1026,13 @@ function addthis_remove_tag($content, $text = '')
 
         $text = get_the_content('');
         $text = strip_shortcodes( $text );
+
         remove_filter('the_content', 'addthis_display_social_widget', 15); 
        
         $text = apply_filters('the_content', $text);
+
+        add_filter('the_content', 'addthis_display_social_widget', 15);
+
         $text = str_replace(']]>', ']]&gt;', $text);
         $text = strip_tags($text);
         $excerpt_length = apply_filters('excerpt_length', 55); 
