@@ -26,14 +26,14 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.1.4
+* Version: 2.2.0
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
 */
 
 define( 'addthis_style_default' , 'small_toolbox_with_share');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.1.3');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.2.0');
 
 $addthis_settings = array();
 $addthis_settings['isdropdown'] = 'true';
@@ -1296,7 +1296,7 @@ function addthis_output_script($return = false )
     
     $script = "\n<!-- AddThis Button Begin -->\n"
              .'<script type="text/javascript">'
-             ."var addthis_product = 'wpp-260';\n";
+             ."var addthis_product = 'wpp-261';\n";
 
 
     $pub = (isset($options['profile'])) ? $options['profile'] : false ;
