@@ -26,14 +26,14 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.1.4
+* Version: 2.2.0a
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
 */
 
 define( 'addthis_style_default' , 'small_toolbox_with_share');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.1.3');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.2.0a');
 
 $addthis_settings = array();
 $addthis_settings['isdropdown'] = 'true';
@@ -60,7 +60,7 @@ $addthis_new_styles = array(
 
     'small_toolbox' => array( 'src' =>  '<div class="addthis_toolbox addthis_default_style addthis_" %s ><a class="addthis_button_preferred_1"></a><a class="addthis_button_preferred_2"></a><a class="addthis_button_preferred_3"></a><a class="addthis_button_preferred_4"></a><a class="addthis_button_compact"></a></div>', 'img' => 'toolbox-small.png', 'name' => 'Small Toolbox', 'above' => 'hidden ', 'below' => ''
     ), // 32x32
-    'plus_one_share_counter' => array( 'src' => '<div class="addthis_toolbox addthis_default_style" %s ><a class="addthis_button_google_plusone"></a><a class="addthis_counter addthis_pill_style"></a></div>', 'img' => 'plusone-share.gif', 'name' => 'Plus One and Share Counter', 'above'=> 'hidden', 'below'=>'hidden'), // +1
+    'plus_one_share_counter' => array( 'src' => '<div class="addthis_toolbox addthis_default_style" %s ><a class="addthis_button_google_plusone" g:plusone:size="medium" ></a><a class="addthis_counter addthis_pill_style"></a></div>', 'img' => 'plusone-share.gif', 'name' => 'Plus One and Share Counter', 'above'=> 'hidden', 'below'=>'hidden'), // +1
     'small_toolbox_with_share' => array( 'src' =>  '<div class="addthis_toolbox addthis_default_style " %s ><a href="//addthis.com/bookmark.php?v=250&amp;username=xa-4d2b47597ad291fb" class="addthis_button_compact">Share</a><span class="addthis_separator">|</span><a class="addthis_button_preferred_1"></a><a class="addthis_button_preferred_2"></a><a class="addthis_button_preferred_3"></a><a class="addthis_button_preferred_4"></a></div>', 'img' => 'small-toolbox.jpg', 'name' => 'Small Toolbox with Share first', 'above' => '', 'below' => 'hidden' 
     ), // Plus sign share | four buttons
     'large_toolbox' => array( 'src' =>  '<div class="addthis_toolbox addthis_default_style addthis_32x32_style" %s ><a class="addthis_button_preferred_1"></a><a class="addthis_button_preferred_2"></a><a class="addthis_button_preferred_3"></a><a class="addthis_button_preferred_4"></a><a class="addthis_button_compact"></a></div>', 'img' => 'toolbox-large.png', 'name' => 'Large Toolbox', 'above' => 'hidden ', 'below' => ''
@@ -1115,7 +1115,7 @@ function addthis_late_widget($link_text)
     
 
     $url_below =  "addthis:url='$url' ";
-    $url_below .=  "addthis:title='$title'"; 
+    $url_below .=  "addthis:title='". esc_attr( $title) ." '"; 
 
     if (has_excerpt() && ! is_attachment() && isset($options['below']) && $options['below'] == 'custom')
     {
@@ -1194,11 +1194,12 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     remove_filter('wp_trim_excerpt', 'addthis_remove_tag', 9, 2);
     remove_filter('get_the_excerpt', 'addthis_late_widget');
     $url = get_permalink();
+    $url = 'http://www.newlandpr.com/case-studies/hsbc-%E2%80%93-celebrating-chinese-new-year-in-london';
     $title = get_the_title();
     $url_above =  "addthis:url='$url' ";
-    $url_above .= "addthis:title='$title'"; 
+    $url_above .= "addthis:title='". esc_attr( $title) ." '";  
     $url_below =  "addthis:url='$url' ";
-    $url_below .= "addthis:title='$title'"; 
+    $url_below .= "addthis:title='". esc_attr( $title) ." '";  
     $above = '';
     $below = '';
 
@@ -1266,9 +1267,19 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     if ($display) 
     {
         if ( isset($above) )
-            $content = sprintf($above, $url_above) . $content;
+        {
+            if ($options['above'] == 'custom')
+                $content = $above . $content;
+            else
+                $content = sprintf($above, $url_above) . $content;
+        }
         if ( isset($below) )
-            $content = $content . sprintf($below, $url_below); 
+        {
+            if ($options['below'] == 'custom')
+                $content = $content . $below;
+            else
+                $content = $content . sprintf($below, $url_below); 
+        }
         if ($filtered == true)
             add_filter('wp_trim_excerpt', 'addthis_remove_tag', 11, 2);
     }
@@ -1517,7 +1528,7 @@ function addthis_options_page_style()
 
 function addthis_admin_menu()
 {
-    $addthis = add_options_page('AddThis Plugin Options', 'AddThis', 'manage_options', __FILE__, 'addthis_plugin_options_php4');
+    $addthis = add_options_page('AddThis Plugin Options', 'AddThis', 'manage_options', basename(__FILE__), 'addthis_plugin_options_php4');
     add_action('admin_print_scripts-' . $addthis, 'addthis_options_page_scripts');
     add_action('admin_print_styles-' . $addthis, 'addthis_options_page_style');
 }
@@ -1816,6 +1827,17 @@ if (! function_exists('__return_true'))
         return true;
     }
 }
+
+if (! function_exists('esc_textarea'))
+{
+    function esc_textarea($text)
+    {
+         $safe_text = htmlspecialchars( $text, ENT_QUOTES );
+         return $safe_text;
+    }
+
+}
+
 
 /**
  * Make sure the option gets added on registration
