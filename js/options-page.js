@@ -108,4 +108,57 @@ jQuery(document).ready(function($) {
     });
 
 
+    var aboveCustom = $('#above_custom_button'); 
+    var aboveCustomShow = function(){
+        if ( aboveCustom.attr('checked') != 'undefined' &&  aboveCustom.attr('checked') == true)
+        {
+            $('.above_option_custom').removeClass('hidden');
+        }
+        else
+        {
+            $('.above_option_custom').addClass('hidden');
+        }
+    };
+    var belowCustom = $('#below_custom_button'); 
+    var belowCustomShow = function(){
+        if ( belowCustom.attr('checked') != 'undefined' &&  belowCustom.attr('checked') == true)
+        {
+            $('.below_option_custom').removeClass('hidden');
+        }
+        else
+        {
+            $('.below_option_custom').addClass('hidden');
+        }
+    };
+
+    var aboveCustomString = $('#above_custom_string'); 
+    var aboveCustomStringShow = function(){
+        if ( aboveCustomString.attr('checked') != 'undefined' &&  aboveCustomString.attr('checked') == true)
+        {
+            $('#above_custom_string_input').removeClass('hidden');
+        }
+        else
+        {
+            $('#above_custom_string_input').addClass('hidden');
+        }
+    };
+    var belowCustomString = $('#below_custom_string'); 
+    var belowCustomStringShow = function(){
+        if ( belowCustomString.attr('checked') != 'undefined' &&  belowCustomString.attr('checked') == true)
+        {
+            $('#below_custom_string_input').removeClass('hidden');
+        }
+        else
+        {
+            $('#below_custom_string_input').addClass('hidden');
+        }
+    };
+
+    aboveCustomShow();
+    belowCustomShow();
+    aboveCustomStringShow();
+    belowCustomStringShow();
+
+    $('input[name="addthis_settings[above]"]').change( function(){aboveCustomShow(); aboveCustomStringShow();} );
+    $('input[name="addthis_settings[below]"]').change( function(){belowCustomShow(); belowCustomStringShow();} );
 });
