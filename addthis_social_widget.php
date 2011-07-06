@@ -379,7 +379,7 @@ function addthis_admin_notices(){
     {
         echo '<div class="updated addthis_setup_nag"><p>'; 
         printf(__('Setup the AddThis plugin so you can start having your users share your content around the web<br /> <a href="%1$s">Setup options</a> | <a href="%2$s" id="php_below_min_nag-no">Ignore this notice</a>'), 
-            admin_url('options-general.php?page=' . __FILE__ ),
+            admin_url('options-general.php?page=' .  basename(__FILE__) ),
             '?addthis_nag_ignore=0'); 
         echo "</p></div>";
     }
@@ -388,7 +388,7 @@ function addthis_admin_notices(){
     {
         echo '<div class="updated addthis_setup_nag"><p>'; 
         printf( __('Sign up for AddThis and add your username/password to recieve analytics about how people are sharing your content.<br /> <a href="%1$s">Enter username and password</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%2$s" target="_blank">Sign Up</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%3$s">Ignore this notice</a>'),
-        admin_url('options-general.php?page=' . __FILE__ ),
+        admin_url('options-general.php?page=' . basename(__FILE__) ),
         'https://www.addthis.com/register?profile=wpp',
         '?addthis_nag_username_ignore=0');
         echo "</p></div>";
@@ -397,7 +397,7 @@ function addthis_admin_notices(){
     {
         echo '<div class="updated addthis_setup_nag"><p>'; 
         printf( __('We have updated the options for the AddThis plugin.  Check out the <a href="%1$s">AddThis settings page</a> to see the new styles and options.<br /> <a href="%1$s">See New Options</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%2$s">Ignore this notice</a>'),
-        admin_url('options-general.php?page=' . __FILE__ ),
+        admin_url('options-general.php?page=' . basename(__FILE__) ),
         '?addthis_nag_updated_ignore=0');
         echo "</p></div>";
     }

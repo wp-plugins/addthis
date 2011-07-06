@@ -74,6 +74,10 @@ In the screen options you can enable the AddThis meta box.  Check the box and sa
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 2.2.1 =
+* Fix compatability with 3.2
+* Fix over agressive regular expression
+
 = 2.2.0 =
 * More Customization Option
 * optionally shorten urls with one bit.ly account
@@ -163,6 +167,9 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+= 2.2.1 = 
+Add 3.2 compatability
+
 = 2.2.0 =
 More Customization options
 
