@@ -26,14 +26,14 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.2.0a
+* Version: 2.2.1
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
 */
 
 define( 'addthis_style_default' , 'small_toolbox_with_share');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.2.0a');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.2.1');
 
 $addthis_settings = array();
 $addthis_settings['isdropdown'] = 'true';
@@ -1194,7 +1194,6 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     remove_filter('wp_trim_excerpt', 'addthis_remove_tag', 9, 2);
     remove_filter('get_the_excerpt', 'addthis_late_widget');
     $url = get_permalink();
-    $url = 'http://www.newlandpr.com/case-studies/hsbc-%E2%80%93-celebrating-chinese-new-year-in-london';
     $title = get_the_title();
     $url_above =  "addthis:url='$url' ";
     $url_above .= "addthis:title='". esc_attr( $title) ." '";  
@@ -1307,7 +1306,7 @@ function addthis_output_script($return = false )
     
     $script = "\n<!-- AddThis Button Begin -->\n"
              .'<script type="text/javascript">'
-             ."var addthis_product = 'wpp-260';\n";
+             ."var addthis_product = 'wpp-261';\n";
 
 
     $pub = (isset($options['profile'])) ? $options['profile'] : false ;
