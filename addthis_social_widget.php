@@ -1705,7 +1705,7 @@ function addthis_plugin_options_php4() {
             <td><input type="text" name="addthis_settings[addthis_brand]" value="<?php echo $addthis_brand; ?>" /></td>
         </tr>
         <tr valign="top">
-            <th scope="row"><?php _e("<a href='http://www.addthis.com/help/client-api#configuration-sharing-templates'>Twitter Template</a> ( not for tweet button) :", 'addthis_trans_domain' ); ?></th>
+            <th scope="row"><?php _e("<a href='http://www.addthis.com/help/client-api#configuration-sharing-templates'>Twitter Template</a> (not for tweet button) :", 'addthis_trans_domain' ); ?></th>
             <td><input type="text" name="addthis_settings[addthis_twitter_template]" value="<?php echo $addthis_twitter_template; ?>" /></td>
         </tr>
         <tr valign="top">
