@@ -33,7 +33,7 @@ else return;
 */
 
 define( 'addthis_style_default' , 'small_toolbox_with_share');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.2.1');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.2.2');
 
 $addthis_settings = array();
 $addthis_settings['isdropdown'] = 'true';
@@ -1306,7 +1306,7 @@ function addthis_output_script($return = false )
     
     $script = "\n<!-- AddThis Button Begin -->\n"
              .'<script type="text/javascript">'
-             ."var addthis_product = 'wpp-261';\n";
+             ."var addthis_product = 'wpp-262';\n";
 
 
     $pub = (isset($options['profile'])) ? $options['profile'] : false ;
