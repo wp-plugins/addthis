@@ -39,18 +39,19 @@ function addthis_kses($string)
     $pretags = array( 'g:plusone:', 'fb:like:', 'tw:');
     $posttags = array('gplusone', 'fblike', 'tw');
 
-    foreach($pretags as $attr)
+    foreach($pretags as $i => $attr)
     {
         $pre_pattern[] = '/'.$attr.'/';
+        $pretags[$i] = ' '.$attr;
     }
-    foreach($posttags as $attr)
+    foreach($posttags as $i => $attr)
     {
         $post_pattern[] = '/[^_]'.$attr.'/';
+        $posttags[$i] = ' '.$attr;
     }
     $temp_string = preg_replace( $pre_pattern, $posttags, $string);
     $new_temp_string = wp_kses($temp_string, $mytags);
     $new_string = preg_replace( $post_pattern, $pretags, $new_temp_string);
-
     // Add in our %s so that the url and title get added properly
 
 

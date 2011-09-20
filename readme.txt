@@ -2,7 +2,7 @@
 Contributors: _mjk_, jorbin
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz
 Requires at least: 2.9
-Tested up to: 3.2.0
+Tested up to: 3.2.1
 Stable tag: 2.2.1
 
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with many popular services. 
@@ -74,6 +74,9 @@ In the screen options you can enable the AddThis meta box.  Check the box and sa
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 2.2.2 =
+* Fix custom button whitespace saving issue
+
 = 2.2.1 =
 * Fix compatability with 3.2
 * Fix over agressive regular expression
