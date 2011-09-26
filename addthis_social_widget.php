@@ -1317,6 +1317,7 @@ function addthis_output_script($return = false )
 
    
     $addthis_config = array();
+    $addthis_share = array();
 
     if ( isset($options['addthis_append_data']) &&  $options['addthis_append_data'] == true)
         $addthis_config["data_track_clickback"] = true;
@@ -1366,7 +1367,7 @@ function addthis_output_script($return = false )
     }
     if ( isset( $options['addthis_share_json'] ) && $options['addthis_share_json'] != '')
         $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . $options['addthis_share_json'] . ';}';
-    elseif (isset($addthis_share))
+    else
         $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
     $script .= '</script>';
 
