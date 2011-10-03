@@ -65,7 +65,9 @@ $addthis_new_styles = array(
     ), // Plus sign share | four buttons
     'large_toolbox' => array( 'src' =>  '<div class="addthis_toolbox addthis_default_style addthis_32x32_style" %s ><a class="addthis_button_preferred_1"></a><a class="addthis_button_preferred_2"></a><a class="addthis_button_preferred_3"></a><a class="addthis_button_preferred_4"></a><a class="addthis_button_compact"></a></div>', 'img' => 'toolbox-large.png', 'name' => 'Large Toolbox', 'above' => 'hidden ', 'below' => ''
     ), // 32x32
-    'fb_tw_sc' => array( 'src' => '<div class="addthis_toolbox addthis_default_style " %s  ><a class="addthis_button_facebook_like" fb:like:layout="button_count"></a><a class="addthis_button_tweet"></a><a class="addthis_counter addthis_pill_style"></a></div>' , 'img' => 'fb-tw-sc.jpg' , 'name' => 'Like, Tweet, Counter', 'above' => '', 'below' => 'hidden'
+    'fb_tw_sc' => array( 'src' => '<div class="addthis_toolbox addthis_default_style " %s  ><a class="addthis_button_facebook_like" fb:like:layout="button_count"></a><a class="addthis_button_tweet"></a><a class="addthis_counter addthis_pill_style"></a></div>' , 'img' => 'fb-tw-sc.jpg' , 'name' => 'Like, Tweet, Counter', 'above' => 'hidden', 'below' => 'hidden'
+    ), // facebook tweet share counter
+    'fb_tw_p1_sc' => array( 'src' => '<div class="addthis_toolbox addthis_default_style " %s  ><a class="addthis_button_facebook_like" fb:like:layout="button_count"></a><a class="addthis_button_tweet"></a><a class="addthis_button_google_plusone" g:plusone:size="medium"></a><a class="addthis_counter addthis_pill_style"></a></div>' , 'img' => 'fb-tw-p1-sc.jpg' , 'name' => 'Like, Tweet, +1, Share', 'above' => '', 'below' => 'hidden'
     ), // facebook tweet share counter
     'simple_button' => array('src' => '<div class="addthis_toolbox addthis_default_style " %s><a href="//addthis.com/bookmark.php?v=250&amp;username=xa-4d2b47f81ddfbdce" class="addthis_button_compact">Share</a></div>', 'img' => 'share.jpg', 'name' => 'Share Button', 'above' => 'hidden ', 'below' => 'hidden'
     ), // Plus sign share
@@ -862,6 +864,8 @@ foreach (array('addthis_show_stats', 'addthis_append_data', 'addthis_showonhome'
         $options[$field] = false;
 
 }
+if ( isset ($data['data_ga_property']) && strlen($data['data_ga_property']) != 0)
+    $options['data_ga_property'] = sanitize_text_field($data['data_ga_property']);
 
 //[addthis_twitter_template]
 if ( isset ($data['addthis_twitter_template']) && strlen($data['addthis_twitter_template'])  != 0  )
@@ -1323,13 +1327,16 @@ function addthis_output_script($return = false )
         $addthis_config["data_track_clickback"] = true;
     else
         $addthis_config["data_track_clickback"] = false;
+    
+    if ( isset($options['data_ga_property']) ){
+        $addthis_config['data_ga_property'] = $options['data_ga_property'];
+        $addthis_config['data_ga_social'] = true;
+    }
 
-    /*/
     if ( isset($options['addthis_addressbar']) &&  $options['addthis_addressbar'] == true)
         $addthis_config["data_track_addressbar"] = true;
     else
         $addthis_config["data_track_addressbar"] = false;
-    //*/
 
     if ( isset($options['addthis_language']) && strlen($options['addthis_language']) == 2)
         $addthis_config['ui_language'] = $options['addthis_language'];
@@ -1370,7 +1377,6 @@ function addthis_output_script($return = false )
     else
         $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
     $script .= '</script>';
-
 
     $script .= '<script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#pubid='.$pub.'"></script>';
     
@@ -1540,7 +1546,7 @@ function addthis_admin_menu()
         'style'     => addthis_style_default ,
         'location'  => 'below',
         'below'     => 'large_toolbox',
-        'above'     => 'fb_tw_sc',
+        'above'     => 'fb_tw_p1_sc',
         'addthis_show_stats' => true,
         'addthis_append_data'=> true,
         'addthis_showonhome'  => true,
@@ -1567,6 +1573,7 @@ function addthis_admin_menu()
         'below_custom_string' => '',
         'addthis_twitter_template' => '',
         'addthis_508' => '',
+        'data_ga_property' => '',
         'addthis_bitly_login' => '',
         'addthis_bitly_key' => '',
         'addthis_config_json' => '',
@@ -1630,10 +1637,10 @@ function addthis_plugin_options_php4() {
         <?php _addthis_choose_icons('above', $options ); ?>
         <?php _addthis_choose_icons('below', $options ); ?>
     <tr valign="top">
-        <td colspan="2"><?php _e('Enter a profile, username and password to discover how your content is being shared, and how your most influential audience members are bringing traffic back to your site. Learn what interests them – and to what degree – and how thoses interests are driving sharing. <a href="//addthis.com/features" target="_blank">Click here for more information on the benefits of register</a>.<a href="//www.addthis.com/help/faq#accounts" target="_blank">Click here for more information on usernames and profiles</a>   ', 'addthis_trans_domain');?> </td>
+        <td colspan="2"><?php _e("<h3><a href='www.addthis.com/register?profile=wpp' target='_blank'>Register</a> to recieve free in-depth analytics reports to better understand your site's social traffic</h3>", 'addthis_trans_domain');?> </td>
     </tr>
     <tr valign="top">
-        <th scope="row"><?php _e("AddThis profile id:", 'addthis_trans_domain' ); ?></th>
+        <th scope="row"><?php _e("AddThis Profile ID:", 'addthis_trans_domain' ); ?></th>
         <td><input id="addthis_profile"  type="text" name="addthis_settings[addthis_profile]" value="<?php echo $profile; ?>" autofill='off' autocomplete='off'  /></td>
     </tr>
     <tr valign="top">
@@ -1686,6 +1693,11 @@ function addthis_plugin_options_php4() {
             <th scope="row"><?php _e("Enable Enhanced Accessibility", 'addthis_trans_domain' ); ?></th>
             <td><input type="checkbox" name="addthis_settings[addthis_508]" value="true" <?php echo ( $addthis_508 == true ? 'checked="checked"' : ''); ?>/></td>
         </tr>
+        <tr>
+            <th scope="row"><?php _e("Google Analytics Code", 'addthis_trans_domain' ); ?></th>
+            <td><input type="checkbox" name="addthis_settings[data_ga_property]" value="true" <?php echo ( $data_ga_property == true ? 'checked="checked"' : ''); ?>/></td>
+        </tr>
+
         <tr valign="top">
             <td colspan="2"></td>
         </tr>

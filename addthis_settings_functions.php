@@ -92,7 +92,7 @@ function addthis_kses($string)
 ?>
         <tr>
             <td id="<?php echo $name ?>" colspan="2">
-                <p><?php _e("$name the post", 'addthis_trans_domain') ?>&nbsp;&nbsp;<span class="description"><input type="checkbox" name="addthis_settings[show_<?php echo $name; ?>]" <?php echo ('none' == $option) ? 'checked="checked"' : '';?> />&nbsp;none</span></p>
+                <p><?php _e("Choose the sharing tool to display $name the post", 'addthis_trans_domain') ?>&nbsp;&nbsp;<br /><span class="description"><input type="checkbox" name="addthis_settings[show_<?php echo $name; ?>]" <?php echo ('none' == $option) ? 'checked="checked"' : '';?> />&nbsp;none</span></p>
                 <?php  $imgLocationBase = apply_filters( 'at_files_uri',  plugins_url( '' , basename(dirname(__FILE__)))) . '/addthis/img/'  ;
                  $imgLocationBase = apply_filters( 'addthis_files_uri',  plugins_url( '' , basename(dirname(__FILE__)))) . '/addthis/img/'  ;
                  foreach ($addthis_new_styles as $k => $v)
