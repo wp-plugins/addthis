@@ -1642,7 +1642,7 @@ function addthis_plugin_options_php4() {
 			<br/>
 			
 			<div style="margin-left:5px;">
-				<?php _e("<h3><a href='www.addthis.com/register?profile=wpp' target='_blank'>Register</a> to recieve free in-depth analytics reports to better understand your site's social traffic</h3>", 'addthis_trans_domain');?>
+				<?php _e("<h3><a href='https://www.addthis.com/register?profile=wpp' target='_blank'>Register</a> to recieve free in-depth analytics reports to better understand your site's social traffic</h3>", 'addthis_trans_domain');?>
 			</div>
 			<table class="form-table" style="width:400px;">
 				<tbody>
