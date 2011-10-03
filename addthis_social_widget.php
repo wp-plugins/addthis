@@ -26,7 +26,7 @@ else return;
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.2.2
+* Version: 2.2.9
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -1632,138 +1632,148 @@ function addthis_plugin_options_php4() {
         </ul>
         <div class='clear'>&nbsp;</div> 
         <div id="tabs-1">
-    <table class="form-table">
-        <tbody>
-        <?php _addthis_choose_icons('above', $options ); ?>
-        <?php _addthis_choose_icons('below', $options ); ?>
-    <tr valign="top">
-        <td colspan="2"><?php _e("<h3><a href='www.addthis.com/register?profile=wpp' target='_blank'>Register</a> to recieve free in-depth analytics reports to better understand your site's social traffic</h3>", 'addthis_trans_domain');?> </td>
-    </tr>
-    <tr valign="top">
-        <th scope="row"><?php _e("AddThis Profile ID:", 'addthis_trans_domain' ); ?></th>
-        <td><input id="addthis_profile"  type="text" name="addthis_settings[addthis_profile]" value="<?php echo $profile; ?>" autofill='off' autocomplete='off'  /></td>
-    </tr>
-    <tr valign="top">
-        <th scope="row"><?php _e("AddThis username:", 'addthis_trans_domain' ); ?></th>
-        <td><input id="addthis_username"  type="text" name="addthis_settings[addthis_username]" value="<?php echo $username; ?>" autofill='off' autocomplete='off'  /></td>
-    </tr>
-    <tr id="password_row" >
-        <th scope="row"><?php _e("AddThis password:", 'addthis_trans_domain' ); ?><br/><span style="font-size:10px">(required for displaying stats)</span></th>
-        <td><input id="addthis_password" type="password" name="addthis_settings[addthis_password]" value="<?php echo $password; ?>" autocomplete='off' autofill='off'  /></td>
-    </tr>
-    </tbody>
-</table>
-  <div class='clear'>&nbsp;</div>  
-   </div>
+			<table class="form-table">
+				<tbody>
+				<?php _addthis_choose_icons('above', $options ); ?>
+				<?php _addthis_choose_icons('below', $options ); ?>
+				</tbody>
+			</table>
+			
+			<br/>
+			
+			<div style="margin-left:5px;">
+				<?php _e("<h3><a href='www.addthis.com/register?profile=wpp' target='_blank'>Register</a> to recieve free in-depth analytics reports to better understand your site's social traffic</h3>", 'addthis_trans_domain');?>
+			</div>
+			<table class="form-table" style="width:400px;">
+				<tbody>
+					<tr valign="top">
+						<td><?php _e("AddThis Profile ID:", 'addthis_trans_domain' ); ?></th>
+						<td><input id="addthis_profile"  type="text" name="addthis_settings[addthis_profile]" value="<?php echo $profile; ?>" autofill='off' autocomplete='off'  /></td>
+					</tr>
+					<tr valign="top">
+						<td><?php _e("AddThis username:", 'addthis_trans_domain' ); ?></th>
+						<td><input id="addthis_username"  type="text" name="addthis_settings[addthis_username]" value="<?php echo $username; ?>" autofill='off' autocomplete='off'  /></td>
+					</tr>
+					<tr id="password_row" >
+						<td><?php _e("AddThis password:", 'addthis_trans_domain' ); ?><br/><span style="font-size:10px">(required for displaying stats)</span></th>
+						<td><input id="addthis_password" type="password" name="addthis_settings[addthis_password]" value="<?php echo $password; ?>" autocomplete='off' autofill='off'  /></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class='clear'>&nbsp;</div>  
+			<br/>
+		</div>
+		
         <div id="tabs-2">
-    <table class="form-table">
-        <tr>
-            <th scope="row"><?php _e("Show stats in admin dashboard:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_settings[addthis_show_stats]" value="true" <?php echo ($addthis_show_stats == true ? 'checked="checked"' : ''); ?>/></td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e("Track <a href=\"//www.addthis.com/blog/2010/03/11/clickback-analytics-measure-traffic-back-to-your-site-from-addthis/\" target=\"_blank\">clickbacks</a>:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_settings[addthis_append_data]" value="true" <?php echo $addthis_append_data == true ? 'checked="checked"' : ''; ?>/></td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e("Track Address Bar Shares", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_settings[addthis_addressbar]" value="true" <?php echo ($addthis_addressbar  == true ? 'checked="checked"' : ''); ?>/></td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e("Show on homepage:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_settings[addthis_showonhome]" value="true" <?php echo ($addthis_showonhome  == true ? 'checked="checked"' : ''); ?>/></td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e("Show on <a href=\"//codex.wordpress.org/Pages\" target=\"blank\">pages</a>:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_settings[addthis_showonpages]" value="true" <?php echo ( $addthis_showonpages  == true ? 'checked="checked"' : ''); ?>/></td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e("Show in archives:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_settings[addthis_showonarchives]" value="true" <?php echo ($addthis_showonarchives  == true ? 'checked="checked"' : ''); ?>/></td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e("Show in categories:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_settings[addthis_showoncats]" value="true" <?php echo ( $addthis_showoncats == true ? 'checked="checked"' : ''); ?>/></td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e("Show on excerpts:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_settings[addthis_showonexcerpts]" value="true" <?php echo ( $addthis_showonexcerpts == true ? 'checked="checked"' : ''); ?>/></td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e("Enable Enhanced Accessibility", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_settings[addthis_508]" value="true" <?php echo ( $addthis_508 == true ? 'checked="checked"' : ''); ?>/></td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e("Google Analytics Code", 'addthis_trans_domain' ); ?></th>
-            <td><input type="text" name="addthis_settings[data_ga_property]" value="<?php echo $data_ga_property ?>"/></td>
-        </tr>
+			<table class="form-table">
+				<tr>
+					<th scope="row"><?php _e("Show stats in admin dashboard:", 'addthis_trans_domain' ); ?></th>
+					<td><input type="checkbox" name="addthis_settings[addthis_show_stats]" value="true" <?php echo ($addthis_show_stats == true ? 'checked="checked"' : ''); ?>/></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php _e("Track <a href=\"//www.addthis.com/blog/2010/03/11/clickback-analytics-measure-traffic-back-to-your-site-from-addthis/\" target=\"_blank\">clickbacks</a>:", 'addthis_trans_domain' ); ?></th>
+					<td><input type="checkbox" name="addthis_settings[addthis_append_data]" value="true" <?php echo $addthis_append_data == true ? 'checked="checked"' : ''; ?>/></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php _e("Track Address Bar Shares", 'addthis_trans_domain' ); ?></th>
+					<td><input type="checkbox" name="addthis_settings[addthis_addressbar]" value="true" <?php echo ($addthis_addressbar  == true ? 'checked="checked"' : ''); ?>/></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php _e("Show on homepage:", 'addthis_trans_domain' ); ?></th>
+					<td><input type="checkbox" name="addthis_settings[addthis_showonhome]" value="true" <?php echo ($addthis_showonhome  == true ? 'checked="checked"' : ''); ?>/></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php _e("Show on <a href=\"//codex.wordpress.org/Pages\" target=\"blank\">pages</a>:", 'addthis_trans_domain' ); ?></th>
+					<td><input type="checkbox" name="addthis_settings[addthis_showonpages]" value="true" <?php echo ( $addthis_showonpages  == true ? 'checked="checked"' : ''); ?>/></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php _e("Show in archives:", 'addthis_trans_domain' ); ?></th>
+					<td><input type="checkbox" name="addthis_settings[addthis_showonarchives]" value="true" <?php echo ($addthis_showonarchives  == true ? 'checked="checked"' : ''); ?>/></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php _e("Show in categories:", 'addthis_trans_domain' ); ?></th>
+					<td><input type="checkbox" name="addthis_settings[addthis_showoncats]" value="true" <?php echo ( $addthis_showoncats == true ? 'checked="checked"' : ''); ?>/></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php _e("Show on excerpts:", 'addthis_trans_domain' ); ?></th>
+					<td><input type="checkbox" name="addthis_settings[addthis_showonexcerpts]" value="true" <?php echo ( $addthis_showonexcerpts == true ? 'checked="checked"' : ''); ?>/></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php _e("Enable Enhanced Accessibility", 'addthis_trans_domain' ); ?></th>
+					<td><input type="checkbox" name="addthis_settings[addthis_508]" value="true" <?php echo ( $addthis_508 == true ? 'checked="checked"' : ''); ?>/></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php _e("Google Analytics Code", 'addthis_trans_domain' ); ?></th>
+					<td><input type="text" name="addthis_settings[data_ga_property]" value="<?php echo $data_ga_property ?>"/></td>
+				</tr>
 
-        <tr valign="top">
-            <td colspan="2"></td>
-        </tr>
-        <tr valign="top">
-            <td colspan="2">For more details on the following options, see <a href="//addthis.com/customization">our customization docs</a>.</td>
-        </tr>
-        <tr valign="top">
-            <th scope="row"><?php _e("Custom service list:", 'addthis_trans_domain' ); ?><br /><span class='description'><?php _e(
-            'Important: AddThis optimizes your list of services based on popularity and language, and personalizes the list for each user. You may decrease sharing by over-riding these features.'
-            , 'addthis_trans_domain') ?>
-            </span></th>
-              <td><input size='60' type="text" name="addthis_settings[addthis_options]" value="<?php echo $addthis_options; ?>" /><br />
-              <span class='description'><?php _e('Enter a comma-separated list of <a href="//addthis.com/services/list">service codes</a>', 'addthis_trans_domain' ); ?></span>
-              </td>  
-        </tr>
-        <tr valign="top">
-            <th scope="row"><?php _e("Brand:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="text" name="addthis_settings[addthis_brand]" value="<?php echo $addthis_brand; ?>" /></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row"><?php _e("<a href='http://www.addthis.com/help/client-api#configuration-sharing-templates'>Twitter Template</a> (not for tweet button) :", 'addthis_trans_domain' ); ?></th>
-            <td><input type="text" name="addthis_settings[addthis_twitter_template]" value="<?php echo $addthis_twitter_template; ?>" /></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row"><?php _e("Bitly Login", 'addthis_trans_domain' ); ?></th>
-            <td><input type="text" name="addthis_settings[addthis_bitly_login]" value="<?php echo $addthis_bitly_login; ?>" /></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row"><?php _e("Bitly Key", 'addthis_trans_domain' ); ?></th>
-            <td><input type="text" name="addthis_settings[addthis_bitly_key]" value="<?php echo $addthis_bitly_key; ?>" /></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row"><?php _e("Language:", 'addthis_trans_domain' ); ?></th>
-            <td>
-                <select name="addthis_settings[addthis_language]">
-                <?php
-                    $curlng = $addthis_language;
-                    foreach ($addthis_languages as $lng=>$name)
-                    {
-                        echo "<option value=\"$lng\"". ($lng == $curlng ? " selected='selected'":""). ">$name</option>";
-                    }
-                ?>
-                </select>
-            </td>
-        </tr>
-        <tr valign="top">
-            <th scope="row"><?php _e("Header background:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="text" name="addthis_settings[addthis_header_background]" value="<?php echo $addthis_header_background; ?>" /></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row"><?php _e("Header color:", 'addthis_trans_domain' ); ?></th>
-            <td><input type="text" name="addthis_settings[addthis_header_color]" value="<?php echo $addthis_header_color; ?>" /></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row"><?php _e("addthis_config values (json format):", 'addthis_trans_domain' ); ?></th>
-            <td><textarea rows='3' cols='40' type="text" name="addthis_settings[addthis_config_json]"  /><?php echo $addthis_config_json; ?></textarea></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row"><?php _e("addthis_share values (json format):", 'addthis_trans_domain' ); ?></th>
-            <td><textarea rows='3' cols='40' type="text" name="addthis_settings[addthis_share_json]"  /><?php echo $addthis_share_json; ?></textarea></td>
-        </tr>
-    </table>
-<div class='clear'>&nbsp;</div>
-    </div>
+				<tr valign="top">
+					<td colspan="2"></td>
+				</tr>
+				<tr valign="top">
+					<td colspan="2">For more details on the following options, see <a href="//addthis.com/customization">our customization docs</a>.</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><?php _e("Custom service list:", 'addthis_trans_domain' ); ?><br /><span class='description'><?php _e(
+					'Important: AddThis optimizes your list of services based on popularity and language, and personalizes the list for each user. You may decrease sharing by over-riding these features.'
+					, 'addthis_trans_domain') ?>
+					</span></th>
+					  <td><input size='60' type="text" name="addthis_settings[addthis_options]" value="<?php echo $addthis_options; ?>" /><br />
+					  <span class='description'><?php _e('Enter a comma-separated list of <a href="//addthis.com/services/list">service codes</a>', 'addthis_trans_domain' ); ?></span>
+					  </td>  
+				</tr>
+				<tr valign="top">
+					<th scope="row"><?php _e("Brand:", 'addthis_trans_domain' ); ?></th>
+					<td><input type="text" name="addthis_settings[addthis_brand]" value="<?php echo $addthis_brand; ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><?php _e("<a href='http://www.addthis.com/help/client-api#configuration-sharing-templates'>Twitter Template</a> (not for tweet button) :", 'addthis_trans_domain' ); ?></th>
+					<td><input type="text" name="addthis_settings[addthis_twitter_template]" value="<?php echo $addthis_twitter_template; ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><?php _e("Bitly Login", 'addthis_trans_domain' ); ?></th>
+					<td><input type="text" name="addthis_settings[addthis_bitly_login]" value="<?php echo $addthis_bitly_login; ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><?php _e("Bitly Key", 'addthis_trans_domain' ); ?></th>
+					<td><input type="text" name="addthis_settings[addthis_bitly_key]" value="<?php echo $addthis_bitly_key; ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><?php _e("Language:", 'addthis_trans_domain' ); ?></th>
+					<td>
+						<select name="addthis_settings[addthis_language]">
+						<?php
+							$curlng = $addthis_language;
+							foreach ($addthis_languages as $lng=>$name)
+							{
+								echo "<option value=\"$lng\"". ($lng == $curlng ? " selected='selected'":""). ">$name</option>";
+							}
+						?>
+						</select>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><?php _e("Header background:", 'addthis_trans_domain' ); ?></th>
+					<td><input type="text" name="addthis_settings[addthis_header_background]" value="<?php echo $addthis_header_background; ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><?php _e("Header color:", 'addthis_trans_domain' ); ?></th>
+					<td><input type="text" name="addthis_settings[addthis_header_color]" value="<?php echo $addthis_header_color; ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><?php _e("addthis_config values (json format):", 'addthis_trans_domain' ); ?></th>
+					<td><textarea rows='3' cols='40' type="text" name="addthis_settings[addthis_config_json]"  /><?php echo $addthis_config_json; ?></textarea></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><?php _e("addthis_share values (json format):", 'addthis_trans_domain' ); ?></th>
+					<td><textarea rows='3' cols='40' type="text" name="addthis_settings[addthis_share_json]"  /><?php echo $addthis_share_json; ?></textarea></td>
+				</tr>
+			</table>
+			<div class='clear'>&nbsp;</div>
+		</div>
     </div>
     <div class="clear">&nbsp;</div>
+	
     <p class="submit">
     <?php
     // Build Preview Link
@@ -1775,9 +1785,9 @@ function addthis_plugin_options_php4() {
          $preview_link = htmlspecialchars( add_query_arg( array( 'preview' => 1, 'template' => $template, 'stylesheet' => $stylesheet, 'preview_iframe' => true, 'TB_iframe' => 'true' ), $preview_link ) );
 
 
-    ?>
-    <a href="<?php echo $preview_link; ?>" class="thickbox thickbox-preview" id="preview" ><?php _e('Preview'); ?></a>
-    <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
+    ?>    
+		<input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
+		<a href="<?php echo $preview_link; ?>" class="thickbox thickbox-preview" id="preview" ><?php _e('Preview'); ?></a>
     </p>
 
     </form>

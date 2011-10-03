@@ -5,7 +5,7 @@ Requires at least: 2.9
 Tested up to: 3.2.1
 Stable tag: 2.2.2
 
-The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with over 300 popular services including Google +1, Facebook Like and Twitter. 
+The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with over 300 popular services. 
 
 == Description ==
 Get more traffic back to your site by installing the AddThis WordPress plugin. With AddThis, your users can promote your content by sharing to 295 of the most popular social networking and bookmarking sites (like Facebook, Twitter, Digg, StumbleUpon and MySpace). Our button is small, unobtrusive, quick to load and recognized all over the web.  We also optionaly support address bar sharing in modern browsers.
@@ -74,6 +74,10 @@ In the screen options you can enable the AddThis meta box.  Check the box and sa
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 2.3.0 =
+* Add Google Analytics option
+* Update settings interface
+
 = 2.2.2 =
 * Fix custom button whitespace saving issue
 
@@ -170,6 +174,9 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+= 2.3.0 = 
+Improve the Settings interface and add Google Analytics Integration
+
 = 2.2.1 = 
 Add 3.2 compatability
 
