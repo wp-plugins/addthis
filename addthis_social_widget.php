@@ -1695,7 +1695,7 @@ function addthis_plugin_options_php4() {
         </tr>
         <tr>
             <th scope="row"><?php _e("Google Analytics Code", 'addthis_trans_domain' ); ?></th>
-            <td><input type="checkbox" name="addthis_settings[data_ga_property]" value="true" <?php echo ( $data_ga_property == true ? 'checked="checked"' : ''); ?>/></td>
+            <td><input type="text" name="addthis_settings[data_ga_property]" value="<?php echo $data_ga_property ?>"/></td>
         </tr>
 
         <tr valign="top">
