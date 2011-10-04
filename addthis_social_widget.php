@@ -1642,12 +1642,12 @@ function addthis_plugin_options_php4() {
 			<br/>
 			
 			<div style="margin-left:5px;">
-				<?php _e("<h3><a href='https://www.addthis.com/register?profile=wpp' target='_blank'>Register</a> to recieve free in-depth analytics reports to better understand your site's social traffic</h3>", 'addthis_trans_domain');?>
+				<?php _e("<h3><a href='https://www.addthis.com/register?profile=wpp' target='_blank'>Register</a> for free in-depth analytics reports and better understand your site's social traffic.</h3>", 'addthis_trans_domain');?>
 			</div>
 			<table class="form-table" style="width:400px;">
 				<tbody>
 					<tr valign="top">
-						<td><?php _e("AddThis Profile ID:", 'addthis_trans_domain' ); ?></th>
+						<td><?php _e("AddThis profile ID:", 'addthis_trans_domain' ); ?></th>
 						<td><input id="addthis_profile"  type="text" name="addthis_settings[addthis_profile]" value="<?php echo $profile; ?>" autofill='off' autocomplete='off'  /></td>
 					</tr>
 					<tr valign="top">
@@ -1715,7 +1715,7 @@ function addthis_plugin_options_php4() {
 				</tr>
 				<tr valign="top">
 					<th scope="row"><?php _e("Custom service list:", 'addthis_trans_domain' ); ?><br /><span class='description'><?php _e(
-					'Important: AddThis optimizes your list of services based on popularity and language, and personalizes the list for each user. You may decrease sharing by over-riding these features.'
+					'Important: AddThis optimizes displayed services based on popularity and language, and personalizes the list for each user. You may decrease sharing by overriding these features.'
 					, 'addthis_trans_domain') ?>
 					</span></th>
 					  <td><input size='60' type="text" name="addthis_settings[addthis_options]" value="<?php echo $addthis_options; ?>" /><br />
