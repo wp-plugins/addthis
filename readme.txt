@@ -5,10 +5,10 @@ Requires at least: 2.9
 Tested up to: 3.2.1
 Stable tag: 2.2.2
 
-The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with over 300 popular services. 
+The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with over 330 popular services. 
 
 == Description ==
-Get more traffic back to your site by installing the AddThis WordPress plugin. With AddThis, your users can promote your content by sharing to 295 of the most popular social networking and bookmarking sites (like Facebook, Twitter, Digg, StumbleUpon and MySpace). Our button is small, unobtrusive, quick to load and recognized all over the web.  We also optionaly support address bar sharing in modern browsers.
+Get more traffic back to your site by installing the AddThis WordPress plugin. With AddThis, your users can promote your content by sharing to 330 of the most popular social networking and bookmarking sites (like Facebook, Twitter, Digg, StumbleUpon and MySpace). We also support address bar sharing in modern browsers. Our button is small, unobtrusive, quick to load and recognized all over the web. 
 
 Optionally, sign up for a free AddThis.com account to see how your visitors are sharing your content: which services they're using for sharing, which content is shared the most, and more.
 
@@ -58,7 +58,7 @@ All of the options required through this plugin require javascript.   JavaScript
 Over 1,200,000 sites have installed AddThis. With over a billion unique users, AddThis is helping share content all over the world, in more than sixty languages. You might be surprised who's sharing their website using AddThis--<a href="http://www.addthis.com/features#partners">here are just a few</a>.
 
 = What services does AddThis support? =
-We currently support over 300 services, from email and blogging platforms to social networks and news aggregators, and we add new services every month. Want to know if your favorite service is supported? This list is accurate up to the minute: <a href="http://www.addthis.com/services">http://www.addthis.com/services</a>.
+We currently support over 330 services, from email and blogging platforms to social networks and news aggregators, and we add new services every month. Want to know if your favorite service is supported? This list is accurate up to the minute: <a href="http://www.addthis.com/services">http://www.addthis.com/services</a>.
 
 = How do I remove AddThis from a page =
 In the screen options you can enable the AddThis meta box.  Check the box and save if you've already published that page or post to disable AddThis on that page or post.  
@@ -187,7 +187,7 @@ More Customization options
 More Features, More Filters, More Social Goodness
 
 = 2.0.5 =
-Force service codes to be lowercase and If opting out of clickback tracking, set config to force opting out
+Force service codes to be lowercase and, if opting out of clickback tracking, set config to force opting out
 
 = 2.0.4 =
 Fix conflict with other plugins and other bug fixes
