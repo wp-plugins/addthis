@@ -147,13 +147,13 @@ function addthis_kses($string)
                         $class = '';
                     }
 
-                    echo "<div class='$name"."_option select_row $class '><span class='radio mt4'><input $checked type='radio' value='custom_string' name='addthis_settings[$name]' id='$name"."_custom_string' /></span> Custom Button<div class='clear'></div></div>";
+                    echo "<div class='$name"."_option select_row $class '><span class='radio mt4'><input $checked type='radio' value='custom_string' name='addthis_settings[$name]' id='$name"."_custom_string' /></span> Custom button<div class='clear'></div></div>";
                     echo "<textarea rows='5' cols='120' name='addthis_settings[$name"."_custom_string]' id='$name"."_custom_string_input' />".esc_textarea($custom_string)."</textarea>";
 
                     echo '</div>';
                 ?>
 				<div class="select_row description"><span class='radio mt0'><input type="radio" name="addthis_settings[<?php echo $name; ?>]" <?php echo ('none' == $option) ? 'checked="checked"' : '';?> value='none' /></span>None</div>
-				<p><a class="<?php echo $name;?>_option" href="#<?php echo $name;?>_more" id="<?php echo $name;?>_more">More Options</a></p>
+				<p><a class="<?php echo $name;?>_option" href="#<?php echo $name;?>_more" id="<?php echo $name;?>_more">More options</a></p>
 				
 			  </fieldset>	
             </td>

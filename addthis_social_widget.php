@@ -380,7 +380,7 @@ function addthis_admin_notices(){
     if ($options == false && ! get_user_meta($user_id, 'addthis_ignore_notices'))
     {
         echo '<div class="updated addthis_setup_nag"><p>'; 
-        printf(__('Setup the AddThis plugin so you can start having your users share your content around the web<br /> <a href="%1$s">Setup options</a> | <a href="%2$s" id="php_below_min_nag-no">Ignore this notice</a>'), 
+        printf(__('Configure the AddThis plugin to enable users to share your content around the web.<br /> <a href="%1$s">Configuration options</a> | <a href="%2$s" id="php_below_min_nag-no">Ignore this notice</a>'), 
             admin_url('options-general.php?page=' .  basename(__FILE__) ),
             '?addthis_nag_ignore=0'); 
         echo "</p></div>";
@@ -1675,7 +1675,7 @@ function addthis_plugin_options_php4() {
 					<td><input type="checkbox" name="addthis_settings[addthis_append_data]" value="true" <?php echo $addthis_append_data == true ? 'checked="checked"' : ''; ?>/></td>
 				</tr>
 				<tr>
-					<th scope="row"><?php _e("Track Address Bar Shares", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("Track address bar shares:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="checkbox" name="addthis_settings[addthis_addressbar]" value="true" <?php echo ($addthis_addressbar  == true ? 'checked="checked"' : ''); ?>/></td>
 				</tr>
 				<tr>
@@ -1699,11 +1699,11 @@ function addthis_plugin_options_php4() {
 					<td><input type="checkbox" name="addthis_settings[addthis_showonexcerpts]" value="true" <?php echo ( $addthis_showonexcerpts == true ? 'checked="checked"' : ''); ?>/></td>
 				</tr>
 				<tr>
-					<th scope="row"><?php _e("Enable Enhanced Accessibility", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("Enable enhanced accessibility:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="checkbox" name="addthis_settings[addthis_508]" value="true" <?php echo ( $addthis_508 == true ? 'checked="checked"' : ''); ?>/></td>
 				</tr>
 				<tr>
-					<th scope="row"><?php _e("Google Analytics Code", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("Google Analytics property ID:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="text" name="addthis_settings[data_ga_property]" value="<?php echo $data_ga_property ?>"/></td>
 				</tr>
 
@@ -1711,7 +1711,7 @@ function addthis_plugin_options_php4() {
 					<td colspan="2"></td>
 				</tr>
 				<tr valign="top">
-					<td colspan="2">For more details on the following options, see <a href="//addthis.com/customization">our customization docs</a>.</td>
+					<td colspan="2">For more details on the following options, see <a href="//addthis.com/customization">our customization documentation</a>.</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><?php _e("Custom service list:", 'addthis_trans_domain' ); ?><br /><span class='description'><?php _e(
@@ -1727,15 +1727,15 @@ function addthis_plugin_options_php4() {
 					<td><input type="text" name="addthis_settings[addthis_brand]" value="<?php echo $addthis_brand; ?>" /></td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><?php _e("<a href='http://www.addthis.com/help/client-api#configuration-sharing-templates'>Twitter Template</a> (not for tweet button) :", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("<a href='http://www.addthis.com/help/client-api#configuration-sharing-templates'>Twitter Template:</a><br/><span class='description'>(not for tweet button)</span>", 'addthis_trans_domain' ); ?></th>
 					<td><input type="text" name="addthis_settings[addthis_twitter_template]" value="<?php echo $addthis_twitter_template; ?>" /></td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><?php _e("Bitly Login", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("Bitly login:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="text" name="addthis_settings[addthis_bitly_login]" value="<?php echo $addthis_bitly_login; ?>" /></td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><?php _e("Bitly Key", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("Bitly key:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="text" name="addthis_settings[addthis_bitly_key]" value="<?php echo $addthis_bitly_key; ?>" /></td>
 				</tr>
 				<tr valign="top">
@@ -1761,11 +1761,11 @@ function addthis_plugin_options_php4() {
 					<td><input type="text" name="addthis_settings[addthis_header_color]" value="<?php echo $addthis_header_color; ?>" /></td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><?php _e("addthis_config values (json format):", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("addthis_config values:<br/><span class=\"description\">(json format)</span>", 'addthis_trans_domain' ); ?></th>
 					<td><textarea rows='3' cols='40' type="text" name="addthis_settings[addthis_config_json]"  /><?php echo $addthis_config_json; ?></textarea></td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><?php _e("addthis_share values (json format):", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("addthis_share values:<br/><span class=\"description\">(json format)</span>", 'addthis_trans_domain' ); ?></th>
 					<td><textarea rows='3' cols='40' type="text" name="addthis_settings[addthis_share_json]"  /><?php echo $addthis_share_json; ?></textarea></td>
 				</tr>
 			</table>
