@@ -74,6 +74,9 @@ In the screen options you can enable the AddThis meta box.  Check the box and sa
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 2.3.1 =
+* Don't strip pintrest tags from custom buttons
+
 = 2.3.0 =
 * Add Google Analytics option
 * Update settings interface
