@@ -35,9 +35,13 @@ function addthis_kses($string)
     $mytags['a'][ 'twrelated' ]= array();
     $mytags['a'][ 'twlang' ]= array();
     $mytags['a'][ 'twcounturl' ]= array();
+    $mytags['a'][ 'pipinitlayout' ]= array();
+    $mytags['a'][ 'pipiniturl' ]= array();
+    $mytags['a'][ 'pipinitmedia' ]= array();
+    $mytags['a'][ 'pipinitdescription' ]= array();
     
-    $pretags = array( 'g:plusone:', 'fb:like:', 'tw:');
-    $posttags = array('gplusone', 'fblike', 'tw');
+    $pretags = array( 'g:plusone:', 'fb:like:', 'tw:', 'pi:pinit:');
+    $posttags = array('gplusone', 'fblike', 'tw', 'pipinit');
 
     foreach($pretags as $i => $attr)
     {
