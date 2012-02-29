@@ -856,7 +856,7 @@ elseif ($data['below'] == 'custom_string')
 
 
 // All the checkbox fields
-foreach (array('addthis_show_stats', 'addthis_append_data', 'addthis_showonhome', 'addthis_showonpages', 'addthis_showonarchives', 'addthis_showoncats', 'addthis_showonexcerpts', 'addthis_addressbar','addthis_508' ) as $field)
+foreach (array('addthis_show_stats', 'addthis_append_data', 'addthis_showonhome', 'addthis_showonpages', 'addthis_showonarchives', 'addthis_showoncats', 'addthis_showonexcerpts', 'addthis_addressbar','addthis_508','addthis_copytracking1' ) as $field)
 {
     if ( isset($data[$field]) &&  $data[$field] == true)
         $options[$field] = true; 
@@ -1338,6 +1338,9 @@ function addthis_output_script($return = false )
     else
         $addthis_config["data_track_addressbar"] = false;
 
+    if ( isset($options['addthis_copytracking1']) && $options['addthis_copytracking1'] == true)
+        $addthis_config['data_track_textcopy'] = false;
+
     if ( isset($options['addthis_language']) && strlen($options['addthis_language']) == 2)
         $addthis_config['ui_language'] = $options['addthis_language'];
         
@@ -1554,6 +1557,7 @@ function addthis_admin_menu()
         'addthis_showonarchives'  => true,
         'addthis_showoncats' => true,
         'addthis_addressbar' => false,
+        'addthis_copytracking1' => false,
         'addthis_brand'     => '',
         'toolbox'   => '',
         'addthis_language'  => '',
@@ -1677,6 +1681,10 @@ function addthis_plugin_options_php4() {
 				<tr>
 					<th scope="row"><?php _e("Track address bar shares:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="checkbox" name="addthis_settings[addthis_addressbar]" value="true" <?php echo ($addthis_addressbar  == true ? 'checked="checked"' : ''); ?>/></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php _e("Opt Out of copy text tracking:", 'addthis_trans_domain' ); ?></th>
+					<td><input type="checkbox" name="addthis_settings[addthis_copytracking1]" value="true" <?php echo ( $addthis_copytracking1 == true ? 'checked="checked"' : ''); ?>/></td>
 				</tr>
 				<tr>
 					<th scope="row"><?php _e("Show on homepage:", 'addthis_trans_domain' ); ?></th>
