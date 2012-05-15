@@ -1651,15 +1651,15 @@ function addthis_plugin_options_php4() {
 			<table class="form-table" style="width:400px;">
 				<tbody>
 					<tr valign="top">
-						<td><?php _e("AddThis profile ID:", 'addthis_trans_domain' ); ?></th>
+						<td><?php _e("AddThis profile ID:", 'addthis_trans_domain' ); ?></td>
 						<td><input id="addthis_profile"  type="text" name="addthis_settings[addthis_profile]" value="<?php echo $profile; ?>" autofill='off' autocomplete='off'  /></td>
 					</tr>
 					<tr valign="top">
-						<td><?php _e("AddThis username:", 'addthis_trans_domain' ); ?></th>
+						<td><?php _e("AddThis username:", 'addthis_trans_domain' ); ?></td>
 						<td><input id="addthis_username"  type="text" name="addthis_settings[addthis_username]" value="<?php echo $username; ?>" autofill='off' autocomplete='off'  /></td>
 					</tr>
 					<tr id="password_row" >
-						<td><?php _e("AddThis password:", 'addthis_trans_domain' ); ?><br/><span style="font-size:10px">(required for displaying stats)</span></th>
+						<td><?php _e("AddThis password:", 'addthis_trans_domain' ); ?><br/><span style="font-size:10px">(required for displaying stats)</span></td>
 						<td><input id="addthis_password" type="password" name="addthis_settings[addthis_password]" value="<?php echo $password; ?>" autocomplete='off' autofill='off'  /></td>
 					</tr>
 				</tbody>
