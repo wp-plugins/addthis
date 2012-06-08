@@ -242,14 +242,10 @@ if ( apply_filters( 'at_do_options_upgrades', '__return_true') || apply_filters(
     function addthis_options_240()
     {
         $options = get_option('addthis_settings'); 
+
         // Add An option for the AT Version
-        //$options['atversion'] = '250';
+        $options['atversion'] = '250';
 
-        // Add An option for wp_footer
-        addthis_check_footer();
-
-        //Change text copy from being an opt-out to being defaulted opt-in
-        
         //$options['wpfooter'] = false;
         update_option( 'addthis_settings', $options); 
 
