@@ -62,7 +62,7 @@ Class AddThis_addjs{
         if ( isset($this->_options['wpfooter']) && $this->_options['wpfooter'])
             add_action('wp_footer', array($this, 'output_script') );
         else
-            add_action('the_content', array($this, 'output_script') );
+            add_filter('the_content', array($this, 'output_script_filter') );
 
         do_action('addthis_addjs_created');
     }
@@ -74,6 +74,16 @@ Class AddThis_addjs{
             echo $this->jsToAdd;
             $this->_js_added = true;
         }
+    }
+
+    function output_script_filter($content){
+        if ($this->_js_added != true && ! is_admin() && ! is_feed() )
+        {
+            $this->addWidgetToJs();
+            $content = $content . $this->jsToAdd;
+            $this->_js_added = true;
+        }
+        return $content;
     }
 
     /* testing for wp_footer in a theme stuff */

@@ -1348,7 +1348,7 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
 }
 
 
-add_action('wp_footer', 'addthis_output_script');
+//add_action('wp_footer', 'addthis_output_script');
 
 /**
  * Check to see if our Javascript has been outputted yet.  If it hasn't, return it.  Else, return false.
