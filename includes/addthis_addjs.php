@@ -49,7 +49,7 @@ Class AddThis_addjs{
             add_action('admin_init',array($this, 'update_wpfooter'));
         }
 
-        $this->pubid = (isset($options['profile'])) ? $options['profile'] : 'wp-'.$this->_cuid ;
+        $this->pubid = $this->getProfileId();
 
         // on theme swich, check for footer again
         add_action('switch_theme', array($this, 'switch_theme'));
@@ -70,6 +70,7 @@ Class AddThis_addjs{
     function output_script(){
         if ($this->_js_added != true)
         {
+            $this->wrapJs();
             $this->addWidgetToJs();
             echo $this->jsToAdd;
             $this->_js_added = true;
@@ -79,11 +80,16 @@ Class AddThis_addjs{
     function output_script_filter($content){
         if ($this->_js_added != true && ! is_admin() && ! is_feed() )
         {
+            $this->wrapJs();
             $this->addWidgetToJs();
             $content = $content . $this->jsToAdd;
             $this->_js_added = true;
         }
         return $content;
+    }
+
+    function wrapJs(){
+        $this->jsToAdd = '<script type="text/javascript">' . $this->jsToAdd . '</script>';
     }
 
     /* testing for wp_footer in a theme stuff */
@@ -139,12 +145,12 @@ Class AddThis_addjs{
     }
 
     function getProfileId(){
-        return (isset($this->_options['addthis_profile']))?  $this->_options['addthis_profile'] : $this->_cuid;
+        return (isset($this->_options['profile']))?  $this->_options['profile'] : $this->_cuid;
     }
 
 
     function setProfileId($profile){
-        $this->_options['addthis_profile'] = sanitize_text_field($profile);
+        $this->_options['profile'] = sanitize_text_field($profile);
         update_option( 'addthis_settings', $options); 
     }   
 

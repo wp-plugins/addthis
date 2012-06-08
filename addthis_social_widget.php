@@ -1347,6 +1347,14 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
 
 }
 
+add_action('init', 'addthis_register_script_in_addjs', 20);
+
+function addthis_register_script_in_addjs(){
+    global $addthis_addjs;
+    $script = addthis_output_script(true, true);
+    $addthis_addjs->addToScript($script);
+}
+
 
 //add_action('wp_footer', 'addthis_output_script');
 
@@ -1355,7 +1363,7 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
  *
  * @return mixed
 */
-function addthis_output_script($return = false )
+function addthis_output_script($return = false, $justConfig = false )
 {
     global $addthis_settings;
 
@@ -1374,7 +1382,6 @@ function addthis_output_script($return = false )
         $pub = 'wp-'.cuid();
     }
     $pub = urlencode($pub);
-
    
     $addthis_config = array();
     $addthis_share = array();
@@ -1444,11 +1451,40 @@ function addthis_output_script($return = false )
         $addthis_share['shorteners']['bitly']['login'] = esc_js($options['addthis_bitly_login']);
         $addthis_share['shorteners']['bitly']['apiKey'] = esc_js($options['addthis_bitly_key']);
     }
+
+    if ($justConfig)
+    {
+        $return = '';
+        if ( isset( $options['addthis_share_json'] ) && $options['addthis_share_json'] != '')
+            $return .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . $options['addthis_share_json'] . ';}';
+        else
+            $return .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
+
+        $return .= "\n";
+
+        if (isset($options['addthis_options']) && strlen($options['addthis_options']) != 0)
+            $return .= 'var addthis_options = "'.$options['addthis_options'].'";';
+
+        $return .= "\n";
+        if ( isset( $options['addthis_config_json'] ) &&   $options['addthis_config_json'] != '')
+            $return .= 'var addthis_config = '. $options['addthis_config_json'] .';';
+        elseif (! empty ($addthis_config) )
+            $return .= 'var addthis_config = '. json_encode($addthis_config) .';';
+
+        $return .= "\n";
+
+
+        return $return;
+
+    }
+
+
     if ( isset( $options['addthis_share_json'] ) && $options['addthis_share_json'] != '')
         $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . $options['addthis_share_json'] . ';}';
     else
         $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
     $script .= '</script>';
+            
 
     $script .= '<script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#pubid='.$pub.'"></script>';
     
@@ -1742,26 +1778,26 @@ function addthis_plugin_options_php4() {
         <div id="tabs-2">
 			<table class="form-table">
                 <tr>
-                    <th><h2>Page Types</h2></th> 
+                    <th><h2>Show AddThis on &hellip;</h2></th> 
 
                 </tr>
-					<th scope="row"><?php _e("Show on homepage:", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("homepage:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="checkbox" name="addthis_settings[addthis_showonhome]" value="true" <?php echo ($addthis_showonhome  == true ? 'checked="checked"' : ''); ?>/></td>
 				</tr>
 				<tr>
-					<th scope="row"><?php _e("Show on <a href=\"//codex.wordpress.org/Pages\" target=\"blank\">pages</a>:", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("<a href=\"//codex.wordpress.org/Pages\" target=\"blank\">pages</a>:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="checkbox" name="addthis_settings[addthis_showonpages]" value="true" <?php echo ( $addthis_showonpages  == true ? 'checked="checked"' : ''); ?>/></td>
 				</tr>
 				<tr>
-					<th scope="row"><?php _e("Show in archives:", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("archives:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="checkbox" name="addthis_settings[addthis_showonarchives]" value="true" <?php echo ($addthis_showonarchives  == true ? 'checked="checked"' : ''); ?>/></td>
 				</tr>
 				<tr>
-					<th scope="row"><?php _e("Show in categories:", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("categories:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="checkbox" name="addthis_settings[addthis_showoncats]" value="true" <?php echo ( $addthis_showoncats == true ? 'checked="checked"' : ''); ?>/></td>
 				</tr>
 				<tr>
-					<th scope="row"><?php _e("Show on excerpts:", 'addthis_trans_domain' ); ?></th>
+					<th scope="row"><?php _e("excerpts:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="checkbox" name="addthis_settings[addthis_showonexcerpts]" value="true" <?php echo ( $addthis_showonexcerpts == true ? 'checked="checked"' : ''); ?>/></td>
 				</tr>
                 <tr>
