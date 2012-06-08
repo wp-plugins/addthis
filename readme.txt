@@ -36,7 +36,7 @@ To upload the plugin through WordPress, instead of FTP:
 
 = Is AddThis free? =
 
-Yep! The features you see today on AddThis will always be free.
+Yep! The features you see today on AddThis will always be free of charge.
 
 = Do I need to create an account? =
 
