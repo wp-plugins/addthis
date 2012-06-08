@@ -479,6 +479,7 @@ function addthis_render_dashboard_widget() {
     {
         // we're good
     }
+    else
     {
         _e( 'Cheatin&#8217; uh?' );
         exit;
