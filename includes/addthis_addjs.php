@@ -44,7 +44,7 @@ Class AddThis_addjs{
         $this->_cuid = $cuid;
 
         // If the footer option isn't set, check for it
-        if (! isset($this->options['wpfooter']) && current_user_can('manage_options'))
+        if (! isset($this->_options['wpfooter']) && current_user_can('manage_options'))
         {
             add_action('admin_init',array($this, 'update_wpfooter'));
         }
@@ -65,6 +65,14 @@ Class AddThis_addjs{
             add_filter('the_content', array($this, 'output_script_filter') );
 
         do_action('addthis_addjs_created');
+    }
+
+    function switch_theme(){
+        $footer = $this->check_for_footer();
+        $options = $this->_options;
+        $options['wpfooter'] = $footer;
+        update_option( 'addthis_settings', $options); 
+        $this->_options = $options;
     }
 
     function output_script(){
