@@ -765,7 +765,7 @@ die();
 */
 function addthis_dashboard_init() {
     $options = get_option('addthis_settings');
-    if (isset($options['addthis_show_stats']) && $options['addthis_show_stats'] == true && isset($options['username']) && isset($options['password']) && ! empty($options['username']) && ! empty($options['password']) && (current_user_can('manage_options') || apply_filter('addthis_show_dashboard', __return_false() ) ) )
+    if (isset($options['addthis_show_stats']) && $options['addthis_show_stats'] == true && isset($options['username']) && isset($options['password']) && ! empty($options['username']) && ! empty($options['password']) && (current_user_can('manage_options') || apply_filters('addthis_show_dashboard', __return_false() ) ) )
         wp_add_dashboard_widget('dashboard_addthis', 'AddThis', 'addthis_render_dashboard_widget_holder');   
 } 
 
