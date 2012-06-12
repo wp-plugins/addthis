@@ -479,6 +479,7 @@ function addthis_render_dashboard_widget() {
     {
         // we're good
     }
+    else
     {
         _e( 'Cheatin&#8217; uh?' );
         exit;
@@ -835,6 +836,19 @@ if ( isset($data['addthis_profile']) )
 if ( isset($data['addthis_password']) )
     $options['password'] = sanitize_text_field($data['addthis_password']);
 
+if ( isset($data['username']) )
+ $options['username'] = sanitize_text_field($data['username']);
+
+if ( isset($data['profile']) )
+ $options['profile'] = sanitize_text_field($data['profile']);
+
+if ( isset($data['password']) )
+    $options['password'] = sanitize_text_field($data['password']);
+
+if ( isset($data['wpfooter']))
+    $options['wpfooter'] = (bool) $data['wpfooter'];
+
+
 if (! isset($data['above']) ){
 }
 elseif ( isset ($data['show_above']) )
@@ -988,7 +1002,7 @@ function addthis_add_content_filters()
    
     if ( ! empty( $options) ){
         if ( isset($options['addthis_showonexcerpts']) &&  $options['addthis_showonexcerpts'] == true )
-            add_filter('get_the_excerpt', 'addthis_display_social_widget_excerpt');
+            add_filter('get_the_excerpt', 'addthis_display_social_widget_excerpt', 11);
         
         add_filter('the_content', 'addthis_display_social_widget', 15);
     }
@@ -1124,16 +1138,28 @@ function addthis_remove_tag($content, $text = '')
         add_filter('the_content', 'addthis_display_social_widget', 15);
 
         $text = str_replace(']]>', ']]&gt;', $text);
-        $text = strip_tags($text);
+       
+        // 3.3 and earlier
+        if (! function_exists('wp_trim_words'))
+            $text = strip_tags($text);
         $excerpt_length = apply_filters('excerpt_length', 55); 
         $excerpt_more = apply_filters('excerpt_more', ' ' . '[...]');
-        $words = preg_split("/[\n\r\t ]+/", $text, $excerpt_length + 1, PREG_SPLIT_NO_EMPTY);
-        if ( count($words) > $excerpt_length ) {
-            array_pop($words);
-            $text = implode(' ', $words);
-            $text = $text . $excerpt_more;
-        } else {
-            $text = implode(' ', $words);
+
+        // 3.3 and later
+        if (function_exists('wp_trim_words'))
+        {
+            $text = wp_trim_words( $text, $excerpt_length, $excerpt_more );
+        }
+        else
+        {
+            $words = preg_split("/[\n\r\t ]+/", $text, $excerpt_length + 1, PREG_SPLIT_NO_EMPTY);
+            if ( count($words) > $excerpt_length ) {
+                array_pop($words);
+                $text = implode(' ', $words);
+                $text = $text . $excerpt_more;
+            } else {
+                $text = implode(' ', $words);
+            }
         }
         if ($options['addthis_showonexcerpts'] == false)
             return $text;

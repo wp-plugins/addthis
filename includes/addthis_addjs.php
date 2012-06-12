@@ -52,7 +52,7 @@ Class AddThis_addjs{
         $this->pubid = $this->getProfileId();
 
         // on theme swich, check for footer again
-        add_action('switch_theme', array($this, 'switch_theme'));
+        add_action('switch_theme', array($this, 'switch_theme'),15);
 
         // In order for our wp_footer magic to work, we need to sometimes add our stuff 
         add_action('init', array($this, 'maybe_add_footer_comment'));
@@ -69,10 +69,8 @@ Class AddThis_addjs{
 
     function switch_theme(){
         $footer = $this->check_for_footer();
-        $options = $this->_options;
-        $options['wpfooter'] = $footer;
-        update_option( 'addthis_settings', $options); 
-        $this->_options = $options;
+        $this->_options['wpfooter'] = $footer;
+        update_option( 'addthis_settings', $this->_options); 
     }
 
     function output_script(){
@@ -144,11 +142,11 @@ Class AddThis_addjs{
 
     /*  User name and other shared resources */
     function getUsername(){
-        return (isset($this->_options['addthis_username']))?  $this->_options['addthis_username'] : false;
+        return (isset($this->_options['username']))?  $this->_options['username'] : false;
 
     }
     function setUsername($username){
-        $this->_options['addthis_username'] = sanitize_text_field($username);
+        $this->_options['username'] = sanitize_text_field($username);
         update_option( 'addthis_settings', $options); 
     }
 
@@ -163,11 +161,11 @@ Class AddThis_addjs{
     }   
 
     function getPassword(){
-        return (isset($this->_options['addthis_password']))?  $this->_options['addthis_password'] : $this->_cuid;
+        return (isset($this->_options['password']))?  $this->_options['password'] : $this->_cuid;
     }
 
     function setPassword($password){
-        $this->_options['addthis_password'] = sanitize_text_field($password);
+        $this->_options['password'] = sanitize_text_field($password);
         update_option( 'addthis_settings', $options); 
     }
 
