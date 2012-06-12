@@ -37,7 +37,6 @@ else return;
 add_action('init', 'addthis_early', 1);
 function addthis_early(){
     global $addthis_addjs;
-
     if (! isset($addthis_addjs)){
         require('includes/addthis_addjs.php');
         $addthis_options = get_option('addthis_settings');
@@ -46,7 +45,7 @@ function addthis_early(){
 }
 
 
-define( 'addthis_style_default' , 'small_toolbox_with_share');
+define( 'addthis_style_default' , 'fb_tw_p1_sc');
 define( 'ADDTHIS_PLUGIN_VERSION', '2.4.0');
 
 $addthis_settings = array();

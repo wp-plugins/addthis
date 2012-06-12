@@ -151,9 +151,8 @@ Class AddThis_addjs{
     }
 
     function getProfileId(){
-        return (isset($this->_options['profile']))?  $this->_options['profile'] : $this->_cuid;
+        return( isset( $this->_options['profile'] ) && ! empty($this->_options['profile']) )?  $this->_options['profile'] : $this->_cuid;
     }
-
 
     function setProfileId($profile){
         $this->_options['profile'] = sanitize_text_field($profile);
