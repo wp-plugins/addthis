@@ -1479,8 +1479,12 @@ function addthis_output_script($return = false, $justConfig = false )
         if ( isset( $options['addthis_share_json'] ) && $options['addthis_share_json'] != '')
             $return .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . $options['addthis_share_json'] . ';}';
         else
-            $return .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
+        {
+            $share = apply_filters('addthis_share_js_var', $addthis_share );
+            if (! empty($share) )
+                $return .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
 
+        }
         $return .= "\n";
 
         if (isset($options['addthis_options']) && strlen($options['addthis_options']) != 0)
