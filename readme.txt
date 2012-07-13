@@ -12,6 +12,10 @@ Get more traffic back to your site by installing the AddThis WordPress plugin. W
 
 Optionally, sign up for a free AddThis.com account to see how your visitors are sharing your content: which services they're using for sharing, which content is shared the most, and more.
 
+We also have plugins available for <a href='http://wordpress.org/extend/plugins/addthis-follow/'>Increasing followers on social networks</a> and <a href='http://wordpress.org/extend/plugins/addthis-welcome/'>Welcoming users based on social behavior</a>.
+
+Tell us what you think <a href='http://www.surveymonkey.com/s/53FDFRF'>Help make AddThis even better by taking this short customer survey.</a>
+
 <a href="http://www.addthis.com/blog">AddThis Blog</a> | <a href="http://www.addthis.com/privacy">Privacy Policy</a>
 
 == Installation ==
