@@ -14,7 +14,7 @@ Class AddThis_addjs{
         'AddThis Social Bookmarking Widget' => array('http://wordpress.org/extend/plugins/addthis/', 'Share') ,
         'AddThis Follow Widget' => array('http://wordpress.org/extend/plugins/addthis-follow/', 'Follow'),
 //        'AddThis Trending Content Widget' => array('http://wordpress.org/extend/plugins/addthis-trending', 'Trending' ),
-//        'AddThis Welcome Bar' => array('http://wordpress.org/extend/plugins/addthis-welcome/', 'Welcome'), 
+        'AddThis Welcome Bar' => array('http://wordpress.org/extend/plugins/addthis-welcome/', 'Welcome'), 
     );
     private $_atInstalled = array();
 
@@ -107,7 +107,7 @@ Class AddThis_addjs{
     }
 
     function wrapJs(){
-        $this->jsToAd .= "var addthis_product = '".$this->productCode."';\n";
+        $this->jsToAdd .= "var addthis_product = '".$this->productCode."';\n";
         $this->jsToAdd = '<script type="text/javascript">' . $this->jsToAdd . '</script>';
     }
 
