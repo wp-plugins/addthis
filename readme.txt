@@ -1,9 +1,9 @@
 === AddThis === 
-Contributors: _mjk_, jorbin
-Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz
+Contributors: _mjk_, jorbin, addthis_paul, joesullivan
+Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz, pintrest, widget
 Requires at least: 2.9
-Tested up to: 3.3.1
-Stable tag: 2.3.2
+Tested up to: 3.3.2
+Stable tag: 2.4.1
 
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with over 330 popular services. 
 
@@ -11,6 +11,10 @@ The AddThis Social Bookmarking Widget allows any visitor to bookmark and share y
 Get more traffic back to your site by installing the AddThis WordPress plugin. With AddThis, your users can promote your content by sharing to 330 of the most popular social networking and bookmarking sites (like Facebook, Twitter, Digg, StumbleUpon and MySpace). We also support address bar sharing in modern browsers. Our button is small, unobtrusive, quick to load and recognized all over the web. 
 
 Optionally, sign up for a free AddThis.com account to see how your visitors are sharing your content: which services they're using for sharing, which content is shared the most, and more.
+
+We also have plugins available for <a href='http://wordpress.org/extend/plugins/addthis-follow/'>Increasing followers on social networks</a> and <a href='http://wordpress.org/extend/plugins/addthis-welcome/'>Welcoming users based on social behavior</a>.
+
+Tell us what you think <a href='http://www.surveymonkey.com/s/53FDFRF'>Help make AddThis even better by taking this short customer survey.</a>
 
 <a href="http://www.addthis.com/blog">AddThis Blog</a> | <a href="http://www.addthis.com/privacy">Privacy Policy</a>
 
@@ -36,7 +40,7 @@ To upload the plugin through WordPress, instead of FTP:
 
 = Is AddThis free? =
 
-Yep! The features you see today on AddThis will always be free.
+Yep! The features you see today on AddThis will always be free of charge.
 
 = Do I need to create an account? =
 
@@ -74,6 +78,13 @@ In the screen options you can enable the AddThis meta box.  Check the box and sa
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 2.4.1 =
+* Bug fixes
+
+= 2.4.0 =   
+* Refactor how we add code to pages which should eliminate how many times it is added
+* Numerous Bug Fixes and a few new filters
+
 = 2.3.2 =
 * Add opt out for copy tracking 
 
@@ -180,6 +191,11 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+= 2.4.1 = 
+Bug Fixes
+
+= 2.4.0 =
+Better Performance and improved UI
 
 = 2.3.2 =
 New option for opting out of copy text tracking
