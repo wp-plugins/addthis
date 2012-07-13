@@ -46,7 +46,7 @@ function addthis_early(){
 
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.4.1');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.4.2');
 
 $addthis_settings = array();
 $addthis_settings['isdropdown'] = 'true';
