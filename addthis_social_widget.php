@@ -474,7 +474,7 @@ add_action('wp_ajax_at_show_dashboard_widget', 'addthis_render_dashboard_widget'
 * @see js/addthis.css
 */
 function addthis_render_dashboard_widget() {
-    if( current_user_can('manage_options') || apply_filter('addthis_show_dashboard', __return_false() ) )
+    if( current_user_can('manage_options') || apply_filters('addthis_show_dashboard', __return_false() ) )
     {
         // we're good
     }
