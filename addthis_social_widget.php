@@ -23,7 +23,7 @@
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.4.2
+* Version: 2.4.3
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -46,7 +46,7 @@ function addthis_early(){
 
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.4.1');
+define( 'ADDTHIS_PLUGIN_VERSION', '2.4.3');
 
 $addthis_settings = array();
 $addthis_settings['isdropdown'] = 'true';
@@ -295,8 +295,6 @@ function addthis_print_widget($url=null, $title=null, $style = addthis_style_def
     $identifier = addthis_get_identifier($url, $title);
 
 echo "\n<!-- AddThis Custom -->\n";
-
-
     if ( ! is_array($style) &&  isset($addthis_new_styles[$style]) ){
         echo sprintf($addthis_new_styles[$style]['src'], $identifier);
     }
@@ -532,7 +530,7 @@ function addthis_render_dashboard_widget() {
         $password = urlencode($options['password']);
     else
     {
-        echo 'No Passwrod entered';
+        echo 'No Password entered';
         return false;
     }
     $domain = get_home_url();
@@ -576,7 +574,7 @@ function addthis_render_dashboard_widget() {
       
             if ( is_wp_error( $stats[$metric.$dimension.$period] ) )
             {
-                    echo "There was an error retrieving your stats from the AddThis servers.  Please wait and try again in a few moments\n";
+                    echo "There was an error retrieving your stats from the AddThis servers.  Please wait and try again in a few moments.\n";
                     if (defined(WP_DEBUG) && WP_DEBUG == TRUE)
                         echo "Error Code:" .  $stats[$metric.$dimension.$period]->get_error_code();
                     
@@ -585,19 +583,19 @@ function addthis_render_dashboard_widget() {
             
             else if ($stats[$metric.$dimension.$period]['response']['code'] == 401 )
             {
-                    echo "The Username / Password / Profile combination you presented is not valid.<br />";
-                    echo "Please confirm that you have correctly entered your AddThis username, password and profile id.";
+                    echo "The username, password, and profile combination you entered is invalid.<br />";
+                    echo "Please confirm that you have correctly entered your AddThis username, password and profile ID.";
                     exit;
             }
             else if ( $stats[$metric.$dimension.$period]['response']['code'] == 500)
             {
-                    echo "Something has gone terribly wrong! This should never happen, but somehow did.  We are working to correct it right now.  We will get everything up again soon";
+                    echo "Something has gone terribly wrong! This should never happen, but somehow did.  We are working to correct it right now.  We will get everything up again soon.";
                     exit;
             }
 
             else if ($stats[$metric.$dimension.$period]['response']['code'] == 501 )  
             { 
-                    echo "There was an error retrieving your analytics. If you wait a momeent and try again, you should be all set ";
+                    echo "There was an error retrieving your analytics. If you wait a momeent and try again, you should be all set.";
                     exit;
             }
             else if ($stats[$metric.$dimension.$period]['response']['code'] != 201 )
@@ -650,10 +648,12 @@ function addthis_render_dashboard_widget() {
         }
         $lastmonth['viral'] = ($lastmonth['shares'] > 0 && $lastmonth['clickbacks'] ) ? $lastmonth['clickbacks'] / $lastmonth['shares'] * 100 . '%' : 'n/a';
 
-
         $services['shares'] = json_decode($stats['shares/servicemonth']['body']);
+        if (is_null($services['shares'])) $services['shares'] = array();
         $services['clickbacks'] = json_decode($stats['clickbacks/servicemonth']['body']);
-    foreach (array('shares', 'clickbacks') as $type)
+        if (is_null($services['clickbacks'])) $services['shares'] = array();
+
+        foreach (array('shares', 'clickbacks') as $type)
         {
             $topServiceShare = array_shift($services[$type]);
             $firstLabel = ( isset($_services[$topServiceShare->service])) ? $_services[$topServiceShare->service] : $topServiceShare->service;
@@ -670,8 +670,8 @@ function addthis_render_dashboard_widget() {
 
 
             $servicesCharts[$type] = '//chart.apis.google.com/chart?&chdlp=b&chs=118x145&cht=p3&chco=BA3A1C|F75C39|424242&chf=bg,s,00000000&'.
-                                        'chdl='.$firstLabel.'|'.$secondLabel.'|'.$thirdLabel.'&'.
-                                        'chd=t:'.$firstAmount.','.$secondAmount.','.$thirdAmount; 
+                'chdl='.$firstLabel.'|'.$secondLabel.'|'.$thirdLabel.'&'.
+                'chd=t:'.$firstAmount.','.$secondAmount.','.$thirdAmount; 
         }                                                         
 
 
