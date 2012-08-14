@@ -655,23 +655,29 @@ function addthis_render_dashboard_widget() {
 
         foreach (array('shares', 'clickbacks') as $type)
         {
-            $topServiceShare = array_shift($services[$type]);
-            $firstLabel = ( isset($_services[$topServiceShare->service])) ? $_services[$topServiceShare->service] : $topServiceShare->service;
-            $firstAmount = $topServiceShare->{$type};
-            $topServiceShare = array_shift($services[$type]);
-            $secondLabel = ( isset($_services[$topServiceShare->service])) ? $_services[$topServiceShare->service] : $topServiceShare->service;
-            $secondAmount = $topServiceShare->{$type};
-            $thirdLabel = 'Others';
-            $thirdAmount = 0;
-            foreach($services[$type] as $service )
-            {
-                $thirdAmount += $service->{$type};
+            if (is_array($services[$type])) {
+                $topServiceShare = array_shift($services[$type]);
+                $firstLabel = ( isset($_services[$topServiceShare->service])) ? $_services[$topServiceShare->service] : $topServiceShare->service;
+                $firstAmount = $topServiceShare->{$type};
+                $topServiceShare = array_shift($services[$type]);
+                $secondLabel = ( isset($_services[$topServiceShare->service])) ? $_services[$topServiceShare->service] : $topServiceShare->service;
+                $secondAmount = $topServiceShare->{$type};
+                $thirdLabel = 'Others';
+                $thirdAmount = 0;
+                if (is_array($services[$type])) {
+                    foreach($services[$type] as $service )
+                    {
+                        $thirdAmount += $service->{$type};
+                    }
+                }
+
+
+                $servicesCharts[$type] = '//chart.apis.google.com/chart?&chdlp=b&chs=118x145&cht=p3&chco=BA3A1C|F75C39|424242&chf=bg,s,00000000&'.
+                    'chdl='.$firstLabel.'|'.$secondLabel.'|'.$thirdLabel.'&'.
+                    'chd=t:'.$firstAmount.','.$secondAmount.','.$thirdAmount; 
+            } else {
+                $servicesCharts[$type] = '//chart.apis.google.com/chart?&chdlp=b&chs=118x145&cht=p3&chco=BA3A1C|F75C39|424242&chf=bg,s,00000000&';
             }
-
-
-            $servicesCharts[$type] = '//chart.apis.google.com/chart?&chdlp=b&chs=118x145&cht=p3&chco=BA3A1C|F75C39|424242&chf=bg,s,00000000&'.
-                'chdl='.$firstLabel.'|'.$secondLabel.'|'.$thirdLabel.'&'.
-                'chd=t:'.$firstAmount.','.$secondAmount.','.$thirdAmount; 
         }                                                         
 
 
@@ -1230,10 +1236,12 @@ function addthis_display_social_widget_excerpt($content)
     else
         $options = get_option('addthis_settings');
    
-
-    if ( has_excerpt() && $options['addthis_showonexcerpts'] == true )
+    // I don't think has_excerpt() is always necessarily true when calling "get_the_excerpt()",
+    // but since this function is only as a get_the_excerpt() filter, we should probably
+    // not care whether or not an excerpt is there since the caller obviously wants one.
+    if ( /*has_excerpt() && */$options['addthis_showonexcerpts'] == true ) {
         return addthis_display_social_widget($content, true, true);
-    else
+    } else
         return $content;
 }
 
@@ -1264,8 +1272,11 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     // Single pages (true by default and design)
     elseif ( is_single() )
         $display = true;
+    elseif ($below_excerpt) 
+        $display = isset($options['addthis_showonexcerpts']) && $options['addthis_showonexcerpts'] == true;
     else
         $display = false;
+
     $custom_fields = get_post_custom($post->ID);
     if (isset ($custom_fields['addthis_exclude']) && $custom_fields['addthis_exclude'][0] ==  'true')
         $display = false;
@@ -1407,26 +1418,17 @@ function addthis_output_script($return = false, $justConfig = false )
     $addthis_config = array();
     $addthis_share = array();
 
-    if ( isset($options['addthis_append_data']) &&  $options['addthis_append_data'] == true)
-        $addthis_config["data_track_clickback"] = true;
-    else
-        $addthis_config["data_track_clickback"] = false;
+    $addthis_config["data_track_clickback"] = (isset($options['addthis_append_data']) && $options['addthis_append_data'] == true);
     
     if ( isset($options['data_ga_property']) ){
         $addthis_config['data_ga_property'] = $options['data_ga_property'];
         $addthis_config['data_ga_social'] = true;
     }
 
-    if ( isset($options['addthis_addressbar']) &&  $options['addthis_addressbar'] == true)
-        $addthis_config["data_track_addressbar"] = true;
-    else
-        $addthis_config["data_track_addressbar"] = false;
+    $addthis_config["data_track_addressbar"] = (isset($options['addthis_addressbar']) && $options['addthis_addressbar'] == true);
 
     // Opt in
-    if ( isset($options['addthis_copytracking2']) && $options['addthis_copytracking2'] == true)
-        $addthis_config['data_track_textcopy'] = true;
-    else
-        $addthis_config['data_track_textcopy'] = false;
+    $addthis_config['data_track_textcopy'] = (isset($options['addthis_copytracking2']) && $options['addthis_copytracking2'] == true);
 
     // Old opt out
     if ( isset($options['addthis_copytracking1']) && $options['addthis_copytracking1'] == true)
@@ -1510,13 +1512,11 @@ function addthis_output_script($return = false, $justConfig = false )
         $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
     $script .= '</script>';
             
-
     $script .= '<script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#pubid='.$pub.'"></script>';
-    
 
     if ( ! is_admin() && ! is_feed() )
         echo $script;
-    elseif ($return == true &&  ! is_admin() && ! is_feed() )
+    elseif ($return == true && ! is_admin() && ! is_feed() )
         return $script;
 }
 
