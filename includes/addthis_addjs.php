@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class for managing AddThis script includes across all its plugins.
+ */
 Class AddThis_addjs{
     /**
     * var bool check to see if we have added our JS already.  Ensures that we don't add it twice
@@ -237,14 +240,7 @@ Class AddThis_addjs{
             }
 
             return '<p class="addthis_more_promo">' .$string . '</p>';
-            
-
-
-
-
-
         }
     }
-
 }
 

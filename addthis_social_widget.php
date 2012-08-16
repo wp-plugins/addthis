@@ -34,6 +34,7 @@ else return;
 
 
 // Setup our shared resources early 
+// addthis_addjs.php is a standard class shared by the various AddThis plugins to make it easy for us to include our bootstrapping JavaScript only once.
 add_action('init', 'addthis_early', 1);
 function addthis_early(){
     global $addthis_addjs;
@@ -93,6 +94,10 @@ $addthis_new_styles = array(
 
 
 //add_filter('the_title', 'at_title_check');
+/**
+ * @deprecated
+ * @todo Add _deprecated_function notice.
+ */ 
 function at_title_check($title)
 {
     
@@ -111,14 +116,10 @@ function at_title_check($title)
 }
 
 
-add_filter('language_attributes', 'addthis_language_attributes');
-function addthis_language_attributes($input)
-{
-    return $input . ' xmlns:fb="http://www.facebook.com/2008/fbml" xmlns:addthis="http://www.addthis.com/help/api-spec" ';
-}
-
-
-
+/**
+ * @deprecated
+ * @todo Add _deprecated_function notice.
+ */
 function addthis_script_to_content($content)
 {
     global $addthis_did_script_output;
@@ -130,6 +131,14 @@ function addthis_script_to_content($content)
     }
     return $content ;
 }
+
+
+add_filter('language_attributes', 'addthis_language_attributes');
+function addthis_language_attributes($input)
+{
+    return $input . ' xmlns:fb="http://www.facebook.com/2008/fbml" xmlns:addthis="http://www.addthis.com/help/api-spec" ';
+}
+
 
 /**
  * Converts our old many options in to one beautiful array
@@ -223,9 +232,6 @@ if ( apply_filters( 'at_do_options_upgrades', '__return_true') || apply_filters(
         $user_id = $current_user->ID;
 
         add_user_meta($user_id, 'addthis_nag_updated_options', 'true', true);
-
-        
-
     }
 
     function addthis_options_210()
@@ -235,7 +241,6 @@ if ( apply_filters( 'at_do_options_upgrades', '__return_true') || apply_filters(
             $options['profile'] = $options['username'];
 
         update_option( 'addthis_settings', $options); 
-
     }
 
     function addthis_options_240()
@@ -247,7 +252,6 @@ if ( apply_filters( 'at_do_options_upgrades', '__return_true') || apply_filters(
 
         //$options['wpfooter'] = false;
         update_option( 'addthis_settings', $options); 
-
     }
 }
 
@@ -678,7 +682,7 @@ function addthis_render_dashboard_widget() {
             } else {
                 $servicesCharts[$type] = '//chart.apis.google.com/chart?&chdlp=b&chs=118x145&cht=p3&chco=BA3A1C|F75C39|424242&chf=bg,s,00000000&';
             }
-        }                                                         
+        } 
 
 
     echo "<div id='at_tabs'>";
@@ -1066,6 +1070,10 @@ function addthis_init()
 
 }
 
+/**
+ * Places our options into a global associative array. 
+ * @refactor
+ */
 function addthis_set_addthis_settings()
 {
     global $addthis_settings;
@@ -1176,6 +1184,10 @@ function addthis_remove_tag($content, $text = '')
     }
 }
 
+
+/**
+ * so named because it is added "later then the standard filter and all the WP internal filters"
+ */
 function addthis_late_widget($link_text)
 {
     remove_filter('get_the_excerpt', 'addthis_late_widget');
@@ -1272,8 +1284,6 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     // Single pages (true by default and design)
     elseif ( is_single() )
         $display = true;
-    elseif ($below_excerpt) 
-        $display = isset($options['addthis_showonexcerpts']) && $options['addthis_showonexcerpts'] == true;
     else
         $display = false;
 
