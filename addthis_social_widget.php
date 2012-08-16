@@ -1251,7 +1251,8 @@ function addthis_display_social_widget_excerpt($content)
     // I don't think has_excerpt() is always necessarily true when calling "get_the_excerpt()",
     // but since this function is only as a get_the_excerpt() filter, we should probably
     // not care whether or not an excerpt is there since the caller obviously wants one.
-    if ( /*has_excerpt() && */$options['addthis_showonexcerpts'] == true ) {
+    // needs testing/understanding.
+    if ( has_excerpt() && $options['addthis_showonexcerpts'] == true ) {
         return addthis_display_social_widget($content, true, true);
     } else
         return $content;
