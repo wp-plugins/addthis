@@ -44,7 +44,7 @@ Class AddThis_addjs{
         $this->productCode = 'wpp-265';
 
         // Version of AddThis code to use
-        $this->atversion = '250';
+        $this->atversion = '300';
 
         // We haven't added our JS yet. Or at least better not have.
         $this->_js_added = false;

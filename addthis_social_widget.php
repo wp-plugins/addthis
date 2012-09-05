@@ -80,13 +80,13 @@ $addthis_new_styles = array(
     ), // 32x32
     'plus_one_share_counter' => array( 'src' => '<div class="addthis_toolbox addthis_default_style" %s ><a class="addthis_button_google_plusone" g:plusone:size="medium" ></a><a class="addthis_counter addthis_pill_style"></a></div>', 'img' => 'plusone-share.gif', 'name' => 'Plus One and Share Counter', 'above'=> 'hidden', 'below'=>'hidden' , 'defaultHide' => true 
     ), // +1
-    'small_toolbox_with_share' => array( 'src' =>  '<div class="addthis_toolbox addthis_default_style " %s ><a href="//addthis.com/bookmark.php?v=250&amp;username=xa-4d2b47597ad291fb" class="addthis_button_compact">Share</a><span class="addthis_separator">|</span><a class="addthis_button_preferred_1"></a><a class="addthis_button_preferred_2"></a><a class="addthis_button_preferred_3"></a><a class="addthis_button_preferred_4"></a></div>', 'img' => 'small-toolbox.jpg', 'name' => 'Small Toolbox with Share first', 'above' => '', 'below' => 'hidden' , 'defaultHide' => true
+    'small_toolbox_with_share' => array( 'src' =>  '<div class="addthis_toolbox addthis_default_style " %s ><a href="//addthis.com/bookmark.php?v=300&amp;username=xa-4d2b47597ad291fb" class="addthis_button_compact">Share</a><span class="addthis_separator">|</span><a class="addthis_button_preferred_1"></a><a class="addthis_button_preferred_2"></a><a class="addthis_button_preferred_3"></a><a class="addthis_button_preferred_4"></a></div>', 'img' => 'small-toolbox.jpg', 'name' => 'Small Toolbox with Share first', 'above' => '', 'below' => 'hidden' , 'defaultHide' => true
     ), // Plus sign share | four buttons
     'fb_tw_sc' => array( 'src' => '<div class="addthis_toolbox addthis_default_style " %s  ><a class="addthis_button_facebook_like" fb:like:layout="button_count"></a><a class="addthis_button_tweet"></a><a class="addthis_counter addthis_pill_style"></a></div>' , 'img' => 'fb-tw-sc.jpg' , 'name' => 'Like, Tweet, Counter', 'above' => 'hidden', 'below' => 'hidden', 'defaultHide' => true
     ), // facebook tweet share counter
-    'simple_button' => array('src' => '<div class="addthis_toolbox addthis_default_style " %s><a href="//addthis.com/bookmark.php?v=250&amp;username=xa-4d2b47f81ddfbdce" class="addthis_button_compact">Share</a></div>', 'img' => 'share.jpg', 'name' => 'Share Button', 'above' => 'hidden ', 'below' => 'hidden', 'defaultHide' => true
+    'simple_button' => array('src' => '<div class="addthis_toolbox addthis_default_style " %s><a href="//addthis.com/bookmark.php?v=300&amp;username=xa-4d2b47f81ddfbdce" class="addthis_button_compact">Share</a></div>', 'img' => 'share.jpg', 'name' => 'Share Button', 'above' => 'hidden ', 'below' => 'hidden', 'defaultHide' => true
     ), // Plus sign share
-    'button' => array( 'src' => '<div><a class="addthis_button" href="//addthis.com/bookmark.php?v=250" %s><img src="//cache.addthis.com/cachefly/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a></div>', 'img' => 'button.jpg', 'name' => 'Classic Share Button', 'above' => 'hidden ', 'below' => 'hidden'
+    'button' => array( 'src' => '<div><a class="addthis_button" href="//addthis.com/bookmark.php?v=300" %s><img src="//cache.addthis.com/cachefly/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a></div>', 'img' => 'button.jpg', 'name' => 'Classic Share Button', 'above' => 'hidden ', 'below' => 'hidden'
     ), // classic
     'share_counter' => array( 'src' => '<div class="addthis_toolbox addthis_default_style " %s  ><a class="addthis_counter"></a></div>', 'img' => 'share_counter.png', 'name' => 'Share Counter', 'above' => 'hidden ', 'below' => 'hidden' , 'defaultHide' => true
     ),
@@ -248,7 +248,7 @@ if ( apply_filters( 'at_do_options_upgrades', '__return_true') || apply_filters(
         $options = get_option('addthis_settings'); 
 
         // Add An option for the AT Version
-        $options['atversion'] = '250';
+        $options['atversion'] = '300';
 
         //$options['wpfooter'] = false;
         update_option( 'addthis_settings', $options); 
@@ -1523,7 +1523,7 @@ function addthis_output_script($return = false, $justConfig = false )
         $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
     $script .= '</script>';
             
-    $script .= '<script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#pubid='.$pub.'"></script>';
+    $script .= '<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid='.$pub.'"></script>';
 
     if ( ! is_admin() && ! is_feed() )
         echo $script;
@@ -1566,7 +1566,7 @@ function addthis_social_widget($content, $onSidebar = false, $url = null, $title
     $content .= "\n<!-- AddThis Button BEGIN -->\n"
                 .'<script type="text/javascript">'
                 ."\n//<!--\n"
-                ."var addthis_product = 'wpp-250';\n";
+                ."var addthis_product = 'wpp-300';\n";
 
 
     if (strlen($addthis_settings['customization'])) 
@@ -1580,15 +1580,15 @@ function addthis_social_widget($content, $onSidebar = false, $url = null, $title
         $content .= <<<EOF
 //-->
 </script>
-<div class="addthis_container"><a href="//www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button" addthis:url="$link" addthis:title="$title">
+<div class="addthis_container"><a href="//www.addthis.com/bookmark.php?v=300&amp;username=$pub" class="addthis_button" addthis:url="$link" addthis:title="$title">
 EOF;
-        $content .= ($addthis_settings['language'] == '' ? '' /* no hardcoded image -- we'll choose the language automatically */ : addthis_get_button_img()) . '</a><script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
+        $content .= ($addthis_settings['language'] == '' ? '' /* no hardcoded image -- we'll choose the language automatically */ : addthis_get_button_img()) . '</a><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#username='.$pub.'"></script></div>';
     }
     else if ($addthis_settings['menu_type'] === 'toolbox')
     {
         $content .= "\n//-->\n</script>\n";
         $content .= <<<EOF
-<div class="addthis_container addthis_toolbox addthis_default_style" addthis:url="$link" addthis:title="$title"><a href="//www.addthis.com/bookmark.php?v=250&amp;username=$pub" class="addthis_button_compact">Share</a><span class="addthis_separator">|</span>
+<div class="addthis_container addthis_toolbox addthis_default_style" addthis:url="$link" addthis:title="$title"><a href="//www.addthis.com/bookmark.php?v=300&amp;username=$pub" class="addthis_button_compact">Share</a><span class="addthis_separator">|</span>
 EOF;
         if (!strlen($addthis_options)) $addthis_options = 'email,favorites,print,facebook,twitter';
         $addthis_options = split(',', $addthis_options);
@@ -1598,7 +1598,7 @@ EOF;
                 $content .= '<a class="addthis_button_'.$option.'"></a>';
             }
         }
-        $content .= '<script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username='.$pub.'"></script></div>';
+        $content .= '<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#username='.$pub.'"></script></div>';
     }
     else
     {
@@ -1607,7 +1607,7 @@ EOF;
         $content .= <<<EOF
 //-->
 </script>
-<div class="addthis_container"><a href="//www.addthis.com/bookmark.php?v=250&amp;username=$pub" onclick="window.open('//www.addthis.com/bookmark.php?v=250&amp;username=$pub&amp;url=$link&amp;title=$title', 'ext_addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
+<div class="addthis_container"><a href="//www.addthis.com/bookmark.php?v=300&amp;username=$pub" onclick="window.open('//www.addthis.com/bookmark.php?v=300&amp;username=$pub&amp;url=$link&amp;title=$title', 'ext_addthis', 'scrollbars=yes,menubar=no,width=620,height=520,resizable=yes,toolbar=no,location=no,status=no'); return false;" title="Bookmark using any bookmark manager!" target="_blank">
 EOF;
         $content .= addthis_get_button_img() . '</a></div>';
     }
