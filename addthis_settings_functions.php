@@ -66,7 +66,7 @@ function addthis_kses($string)
  * Add this version notification message
  * @param type $atversion
  */
-ffunction _addthis_version_notification($atversion_reverted, $atversion)
+function _addthis_version_notification($atversion_reverted, $atversion)
 {
 	//Fresh install Scenario. ie., atversion = 300 without reverting back. 
 	if($atversion_reverted == 0 && $atversion >= 300) {
