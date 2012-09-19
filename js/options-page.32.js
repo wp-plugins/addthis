@@ -175,6 +175,7 @@ jQuery(document).ready(function($) {
      * Revert to older version after the user upgrades
      */
     $(".addthis-revert-atversion").click(function(){
+       $("#addthis_atversion_reverted_flag").val(1);
        $("#addthis_atversion_hidden").val(ATVERSION_250);
        $(this).closest("form").submit();
        return false;
@@ -183,6 +184,7 @@ jQuery(document).ready(function($) {
     * Update to a newer version
     */ 
    $(".addthis-update-atversion").click(function(){
+       $("#addthis_atversion_reverted_flag").val(0);
        $("#addthis_atversion_hidden").val(AT_VERSION_300);
        $(this).closest("form").submit();
        return false;

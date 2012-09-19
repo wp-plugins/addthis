@@ -41,7 +41,7 @@ Class AddThis_addjs{
             _doing_it_wrong( 'addthis_addjs', 'Only one instance of this class should be initialized.  Look for the $addthis_addjs global first',1 ); 
         }
 
-        $this->productCode = 'wpp-265';
+        $this->productCode = 'wpp-266';
 
         // We haven't added our JS yet. Or at least better not have.
         $this->_js_added = false;
@@ -49,7 +49,7 @@ Class AddThis_addjs{
         $this->_options = $options;
         
         // Version of AddThis code to use
-        $this->atversion = array_key_exists('atversion', $options) && $options['atversion'] ? $options['atversion'] : ADDTHIS_ATVERSION;
+        $this->atversion = array_key_exists('atversion_reverted', $options) && $options['atversion_reverted'] == 1 ? $options['atversion'] : ADDTHIS_ATVERSION;
 
         // set the cuid
         $base = home_url();

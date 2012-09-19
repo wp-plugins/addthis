@@ -66,11 +66,15 @@ function addthis_kses($string)
  * Add this version notification message
  * @param type $atversion
  */
-function _addthis_version_notification($atversion)
+ffunction _addthis_version_notification($atversion_reverted, $atversion)
 {
+	//Fresh install Scenario. ie., atversion = 300 without reverting back. 
+	if($atversion_reverted == 0 && $atversion >= 300) {
+		return;
+	}
     $imgLocationBase = apply_filters( 'addthis_files_uri',  plugins_url( '' , basename(dirname(__FILE__)))) . '/addthis/img/'  ;
     ob_start();
-    if ($atversion >= 300) {
+    if ($atversion_reverted == 0) {
         ?>
         <div class="addthis-notification addthis-success-message">
             <div style="float:left">Your AddThis sharing plugin has been updated.</div>
@@ -79,7 +83,7 @@ function _addthis_version_notification($atversion)
             </div>
         </div>
         <?php
-    } elseif ($atversion < 300) {
+    } else {
         ?>
         <div class="addthis-notification addthis-warning-message">
             <div style="float:left">Update AddThis to activate new features that will make sharing even easier.</div>

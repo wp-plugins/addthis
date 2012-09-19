@@ -203,6 +203,7 @@ if ( apply_filters( 'at_do_options_upgrades', '__return_true') || apply_filters(
         if ($atversion = get_option('atversion'))
             $addthis_new_options['atversion'] = $atversion;
         
+        
         // Above is new, set it to none
         $addthis_new_options['above'] = 'none';
 
@@ -966,6 +967,9 @@ if ( isset ($data['addthis_language']))
 if ( isset ($data['atversion']))
     $options['atversion'] = sanitize_text_field($data['atversion']);
 
+//[atversion_reverted]=> 
+if ( isset ($data['atversion_reverted']))
+    $options['atversion_reverted'] = sanitize_text_field($data['atversion_reverted']);
 
 if ( isset ($data['addthis_header_background']) && strlen($data['addthis_header_background']) != 0 )
 {
@@ -1467,9 +1471,9 @@ function addthis_output_script($return = false, $justConfig = false )
 
     if ( isset($options['addthis_language']) && strlen($options['addthis_language']) == 2)
         $addthis_config['ui_language'] = $options['addthis_language'];
-        
+    
     if ( isset($options['atversion'])) 
-        $addthis_config['ui_atversion'] = $options['atversion'];    
+        $addthis_config['ui_atversion'] = isset($options['atversion_reverted']) && $options['atversion_reverted'] == 1 ? $options['atversion'] : ADDTHIS_ATVERSION;    
         
     if ( isset($options['addthis_header_background']) )
         $addthis_config['ui_header_background'] = $options['addthis_header_background'];
@@ -1761,6 +1765,7 @@ function addthis_admin_menu()
         'addthis_config_json' => '',
         'addthis_share_json' => '',
         'atversion' => ADDTHIS_ATVERSION,
+        'atversion_reverted' => 0
     );
 
 function addthis_plugin_options_php4() {
@@ -1804,8 +1809,9 @@ function addthis_plugin_options_php4() {
             if ( $addthis_options && ! isset($addthis_options[$option]) )
                 $addthis_options[$option] = false;
         }
-        $options = wp_parse_args($addthis_options, $addthis_default_options);
+        $options = wp_parse_args($addthis_options, $addthis_default_options);        
         extract($options);        
+        
     ?>
 
     <p><?php echo $addthis_addjs->getAtPluginPromoText();  ?></p>
@@ -1819,9 +1825,9 @@ function addthis_plugin_options_php4() {
         <div class='clear'>&nbsp;</div> 
         
         <div id="tabs-1">
-                        <?php echo $version_notification_content = _addthis_version_notification($atversion);?>
+                        <?php echo $version_notification_content = _addthis_version_notification($atversion_reverted, $atversion);?>
                         <input type="hidden" value="<?php echo $atversion?>"  name="addthis_settings[atversion]" id="addthis_atversion_hidden" />
-
+                        <input type="hidden" value="0"  name="addthis_settings[atversion_reverted]" id="addthis_atversion_reverted_flag" />
 			<table class="form-table">
 				<tbody>
 				<?php _addthis_choose_icons('above', $options ); ?>
