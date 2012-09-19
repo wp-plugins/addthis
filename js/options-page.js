@@ -1,6 +1,5 @@
 jQuery(document).ready(function($) {   
     $( "#tabs" ).tabs();
-
     var thickDims, tbWidth, tbHeight; 
     thickDims = function() {
         var tbWindow = $('#TB_window'), H = $(window).height(), W = $(window).width(), w, h;
@@ -161,4 +160,33 @@ jQuery(document).ready(function($) {
 
     $('input[name="addthis_settings[above]"]').change( function(){aboveCustomShow(); aboveCustomStringShow();} );
     $('input[name="addthis_settings[below]"]').change( function(){belowCustomShow(); belowCustomStringShow();} );
+    
+    /**
+     * Hide Theming and branding options when user selects version 3.0 or above
+     */   
+    var ATVERSION_250 = 250;
+    var AT_VERSION_300 = 300;
+    if ($("#addthis_atversion_hidden").val() > ATVERSION_250) {
+        $(".classicFeature").hide();
+    } else {
+        $(".classicFeature").show();
+    }
+    
+    /**
+     * Revert to older at-version
+     */
+    $(".addthis-revert-atversion").click(function(){
+       $("#addthis_atversion_hidden").val(ATVERSION_250);       
+       $(this).closest("form").submit();
+       return false;
+    });
+   /**
+    * Update to the newer at-version
+    */ 
+   $(".addthis-update-atversion").click(function(){
+       $("#addthis_atversion_hidden").val(AT_VERSION_300); 
+       $(this).closest("form").submit();
+       return false;
+   });
+
 });

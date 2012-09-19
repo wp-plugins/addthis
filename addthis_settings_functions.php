@@ -62,6 +62,37 @@ function addthis_kses($string)
 
     return $new_string;
 }
+/**
+ * Add this version notification message
+ * @param type $atversion
+ */
+function _addthis_version_notification($atversion)
+{
+    $imgLocationBase = apply_filters( 'addthis_files_uri',  plugins_url( '' , basename(dirname(__FILE__)))) . '/addthis/img/'  ;
+    ob_start();
+    if ($atversion >= 300) {
+        ?>
+        <div class="addthis-notification addthis-success-message">
+            <div style="float:left">Your AddThis sharing plugin has been updated.</div>
+            <div style="float:right">
+                <a href="#" class="addthis-revert-atversion">Revert back to previous version</a>
+            </div>
+        </div>
+        <?php
+    } elseif ($atversion < 300) {
+        ?>
+        <div class="addthis-notification addthis-warning-message">
+            <div style="float:left">Update AddThis to activate new features that will make sharing even easier.</div>
+            <div style="float:right">
+                <a href="#" class="addthis-update-atversion"><img src="<?php echo $imgLocationBase . 'update.png';?>" /></a>
+            </div>
+        </div>       
+        <?php
+    }
+    $notification_content = ob_get_contents();
+    ob_end_clean();
+    return $notification_content;
+}
 
 /**
  * The icon choser row.  Should be made to look a bit prettier
