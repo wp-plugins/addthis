@@ -169,11 +169,11 @@ jQuery(document).ready(function($) {
     var MANUAL_UPDATE = -1;
     var AUTO_UPDATE = 0;
     var REVERTED = 1;
-    
-    if ($("#addthis_atversion_hidden").val() > ATVERSION_250) {
-        $(".classicFeature").hide();
-    } else {
+    var atVersionUpdateStatus = $("#addthis_atversion_update_status").val();
+    if (atVersionUpdateStatus == REVERTED) {
         $(".classicFeature").show();
+    } else {
+        $(".classicFeature").hide();
     }
     
     /**

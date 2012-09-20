@@ -1476,7 +1476,7 @@ function addthis_output_script($return = false, $justConfig = false )
         $addthis_config['ui_language'] = $options['addthis_language'];
     
     if ( isset($options['atversion'])) 
-        $addthis_config['ui_atversion'] = isset($options['atversion_update_status']) && $options['atversion_update_status'] == 1 ? $options['atversion'] : ADDTHIS_ATVERSION;    
+        $addthis_config['ui_atversion'] = isset($options['atversion_update_status']) && $options['atversion_update_status'] == ADDTHIS_ATVERSION_REVERTED ? $options['atversion'] : ADDTHIS_ATVERSION;    
         
     if ( isset($options['addthis_header_background']) )
         $addthis_config['ui_header_background'] = $options['addthis_header_background'];
@@ -1814,7 +1814,6 @@ function addthis_plugin_options_php4() {
         }
         $options = wp_parse_args($addthis_options, $addthis_default_options);        
         extract($options);        
-        $derived_atversion = ($atversion_update_status == ADDTHIS_ATVERSION_REVERTED) ? $atversion : ADDTHIS_ATVERSION
     ?>
 
     <p><?php echo $addthis_addjs->getAtPluginPromoText();  ?></p>
