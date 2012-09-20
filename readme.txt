@@ -2,7 +2,7 @@
 Contributors: _mjk_, jorbin, addthis_paul, joesullivan, solchea, srijith.v
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz, pintrest, widget
 Requires at least: 2.9
-Tested up to: 3.4.1
+Tested up to: 3.4.2
 Stable tag: 2.5.0
 
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with over 330 popular services. 
