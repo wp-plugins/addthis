@@ -1438,7 +1438,7 @@ function addthis_output_script($return = false, $justConfig = false )
     
     $script = "\n<!-- AddThis Button Begin -->\n"
              .'<script type="text/javascript">'
-             ."var addthis_product = 'wpp-263';\n";
+             ."var addthis_product = 'wpp-2.5.0';\n";
 
 
     $pub = (isset($options['profile'])) ? $options['profile'] : false ;
@@ -1608,7 +1608,7 @@ function addthis_social_widget($content, $onSidebar = false, $url = null, $title
     $content .= "\n<!-- AddThis Button BEGIN -->\n"
                 .'<script type="text/javascript">'
                 ."\n//<!--\n"
-                ."var addthis_product = 'wpp-300';\n";
+                ."var addthis_product = 'wpp-2.5.0';\n";
 
 
     if (strlen($addthis_settings['customization'])) 

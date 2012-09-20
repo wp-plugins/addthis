@@ -41,7 +41,7 @@ Class AddThis_addjs{
             _doing_it_wrong( 'addthis_addjs', 'Only one instance of this class should be initialized.  Look for the $addthis_addjs global first',1 ); 
         }
 
-        $this->productCode = 'wpp-266';
+        $this->productCode = 'wpp-2.5.0';
 
         // We haven't added our JS yet. Or at least better not have.
         $this->_js_added = false;
