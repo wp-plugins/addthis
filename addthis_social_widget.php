@@ -1829,7 +1829,7 @@ function addthis_plugin_options_php4() {
         
         <div id="tabs-1">
                         <?php echo $version_notification_content = _addthis_version_notification($atversion_update_status, $atversion);?>
-                        <input type="hidden" value="<?php echo $derived_atversion?>"  name="addthis_settings[atversion]" id="addthis_atversion_hidden" />
+                        <input type="hidden" value="<?php echo $atversion?>"  name="addthis_settings[atversion]" id="addthis_atversion_hidden" />
                         <input type="hidden" value="<?php echo $atversion_update_status?>"  name="addthis_settings[atversion_update_status]" id="addthis_atversion_update_status" />
 			<table class="form-table">
 				<tbody>
