@@ -64,17 +64,21 @@ function addthis_kses($string)
 }
 /**
  * Add this version notification message
- * @param type $atversion
+ * @param int $atversion_update_status
+ * @param int $atversion
  */
-function _addthis_version_notification($atversion_reverted, $atversion)
+function _addthis_version_notification($atversion_update_status, $atversion)
 {
-	//Fresh install Scenario. ie., atversion = 300 without reverting back. 
-	if($atversion_reverted == 0 && $atversion >= 300) {
-		return;
-	}
+    //Fresh install Scenario. ie., atversion = 300 without reverting back. 
+    if($atversion_update_status == ADDTHIS_ATVERSION_AUTO_UPDATE && $atversion >= ADDTHIS_ATVERSION) {
+            return;
+    }
     $imgLocationBase = apply_filters( 'addthis_files_uri',  plugins_url( '' , basename(dirname(__FILE__)))) . '/addthis/img/'  ;
     ob_start();
-    if ($atversion_reverted == 0) {
+    // In the automatic update by the system the $atversion_update_status is 0
+    // On subsequent update using notification link the  $atversion_update_status = -1
+    // In both cases display the revert link
+    if ($atversion_update_status == ADDTHIS_ATVERSION_AUTO_UPDATE || $atversion_update_status == ADDTHIS_ATVERSION_MANUAL_UPDATE) {
         ?>
         <div class="addthis-notification addthis-success-message">
             <div style="float:left">Your AddThis sharing plugin has been updated.</div>
