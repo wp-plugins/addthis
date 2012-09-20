@@ -197,6 +197,9 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+= 2.5.0 =
+Updated share menu, Instant Share, Pinterest updates and bug fixes.
+
 = 2.4.3 =
 Fixed admin console bug for non-administrators.
 
