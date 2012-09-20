@@ -1,9 +1,9 @@
 === AddThis === 
-Contributors: _mjk_, jorbin, addthis_paul, joesullivan, solchea
+Contributors: _mjk_, jorbin, addthis_paul, joesullivan, solchea, srijith.v
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz, pintrest, widget
 Requires at least: 2.9
 Tested up to: 3.4.1
-Stable tag: 2.4.3
+Stable tag: 2.5.0
 
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with over 330 popular services. 
 
@@ -59,7 +59,7 @@ All of the options required through this plugin require javascript.   JavaScript
 1. It's free!
 
 = Who else uses AddThis? =
-Over 1,200,000 sites have installed AddThis. With over a billion unique users, AddThis is helping share content all over the world, in more than sixty languages. You might be surprised who's sharing their website using AddThis--<a href="http://www.addthis.com/features#partners">here are just a few</a>.
+Over 14,000,000 sites have installed AddThis. With over a billion unique users, AddThis is helping share content all over the world, in more than sixty languages. You might be surprised who's sharing their website using AddThis--<a href="http://www.addthis.com/features#partners">here are just a few</a>.
 
 = What services does AddThis support? =
 We currently support over 330 services, from email and blogging platforms to social networks and news aggregators, and we add new services every month. Want to know if your favorite service is supported? This list is accurate up to the minute: <a href="http://www.addthis.com/services">http://www.addthis.com/services</a>.
@@ -78,6 +78,12 @@ In the screen options you can enable the AddThis meta box.  Check the box and sa
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 2.5.0 =
+* <a href="http://www.addthis.com/blog/2012/09/13/introducing-our-new-sharing-experience">New streamlined and simplified share menu</a>
+* Added Instant Share for Facebook and Twitter
+* Updated Pinterest support
+* Bug fixes
+
 = 2.4.1 =
 * Bug fixes
 
