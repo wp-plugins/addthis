@@ -74,6 +74,9 @@ $addthis_styles = array(
                       'bookmark-small' => array('img'=>'sm-bookmark-en.gif', 'w'=>83, 'h'=>16),
                       'plus' => array('img'=>'sm-plus.gif', 'w'=>16, 'h'=>16)
                     );
+$addthis_options = get_option('addthis_settings');
+$atversion = array_key_exists('atversion_reverted', $addthis_options) && $addthis_options['atversion_reverted'] == 1 ? $addthis_options['atversion'] : ADDTHIS_ATVERSION;
+
 $addthis_new_styles = array(
 
     'fb_tw_p1_sc' => array( 'src' => '<div class="addthis_toolbox addthis_default_style " %s  ><a class="addthis_button_facebook_like" fb:like:layout="button_count"></a><a class="addthis_button_tweet"></a><a class="addthis_button_google_plusone" g:plusone:size="medium"></a><a class="addthis_counter addthis_pill_style"></a></div>' , 'img' => 'fb-tw-p1-sc.jpg' , 'name' => 'Like, Tweet, +1, Share', 'above' => '', 'below' => ''
@@ -1491,8 +1494,8 @@ function addthis_output_script($return = false, $justConfig = false )
         $addthis_config['ui_508_compliant'] = true;
 
     $addthis_config = apply_filters('addthis_config_js_var', $addthis_config);
-    
-    $script = merge_config_with_json_config($script, $addthis_config, $options['addthis_config_json']);
+    $addthis_config_json = array_key_exists('addthis_config_json', $options) ? $options['addthis_config_json'] : '';
+    $script = merge_config_with_json_config($script, $addthis_config, $addthis_config_json);
     
     
     if (isset($options['addthis_options']) && strlen($options['addthis_options']) != 0)
@@ -1529,7 +1532,7 @@ function addthis_output_script($return = false, $justConfig = false )
 
         $return .= "\n";
         
-        $return = merge_config_with_json_config($return, $addthis_config, $options['addthis_config_json']);
+        $return = merge_config_with_json_config($return, $addthis_config, $addthis_config_json);
 
         $return .= "\n";
 
