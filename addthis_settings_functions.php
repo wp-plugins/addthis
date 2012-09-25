@@ -151,7 +151,7 @@ function _addthis_version_notification($atversion_update_status, $atversion)
                     }
                     if ($checked === '' && isset($v['defaultHide']) &&  $v['defaultHide'] == true)
                         continue;
-                    echo "<div class='$name"."_option select_row $class '><span class='radio'><input $checked type='radio' value='".$k."' name='addthis_settings[$name]' /></span><img alt='".$k."'  src='". $imgLocationBase  .  $v['img'] ."' align='left' /><div class='clear'></div></div>";
+                    echo "<div class='$name"."_option select_row $class '><span class='radio'><input $checked type='radio' value='".$k."' id='{$k}_{$name}' name='addthis_settings[$name]' /></span><label for='{$k}_{$name}'> <img alt='".$k."'  src='". $imgLocationBase  .  $v['img'] ."' align='left' /></label><div class='clear'></div></div>";
                 }
                 
                 $class = 'hidden';
@@ -193,13 +193,13 @@ function _addthis_version_notification($atversion_update_status, $atversion)
                         $class = '';
                     }
 
-                    echo "<div class='$name"."_option select_row $class '><span class='radio mt4'><input $checked type='radio' value='custom_string' name='addthis_settings[$name]' id='$name"."_custom_string' /></span> Custom button<div class='clear'></div></div>";
+                    echo "<div class='$name"."_option select_row $class '><span class='radio mt4'><input $checked type='radio' value='custom_string' name='addthis_settings[$name]' id='$name"."_custom_string' /></span> <label for='{$name}_custom_string'>Custom button</label><div class='clear'></div></div>";
                     _e( sprintf("<div style='max-width: 748px;' class='%s_custom_string_input'> This text box allows you to enter any AddThis markup that you wish. To see examples of what you can do, visit <a href='https://www.addthis.com/get/sharing'>AddThis.com Sharing Tools</a> and select any sharing tool. You can also check out our <a href='http://support.addthis.com/customer/portal/articles/381263-addthis-client-api#rendering-decoration'>Client API</a>. For any help you may need, please visit <a href='http://support.addthis.com'>AddThis Support</a></div>", $name ),'addthis_trans_domain');
                     echo "<textarea style='max-width:748px;'  rows='5' cols='120' name='addthis_settings[$name"."_custom_string]' class='$name"."_custom_string_input' />".esc_textarea($custom_string)."</textarea>";
 
                     echo '</div>';
                 ?>
-				<div class="select_row description"><span class='radio mt0'><input type="radio" class='always' name="addthis_settings[<?php echo $name; ?>]" <?php echo ('none' == $option) ? 'checked="checked"' : '';?> value='none' /></span>None</div>
+                                <div class="select_row description"><span class='radio mt0'><input type="radio" class='always' id="<?php echo $name . '_None' ?>" name="addthis_settings[<?php echo $name; ?>]" <?php echo ('none' == $option) ? 'checked="checked"' : '';?> value='none' /></span><label for="<?php echo $name . '_None' ?>">None</label></div>
 				<p><a class="<?php echo $name;?>_option" href="#<?php echo $name;?>_more" id="<?php echo $name;?>_more"><span>More options</span><span class='hidden'>Less options</span></a></p>
 				
 			  </fieldset>	

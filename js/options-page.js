@@ -75,13 +75,21 @@ jQuery(document).ready(function($) {
         return false;
     });
 
-    $('#above_more').click( function() {
-        $('#above .select_row').children('.radio').children('input').not(':checked').not('always').parent().parent().toggleClass('hidden');
-        $(this).children('span').toggleClass('hidden');
-        return false;
-    });
-    $('#below_more').click( function() {
-        $('#below .select_row').children('.radio').children('input').not(':checked').not('always').parent().parent().toggleClass('hidden');
+    /**
+     * Handle the toggling for More and Less options
+     */
+    $('#above_more, #below_more').click( function() {
+        var allSharingRows = $(this).closest('td').find('.select_row');
+        var toggleSharingRows = allSharingRows.find('input').not(':checked').not('.always').parent().parent();
+        if($(this).children('span').not(".hidden").html() == "More options") {
+            toggleSharingRows.removeClass('hidden');
+        } else {
+            toggleSharingRows.addClass('hidden');
+            //1) "None" is selected 2) Minimized state => always display the first row.
+            if (allSharingRows.find(".always").is(":checked")) {
+                toggleSharingRows.first().removeClass('hidden');
+            }
+        }
         $(this).children('span').toggleClass('hidden');
         return false;
     });
