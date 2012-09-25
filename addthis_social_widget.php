@@ -33,8 +33,8 @@ else return;
 
 
 // Setup our shared resources early 
-// addthis_addjs.php is a standard class shared by the various AddThis plugins to make it easy for us to include our bootstrapping JavaScript only once.
-add_action('init', 'addthis_early', 1);
+// addthis_addjs.php is a standard class shared by the various AddThis plugins to make it easy for us to include our bootstrapping JavaScript only once. Priority should be lowest for Share plugin.
+add_action('init', 'addthis_early', 0);
 function addthis_early(){
     global $addthis_addjs;
     if (! isset($addthis_addjs)){
