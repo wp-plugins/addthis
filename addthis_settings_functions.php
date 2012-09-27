@@ -35,6 +35,7 @@ function addthis_kses($string)
     $mytags['a'][ 'twtext' ]= array();
     $mytags['a'][ 'twrelated' ]= array();
     $mytags['a'][ 'twlang' ]= array();
+    $mytags['a'][ 'twhashtags' ]= array();
     $mytags['a'][ 'twcounturl' ]= array();
     $mytags['a'][ 'pipinitlayout' ]= array();
     $mytags['a'][ 'pipiniturl' ]= array();

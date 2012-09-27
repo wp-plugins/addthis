@@ -23,7 +23,7 @@
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 2.5.0
+* Version: 2.5.1
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -46,7 +46,8 @@ function addthis_early(){
 
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PLUGIN_VERSION', '2.5.0');
+define( 'ADDTHIS_PLUGIN_VERSION' , '2.5.1');
+define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-2.5.1');
 define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
 define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
@@ -1441,7 +1442,7 @@ function addthis_output_script($return = false, $justConfig = false )
     
     $script = "\n<!-- AddThis Button Begin -->\n"
              .'<script type="text/javascript">'
-             ."var addthis_product = 'wpp-2.5.0';\n";
+             ."var addthis_product = '".ADDTHIS_PRODUCT_VERSION."';\n";
 
 
     $pub = (isset($options['profile'])) ? $options['profile'] : false ;
@@ -1611,7 +1612,7 @@ function addthis_social_widget($content, $onSidebar = false, $url = null, $title
     $content .= "\n<!-- AddThis Button BEGIN -->\n"
                 .'<script type="text/javascript">'
                 ."\n//<!--\n"
-                ."var addthis_product = 'wpp-2.5.0';\n";
+                ."var addthis_product = '".ADDTHIS_PRODUCT_VERSION."';\n";
 
 
     if (strlen($addthis_settings['customization'])) 
