@@ -978,6 +978,9 @@ if ( isset ($data['atversion']))
 if ( isset ($data['atversion_update_status']))
     $options['atversion_update_status'] = sanitize_text_field($data['atversion_update_status']);
 
+if ( isset ($data['credential_validation_status']))
+    $options['credential_validation_status'] = sanitize_text_field($data['credential_validation_status']);
+
 if ( isset ($data['addthis_header_background']) && strlen($data['addthis_header_background']) != 0 )
 {
     if (! strpos($data['addthis_header_background'], '#') === 0)
@@ -1558,6 +1561,46 @@ function addthis_output_script($return = false, $justConfig = false )
         return $script;
 }
 
+add_action('wp_ajax_validate_addthis_api_credentials', 'validate_addthis_api_credentials');
+/**
+ * AJAX action to test the AddThis credentials
+ */
+function validate_addthis_api_credentials()
+{
+    $ajax_response = array('profileerror' => 'true', 'profilemessage' => '',
+                           'credentialerror' => 'true', 'credentialmessage' => '');
+    if ($_POST['addthis_username'] && $_POST['addthis_password'] && $_POST['addthis_profile']) {
+        $url = 'https://api.addthis.com/analytics/1.0/pub/shares.json?'.
+            'username=' . $_POST['addthis_username'].
+            '&password=' . $_POST['addthis_password'].
+            '&pubid=' . $_POST['addthis_profile'];
+        $response = wp_remote_get($url);
+        $credential_error = '&#x2716; The username, password, and profile combination you entered is invalid.';
+        $profile_error = '&#x2716; Invalid AddThis profile ID';
+
+        if (!is_wp_error($response)) {
+            if ($response['response']['code'] == 200) {
+                $ajax_response['profileerror'] = 'false';
+                $ajax_response['credentialerror'] = 'false';
+            } else {
+                if ($response['response']['code'] != 401) {
+                    $ajax_response['credentialerror'] = 'false';
+                    if (strpos($response['body'], '"invalidParameterName":"pubid"') === FALSE) {
+                        $ajax_response['profileerror'] = 'false';
+                    } else {
+                        $ajax_response['profilemessage'] = $profile_error;
+                    }
+                }   else {
+                    $ajax_response['credentialmessage'] = $credential_error;
+                }
+            }
+        } else {
+            $ajax_response['credentialmessage'] = 'error';
+        }     
+    }
+    die('{"profileerror":"' . $ajax_response['profileerror'] . '","profilemessage":"' . $ajax_response['profilemessage'] . '",
+        "credentialerror":"' . $ajax_response['credentialerror'] . '","credentialmessage":"' . $ajax_response['credentialmessage'] . '"}');
+}
 /*
  * Merge the Add this settings with that given using JSON format
  * @param String $appendString - The string to build and return the script
@@ -1712,6 +1755,7 @@ function addthis_options_page_scripts()
     $script_location = apply_filters( 'at_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) . '/addthis/js/'.$script ;
     $script_location = apply_filters( 'addthis_files_uri',  plugins_url( '', basename(dirname(__FILE__)) ) ) . '/addthis/js/'.$script ;
     wp_enqueue_script( 'addthis_options_page_script',  $script_location , array('jquery-ui-tabs', 'thickbox'  ));  
+    wp_localize_script( 'addthis_options_page_script', 'addthis_option_params', array('wp_ajax_url'=> admin_url('admin-ajax.php'), 'addthis_validate_action' => 'validate_addthis_api_credentials') );
 
 }
 
@@ -1772,7 +1816,8 @@ function addthis_admin_menu()
         'addthis_config_json' => '',
         'addthis_share_json' => '',
         'atversion' => ADDTHIS_ATVERSION,
-        'atversion_update_status' => 0
+        'atversion_update_status' => 0,
+        'credential_validation_status' => 0
     );
 
 function addthis_plugin_options_php4() {
@@ -1834,6 +1879,7 @@ function addthis_plugin_options_php4() {
                         <?php echo $version_notification_content = _addthis_version_notification($atversion_update_status, $atversion);?>
                         <input type="hidden" value="<?php echo $atversion?>"  name="addthis_settings[atversion]" id="addthis_atversion_hidden" />
                         <input type="hidden" value="<?php echo $atversion_update_status?>"  name="addthis_settings[atversion_update_status]" id="addthis_atversion_update_status" />
+                        <input type="hidden" value="<?php echo $credential_validation_status?>"  name="addthis_settings[credential_validation_status]" id="addthis_credential_validation_status" />
 			<table class="form-table">
 				<tbody>
 				<?php _addthis_choose_icons('above', $options ); ?>
@@ -1844,22 +1890,58 @@ function addthis_plugin_options_php4() {
 			<br/>
 			
 			<div style="margin-left:5px;">
-				<?php _e("<h3><a href='https://www.addthis.com/register?profile=wpp' target='_blank'>Register</a> for free in-depth analytics reports and better understand your site's social traffic.</h3>", 'addthis_trans_domain');?>
+				<?php _e("Don't have an account? <a href='https://www.addthis.com/register?profile=wpp' target='_blank'>Register</a> for free in-depth analytics reports and better understand your site's social traffic.", 'addthis_trans_domain');?>
 			</div>
-			<table class="form-table" style="width:400px;">
+			<table class="form-table" style="width:600px;">
 				<tbody>
+                                        <tr>
+                                            <td colspan="2">
+                                                <strong>Enter your ID to track analytics</strong>
+                                            </td>
+                                        </tr>
+                                        
 					<tr valign="top">
-						<td><?php _e("AddThis profile ID:", 'addthis_trans_domain' ); ?></td>
+						<td width="200"><?php _e("AddThis profile ID:", 'addthis_trans_domain' ); ?></td>
 						<td><input id="addthis_profile"  type="text" name="addthis_settings[addthis_profile]" value="<?php echo $profile; ?>" autofill='off' autocomplete='off'  /></td>
 					</tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td>
+                                                <span id="addthis-profile-validation-message" style="color:red"></span>
+                                                <?php
+                                                if ($credential_validation_status == 1) {
+                                                    echo '<span style="color:green">&#10004; Valid AddThis profile ID.</span>';
+                                                }
+                                                ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <strong>Sign in to view analytics</strong>
+                                            </td>
+                                        </tr>
 					<tr valign="top">
 						<td><?php _e("AddThis email / username:", 'addthis_trans_domain' ); ?></td>
 						<td><input id="addthis_username"  type="text" name="addthis_settings[addthis_username]" value="<?php echo $username; ?>" autofill='off' autocomplete='off'  /></td>
 					</tr>
 					<tr id="password_row" >
-						<td><?php _e("AddThis password:", 'addthis_trans_domain' ); ?><br/><span style="font-size:10px">(required for displaying stats)</span></td>
+						<td><?php _e("AddThis password:", 'addthis_trans_domain' ); ?></td>
 						<td><input id="addthis_password" type="password" name="addthis_settings[addthis_password]" value="<?php echo $password; ?>" autocomplete='off' autofill='off'  /></td>
 					</tr>
+                                        <tr>
+                                            <td style="height:32px">
+                                                <img class="addthis-admin-loader" style="display:none" src="<?php echo plugins_url('img/loader.gif', __FILE__)?>" />
+                                            </td>
+                                            <td>
+                                                <span class="addthis-admin-loader" style="display:none;color:gray">Connecting to AddThis profile <?php echo $profile; ?>..</span>
+                                                <span id="addthis-credential-validation-message" style="color:red"></span>
+                                                <?php
+                                                if ($credential_validation_status == 1) {
+                                                    echo '<span style="color:green">&#10004; Valid AddThis credentials.</span>';
+                                                }
+                                                ?>
+                                            </td>
+                                        </tr>
 				</tbody>
 			</table>
 			<div class='clear'>&nbsp;</div>  

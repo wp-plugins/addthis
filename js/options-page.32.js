@@ -200,5 +200,80 @@ jQuery(document).ready(function($) {
        $(this).closest("form").submit();
        return false;
    });
+   
+   var addthis_credential_validation_status = $("#addthis_credential_validation_status");
+   var addthis_validation_message = $("#addthis-credential-validation-message");
+   var addthis_profile_validation_message = $("#addthis-profile-validation-message");
+   //Validate the Addthis credentials
+   function validate_addthis_credentials() {
+        $.ajax(
+            {"url" : addthis_option_params.wp_ajax_url,
+             "type" : "post",
+             "data" : {"action" : addthis_option_params.addthis_validate_action,
+                      "addthis_profile" : $("#addthis_profile").val(),
+                      "addthis_username" : $("#addthis_username").val(),
+                      "addthis_password" : $("#addthis_password").val()
+                  },
+             "dataType" : "json",
+             "beforeSend" : function() {
+                 $(".addthis-admin-loader").show();
+                 addthis_validation_message.html("").next().hide();
+                 addthis_profile_validation_message.html("").next().hide();
+             },
+             "success": function(data) {
+                 addthis_validation_message.show();
+                 addthis_profile_validation_message.show();
 
+                 if (data.credentialmessage == "error" || (data.profileerror == "false" && data.credentialerror == "false")) {
+                     if (data.credentialmessage != "error") {
+                         addthis_credential_validation_status.val(1);
+                     }
+                     $("#addthis_settings").submit();
+                 } else {
+                     addthis_validation_message.html(data.credentialmessage);
+                     addthis_profile_validation_message.html(data.profilemessage);
+                 }
+
+             },
+             "complete" :function(data) {
+                 $(".addthis-admin-loader").hide();
+             },
+             "error" : function(jqXHR, textStatus, errorThrown) {
+                 console.log(textStatus, errorThrown);
+             }
+         });
+    }
+    //Prevent default form submission
+    $("#addthis_settings").submit(function(){
+        var isProfileEmpty = $.trim($("#addthis_profile").val()) == "";
+        var isUsernameEmpty = $.trim($("#addthis_username").val()) == "";
+        var isPasswordEmpty = $.trim($("#addthis_password").val()) == "";
+        var isAnyFieldEmpty = isProfileEmpty || isUsernameEmpty || isPasswordEmpty;
+        var validationRequired = addthis_credential_validation_status.val() == 0;
+        
+        if(isUsernameEmpty != isPasswordEmpty) {
+            var emptyLabel = isUsernameEmpty ? "username" : "password";
+            addthis_validation_message.html("&#x2716; AddThis " + emptyLabel + " is required to view analytics").next().hide();
+            return false;
+        } else if (isProfileEmpty && !isUsernameEmpty && !isPasswordEmpty) {
+            addthis_profile_validation_message.html("&#x2716; AddThis profile ID is required to view analytics").next().hide();
+            return false;
+        } else if (!validationRequired || isAnyFieldEmpty) {
+            return true;
+        } else if(!isAnyFieldEmpty && validationRequired) {
+            validate_addthis_credentials();
+            return false;
+        }
+    });
+    
+    $("#addthis_username, #addthis_password, #addthis_profile").change(function(){
+       addthis_credential_validation_status.val(0);
+       if($.trim($("#addthis_profile").val()) == "") {
+            addthis_profile_validation_message.next().hide();
+       }
+       if(($.trim($("#addthis_username").val()) == "") || ($.trim($("#addthis_password").val()) == "")) {
+            addthis_validation_message.next().hide();
+       }
+    });
 });
+
