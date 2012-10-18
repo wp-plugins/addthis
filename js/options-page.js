@@ -76,32 +76,34 @@ jQuery(document).ready(function($) {
     });
 
     /**
-     * Handle the toggling for More and Less options
-     */
-    $('#above_more, #below_more').click( function() {
-        var allSharingRows = $(this).closest('td').find('.select_row');
-        var toggleSharingRows = allSharingRows.find('input').not(':checked').not('.always').parent().parent();
-        if($(this).children('span').not(".hidden").html() == "More options") {
-            toggleSharingRows.removeClass('hidden');
-        } else {
-            toggleSharingRows.addClass('hidden');
-            //1) "None" is selected 2) Minimized state => always display the first row.
-            if (allSharingRows.find(".always").is(":checked")) {
-                toggleSharingRows.first().removeClass('hidden');
-            }
-        }
-        $(this).children('span').toggleClass('hidden');
-        return false;
-    });
+    * Handle enable disable top and bottom share buttons
+    */
+   $("#enable_above, #enable_below").click(enableShareIconsClickHandler);
+  
+   function enableShareIconsClickHandler(){
+       toggleShareIconsContainer($(this));
+   }
+  function toggleShareIconsContainer(element){
+       var animationContainer = element.closest("td").find(".select_row");
+       if (!element.attr("checked")) {
+          animationContainer.css("opacity", 0.4);
+          animationContainer.find("input").attr("disabled", true);
+       } else {
+          animationContainer.css("opacity", 1);
+          animationContainer.find("input").attr("disabled", false);
+       }
+   }
+   toggleShareIconsContainer($("#enable_above"));
+   toggleShareIconsContainer($("#enable_below"));
    
     var show_above =  $('input[name="addthis_settings[show_above]"]');
     var show_below = $('input[name="addthis_settings[show_below]"]');
-    if ( show_above.attr('checked') != "undefined" && show_above.attr('checked') == true)
+    if ( show_above.prop('checked') != "undefined" && show_above.prop('checked') == true)
     {
         $('.above_option').toggleClass('hide');
     }
    
-    if ( show_below.attr('checked') != "undefined" && show_below.attr('checked') == true)
+    if ( show_below.prop('checked') != "undefined" && show_below.prop('checked') == true)
     {
         $('.below_option').toggleClass('hide');
     }
@@ -117,7 +119,7 @@ jQuery(document).ready(function($) {
 
     var aboveCustom = $('#above_custom_button'); 
     var aboveCustomShow = function(){
-        if ( aboveCustom.attr('checked') != 'undefined' &&  aboveCustom.attr('checked') == true)
+        if ( aboveCustom.prop('checked') != 'undefined' &&  aboveCustom.prop('checked') == true)
         {
             $('.above_option_custom').removeClass('hidden');
         }
@@ -128,7 +130,7 @@ jQuery(document).ready(function($) {
     };
     var belowCustom = $('#below_custom_button'); 
     var belowCustomShow = function(){
-        if ( belowCustom.attr('checked') != 'undefined' &&  belowCustom.attr('checked') == true)
+        if ( belowCustom.prop('checked') != 'undefined' &&  belowCustom.prop('checked') == true)
         {
             $('.below_option_custom').removeClass('hidden');
         }
@@ -140,7 +142,7 @@ jQuery(document).ready(function($) {
 
     var aboveCustomString = $('#above_custom_string'); 
     var aboveCustomStringShow = function(){
-        if ( aboveCustomString.attr('checked') != 'undefined' &&  aboveCustomString.attr('checked') == true)
+        if ( aboveCustomString.prop('checked') != 'undefined' &&  aboveCustomString.prop('checked') == true)
         {
             $('.above_custom_string_input').removeClass('hidden');
         }
@@ -207,6 +209,7 @@ jQuery(document).ready(function($) {
    var addthis_validation_message = $("#addthis-credential-validation-message");
    var addthis_profile_validation_message = $("#addthis-profile-validation-message");
    //Validate the Addthis credentials
+   window.skipValidationInternalError = false;
    function validate_addthis_credentials() {
         $.ajax(
             {"url" : addthis_option_params.wp_ajax_url,
@@ -229,11 +232,16 @@ jQuery(document).ready(function($) {
                  if (data.credentialmessage == "error" || (data.profileerror == "false" && data.credentialerror == "false")) {
                      if (data.credentialmessage != "error") {
                          addthis_credential_validation_status.val(1);
+                     } else {
+                         window.skipValidationInternalError = true;
                      }
                      $("#addthis_settings").submit();
                  } else {
                      addthis_validation_message.html(data.credentialmessage);
                      addthis_profile_validation_message.html(data.profilemessage);
+                     if (data.profilemessage != "") {
+                         $('html, body').animate({"scrollTop":0}, 'slow');
+                     }
                  }
 
              },
@@ -247,6 +255,9 @@ jQuery(document).ready(function($) {
     }
     //Prevent default form submission
     $("#addthis_settings").submit(function(){
+        if(window.skipValidationInternalError) {
+            return true;
+        }
         var isProfileEmpty = $.trim($("#addthis_profile").val()) == "";
         var isUsernameEmpty = $.trim($("#addthis_username").val()) == "";
         var isPasswordEmpty = $.trim($("#addthis_password").val()) == "";
@@ -259,6 +270,7 @@ jQuery(document).ready(function($) {
             return false;
         } else if (isProfileEmpty && !isUsernameEmpty && !isPasswordEmpty) {
             addthis_profile_validation_message.html("&#x2716; AddThis profile ID is required to view analytics").next().hide();
+            $('html, body').animate({"scrollTop":0}, 'slow');
             return false;
         } else if (!validationRequired || isAnyFieldEmpty) {
             return true;

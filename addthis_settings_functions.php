@@ -102,7 +102,18 @@ function _addthis_version_notification($atversion_update_status, $atversion)
     ob_end_clean();
     return $notification_content;
 }
-
+/**
+ * Swap the order of occurrence of two keys in an associative array
+ * @param type $array
+ * @param type $key1
+ * @param type $key2
+ */
+function _addthis_swap_first_two_elements (&$array, $key)
+{
+   $temp        = array($key => $array[$key]);
+   unset($array[$key]);
+   $array = $temp + $array;
+}
 /**
  * The icon choser row.  Should be made to look a bit prettier
  */
@@ -110,10 +121,11 @@ function _addthis_version_notification($atversion_update_status, $atversion)
  {
      $addthis_new_styles = _get_style_options();
      global $addthis_default_options;
-
      extract($options);
      if ($name == 'above')
      {
+        _addthis_swap_first_two_elements($addthis_new_styles, 'large_toolbox');
+        $legend = 'Top';
         $option = $above;
         $custom_size = $above_custom_size;
         $do_custom_services  = ( isset( $above_do_custom_services ) && $above_do_custom_services  ) ? 'checked="checked"' : '';
@@ -125,8 +137,9 @@ function _addthis_version_notification($atversion_update_status, $atversion)
      }
      else
      {
-         $option = $below;
-         $custom_size =  $below_custom_size;
+        $legend = 'Bottom';
+        $option = $below;
+        $custom_size =  $below_custom_size;
         $do_custom_services  = ( isset( $below_do_custom_services ) && $below_do_custom_services  ) ? 'checked="checked"' : '';
         $do_custom_preferred = ( isset( $below_do_custom_preferred ) &&  $below_do_custom_preferred ) ? 'checked="checked"' : '';
         $custom_services = $below_custom_services;
@@ -138,21 +151,29 @@ function _addthis_version_notification($atversion_update_status, $atversion)
         <tr>
             <td id="<?php echo $name ?>" colspan="2">
               <fieldset>  
-				<legend>&nbsp; <?php _e("Choose the sharing tool to display <b>$name</b> the post:", 'addthis_trans_domain') ?> &nbsp;</legend>
-				
-                <?php  $imgLocationBase = apply_filters( 'at_files_uri',  plugins_url( '' , basename(dirname(__FILE__)))) . '/addthis/img/'  ;
+		<legend>&nbsp;<strong><?php _e("$legend Sharing Tool", 'addthis_trans_domain') ?></strong> &nbsp;</legend>
+                
+		<?php 
+                    $sharing_checked = $option == 'none' ? '' : 'checked="checked"';
+                    echo "<div class='enable-sharing-tool'><input type='checkbox' {$sharing_checked} value='{$option}' id='enable_{$name}' name='addthis_settings[enable_{$name}]' />
+                <label for='enable_{$name}'>";
+                echo _e('Enable the following sharing tool at the ', 'addthis_trans_domain' );
+                echo '<strong>';
+                echo _e($legend, 'addthis_trans_domain');
+                echo '</strong> of posts:</label></div>';
+                    
+                 $imgLocationBase = apply_filters( 'at_files_uri',  plugins_url( '' , basename(dirname(__FILE__)))) . '/addthis/img/'  ;
                  $imgLocationBase = apply_filters( 'addthis_files_uri',  plugins_url( '' , basename(dirname(__FILE__)))) . '/addthis/img/'  ;
-                 foreach ($addthis_new_styles as $k => $v)
+                
+                foreach ($addthis_new_styles as $k => $v)
                 {
-                    $class = 'hidden';
                     $checked = '';
                     if ($option == $k || ($option == 'none' && $k == $addthis_default_options[$name]  ) ){
                         $checked = 'checked="checked"';
-                        $class = '';
                     }
                     if ($checked === '' && isset($v['defaultHide']) &&  $v['defaultHide'] == true)
                         continue;
-                    echo "<div class='$name"."_option select_row $class '><span class='radio'><input $checked type='radio' value='".$k."' id='{$k}_{$name}' name='addthis_settings[$name]' /></span><label for='{$k}_{$name}'> <img alt='".$k."'  src='". $imgLocationBase  .  $v['img'] ."' align='left' /></label><div class='clear'></div></div>";
+                    echo "<div class='$name"."_option select_row'><span class='radio'><input $checked type='radio' value='".$k."' id='{$k}_{$name}' name='addthis_settings[$name]' /></span><label for='{$k}_{$name}'> <img alt='".$k."'  src='". $imgLocationBase  .  $v['img'] ."' align='left' /></label><div class='clear'></div></div>";
                 }
                 
                 $class = 'hidden';
@@ -186,23 +207,19 @@ function _addthis_version_notification($atversion_update_status, $atversion)
                     echo "</ul></div>";
                 }
                
-                    $class = 'hidden';
                     $checked = '';
                     if ($option == 'custom_string' || $option == 'none' && 'custom_strin' == $addthis_default_options[$name] )
                     {
                         $checked = 'checked="checked"';
-                        $class = '';
                     }
 
-                    echo "<div class='$name"."_option select_row $class '><span class='radio mt4'><input $checked type='radio' value='custom_string' name='addthis_settings[$name]' id='$name"."_custom_string' /></span> <label for='{$name}_custom_string'>Custom button</label><div class='clear'></div></div>";
-                    _e( sprintf("<div style='max-width: 748px;' class='%s_custom_string_input'> This text box allows you to enter any AddThis markup that you wish. To see examples of what you can do, visit <a href='https://www.addthis.com/get/sharing'>AddThis.com Sharing Tools</a> and select any sharing tool. You can also check out our <a href='http://support.addthis.com/customer/portal/articles/381263-addthis-client-api#rendering-decoration'>Client API</a>. For any help you may need, please visit <a href='http://support.addthis.com'>AddThis Support</a></div>", $name ),'addthis_trans_domain');
-                    echo "<textarea style='max-width:748px;'  rows='5' cols='120' name='addthis_settings[$name"."_custom_string]' class='$name"."_custom_string_input' />".esc_textarea($custom_string)."</textarea>";
+                    echo "<div class='$name"."_option select_row'><span class='radio mt4'><input $checked type='radio' value='custom_string' name='addthis_settings[$name]' id='$name"."_custom_string' /></span> <label for='{$name}_custom_string'>Custom button</label><div class='clear'></div></div>";
+                    _e( sprintf("<div style='max-width: 748px;margin-left:20px' class='%s_custom_string_input'> This text box allows you to enter any AddThis markup that you wish. To see examples of what you can do, visit <a href='https://www.addthis.com/get/sharing'>AddThis.com Sharing Tools</a> and select any sharing tool. You can also check out our <a href='http://support.addthis.com/customer/portal/articles/381263-addthis-client-api#rendering-decoration'>Client API</a>. For any help you may need, please visit <a href='http://support.addthis.com'>AddThis Support</a></div>", $name ),'addthis_trans_domain');
+                    echo "<textarea style='max-width:748px;margin-left:20px'  rows='5' cols='120' name='addthis_settings[$name"."_custom_string]' class='$name"."_custom_string_input' />".esc_textarea($custom_string)."</textarea>";
 
                     echo '</div>';
                 ?>
-                                <div class="select_row description"><span class='radio mt0'><input type="radio" class='always' id="<?php echo $name . '_None' ?>" name="addthis_settings[<?php echo $name; ?>]" <?php echo ('none' == $option) ? 'checked="checked"' : '';?> value='none' /></span><label for="<?php echo $name . '_None' ?>">None</label></div>
-				<p><a class="<?php echo $name;?>_option" href="#<?php echo $name;?>_more" id="<?php echo $name;?>_more"><span>More options</span><span class='hidden'>Less options</span></a></p>
-				
+                               				
 			  </fieldset>	
             </td>
         </tr>
