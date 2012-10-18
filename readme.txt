@@ -3,7 +3,7 @@ Contributors: srijith.v, solchea, jorbin, _mjk_, addthis_paul, joesullivan
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz, pintrest, widget
 Requires at least: 2.9
 Tested up to: 3.4.2
-Stable tag: 2.5.1
+Stable tag: 3.0
 
 The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with over 330 popular services. 
 
@@ -78,6 +78,11 @@ In the screen options you can enable the AddThis meta box.  Check the box and sa
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 3.0 =
+* UX changes in admin settings
+* Credential verification in Admin settings. If AddThis account details are wrong it will be notified to user. 
+* Bug fixes
+
 = 2.5.1 =
 * Added hashtag support for Twitter
 * Conflict removed with <a href="http://wordpress.org/extend/plugins/addthis-follow/">AddThis Follow</a> and <a href="http://wordpress.org/extend/plugins/addthis-welcome/">AddThis Welcome Bar</a> Wordpress plugins
@@ -202,6 +207,9 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+= 3.0 =
+Updated UI, AddThis account verification and bug fixes.
+
 = 2.5.1 =
 Bug fixes.
 
