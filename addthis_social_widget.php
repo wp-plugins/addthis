@@ -23,7 +23,7 @@
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 3.0
+* Version: 3.0.1
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -46,8 +46,8 @@ function addthis_early(){
 
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PLUGIN_VERSION' , '3.0');
-define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.0');
+define( 'ADDTHIS_PLUGIN_VERSION' , '3.0.1');
+define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.0.1');
 define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
 define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
@@ -76,7 +76,7 @@ $addthis_styles = array(
                       'plus' => array('img'=>'sm-plus.gif', 'w'=>16, 'h'=>16)
                     );
 $addthis_options = get_option('addthis_settings');
-$atversion = array_key_exists('atversion_reverted', $addthis_options) && $addthis_options['atversion_reverted'] == 1 ? $addthis_options['atversion'] : ADDTHIS_ATVERSION;
+$atversion = is_array($addthis_options) && array_key_exists('atversion_reverted', $addthis_options) && $addthis_options['atversion_reverted'] == 1 ? $addthis_options['atversion'] : ADDTHIS_ATVERSION;
 
 $addthis_new_styles = array(
 
@@ -282,7 +282,7 @@ function addthis_check_footer() {
 */
 function cuid()
 {
-    $base = home_url();
+    $base = get_option('home');
     $cuid = hash_hmac('md5', $base, 'addthis'); 
     return $cuid;
 } 
@@ -1573,9 +1573,9 @@ function validate_addthis_api_credentials()
                            'credentialerror' => 'true', 'credentialmessage' => '');
     if ($_POST['addthis_username'] && $_POST['addthis_password'] && $_POST['addthis_profile']) {
         $url = 'https://api.addthis.com/analytics/1.0/pub/shares.json?'.
-            'username=' . $_POST['addthis_username'].
-            '&password=' . $_POST['addthis_password'].
-            '&pubid=' . $_POST['addthis_profile'];
+            'username=' . urlencode($_POST['addthis_username']).
+            '&password=' . urlencode($_POST['addthis_password']).
+            '&pubid=' . urlencode($_POST['addthis_profile']);
         $response = wp_remote_get($url);
         $credential_error = '&#x2716; The username, password, and profile combination you entered is invalid.';
         $profile_error = '&#x2716; Invalid AddThis profile ID';

@@ -52,7 +52,7 @@ Class AddThis_addjs{
         $this->atversion = array_key_exists('atversion_update_status', $options) && $options['atversion_update_status'] == ADDTHIS_ATVERSION_REVERTED ? $options['atversion'] : ADDTHIS_ATVERSION;
         
         // set the cuid
-        $base = home_url();
+        $base = get_option('home');
         $cuid = hash_hmac('md5', $base, 'addthis'); 
         $this->_cuid = $cuid;
 
