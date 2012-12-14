@@ -38,8 +38,14 @@ ul.nav-tab-wrapper li.ui-tabs-selected{
 	border-bottom: 1px solid #fff;
 	padding-bottom: 13px;
 }
-
-
+li.ui-tabs-active{
+    -moz-border-radius: 5px 5px 0 0 !important;
+    border-top:1px solid #ccc !important;    
+    border-left:1px solid #ccc !important;    
+    border-right: 1px solid #ccc !important;
+    border-bottom: 1px solid #fff !important;
+    padding-bottom: 13px !important;    
+}
 .select_row {
 	line-height: 32px;
         padding-left:20px;

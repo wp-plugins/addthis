@@ -124,7 +124,7 @@ Class AddThis_addjs{
     }
 
     function check_for_footer(){
-        $url = add_query_arg( array( 'attest' => 'true') , home_url() );
+        $url = home_url();
         $response = wp_remote_get( $url, array( 'sslverify' => false ) );
         $code = (int) wp_remote_retrieve_response_code( $response );
             if ( $code == 200 ) {
@@ -135,10 +135,7 @@ Class AddThis_addjs{
     }
     
     function maybe_add_footer_comment(){
-        if ( $_GET['attest'] = 'true' )
-        {
-            add_action( 'wp_footer', array($this, 'test_footer' ), 99999 ); // Some obscene priority, make sure we run last
-        }
+    	add_action( 'wp_footer', array($this, 'test_footer' ), 99999 ); // Some obscene priority, make sure we run last
     }
 
     function test_footer(){
