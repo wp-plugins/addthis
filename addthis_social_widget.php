@@ -1986,7 +1986,7 @@ function addthis_plugin_options_php4() {
                     <th><h2>Display Options</h2></th>
                 </tr>
 				<tr valign="top">
-					<td colspan="2">For more details on the following options, see <a href="//addthis.com/customization">our customization documentation</a>.</td>
+					<td colspan="2">For more details on the following options, see <a href="//support.addthis.com/customer/portal/articles/381263-addthis-client-api">our customization documentation</a>.</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><?php _e("Custom service list:", 'addthis_trans_domain' ); ?><br /><span class='description'><?php _e(
