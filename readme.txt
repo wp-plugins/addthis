@@ -1,20 +1,18 @@
-=== AddThis === 
+=== Share Buttons by AddThis === 
 Contributors: srijith.v, solchea, jorbin, _mjk_, addthis_paul, joesullivan 
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz, pintrest, widget
 Requires at least: 2.9
 Tested up to: 3.5
 Stable tag: 3.0.2
 
-The AddThis Social Bookmarking Widget allows any visitor to bookmark and share your site easily with over 330 popular services. 
+AddThis Share Buttons help drive traffic to your site by helping visitors share, bookmark and email your content to over 330 services.
 
 == Description ==
-Get more traffic back to your site by installing the AddThis WordPress plugin. With AddThis, your users can promote your content by sharing to 330 of the most popular social networking and bookmarking sites (like Facebook, Twitter, Digg, StumbleUpon and MySpace). We also support address bar sharing in modern browsers. Our button is small, unobtrusive, quick to load and recognized all over the web. 
+Get more traffic back to your site by installing the AddThis WordPress plugin. With AddThis, your users can promote your content by sharing to over 330 of the most popular social networking and bookmarking sites (like Facebook, Twitter, Pinterest, Google+ and LinkedIn). We also support address bar sharing in modern browsers. Our button is small, unobtrusive, quick to load and recognized all over the web. 
 
 Optionally, sign up for a free AddThis.com account to see how your visitors are sharing your content: which services they're using for sharing, which content is shared the most, and more.
 
-We also have plugins available for <a href='http://wordpress.org/extend/plugins/addthis-follow/'>increasing followers on social networks</a>, <a href='http://wordpress.org/extend/plugins/addthis-welcome/'>welcoming users based on social behavior</a>, and <a href='http://wordpress.org/extend/plugins/addthis-social-sign-in'>adding social authentication</a> to your WordPress blog.
-
-Help make AddThis even better by taking this <a href='http://www.surveymonkey.com/s/53FDFRF'>short customer survey.</a>
+We also have plugins available for <a href='http://wordpress.org/extend/plugins/addthis-follow/'>increasing followers on social networks</a>, <a href='http://wordpress.org/extend/plugins/addthis-welcome/'>welcoming users based on social behavior</a>, <a href='http://wordpress.org/extend/plugins/addthis-social-sign-in'>adding social authentication</a> and <a href='http://wordpress.org/extend/plugins/addthis-trending-content/'>showing your trending content</a> to your WordPress blog.
 
 <a href="http://www.addthis.com/blog">AddThis Blog</a> | <a href="http://www.addthis.com/privacy">Privacy Policy</a>
 
