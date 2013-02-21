@@ -41,7 +41,7 @@ class AddThisSidebarWidget extends WP_Widget {
         printf(apply_filters('addthis_sidebar_style_output',  $addthis_new_styles[$instance['style']]['src']), '');
         
         echo $after_widget;
-    
+		echo "<style type='text/css'>.addthis_toolbox, .addthis_button {float:left;width:100%;margin:0 0 15px 0;} .addthis_button_tweet {min-width: 83px;float:left;}</style>";    
     }
 
     /**

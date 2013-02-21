@@ -3,7 +3,7 @@ Contributors: srijith.v, solchea, jorbin, _mjk_, addthis_paul, joesullivan
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz, pintrest, widget
 Requires at least: 2.9
 Tested up to: 3.5
-Stable tag: 3.0.2
+Stable tag: 3.0.3
 
 AddThis Share Buttons help drive traffic to your site by helping visitors share, bookmark and email your content to over 330 services.
 
@@ -76,6 +76,9 @@ In the screen options you can enable the AddThis meta box.  Check the box and sa
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+= 3.0.3 = 
+* Bug fix: Style tags are now allowed in Custom Code box.
+
 = 3.0.2 = 
 * Bug fix: Conflict with WpSuperCache resolved
 * Wordpress 3.5 style conflicts resolved
@@ -212,6 +215,9 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+
+= 3.0.3 = 
+Bug fixes.
 
 = 3.0.2 = 
 Bug fixes.
