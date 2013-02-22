@@ -94,7 +94,6 @@ Class AddThis_addjs{
             $this->addWidgetToJs();
             $this->addAfterToJs();
             echo $this->jsToAdd;
-            echo '<style type="text/css">.entry-content .addthis_toolbox {margin:0 0 10px 0;} .addthis_button_tweet {min-width: 83px;float:left;}</style>';
             $this->_js_added = true;
             $this->jsToAdd = false;
         } else {        	
