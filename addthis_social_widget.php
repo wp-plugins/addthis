@@ -46,8 +46,8 @@ function addthis_early(){
 
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PLUGIN_VERSION' , '3.0.3');
-define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.0.3');
+define( 'ADDTHIS_PLUGIN_VERSION' , '3.0.4');
+define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.0.4');
 define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
 define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
