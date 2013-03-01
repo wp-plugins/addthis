@@ -1423,14 +1423,14 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     {
         if ( isset($above) )
         {
-            if ($options['above'] == 'custom' || $options['above'] == 'custom_string')
+            if ($options['above'] == 'custom')
                 $content = $above . $content;
             else
                 $content = sprintf($above, $url_above) . $content;
         }
         if ( isset($below) )
         {
-            if ($options['below'] == 'custom' || $options['below'] == 'custom_string')
+            if ($options['below'] == 'custom')
                 $content = $content . $below;
             else
                 $content = $content . sprintf($below, $url_below); 
