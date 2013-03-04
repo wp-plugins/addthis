@@ -1,5 +1,5 @@
 === Share Buttons by AddThis === 
-Contributors: srijith.v, solchea, jorbin, _mjk_, addthis_paul, joesullivan 
+Contributors: srijith.v, solchea, _mjk_, addthis_paul
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz, pintrest, widget
 Requires at least: 2.9
 Tested up to: 3.5
@@ -32,7 +32,6 @@ For a manual installation via FTP:
 To upload the plugin through WordPress, instead of FTP:
 
 1. Upload the downloaded zip file on the 'Add New' plugins screen (see the 'Upload' tab) in your WordPress admin area and activate.
-
 
 == Frequently Asked Questions ==
 
