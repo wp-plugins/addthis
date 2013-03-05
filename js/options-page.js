@@ -292,7 +292,7 @@ jQuery(document).ready(function($) {
        }
     });
 
-    $('#addthis-config-json').focusout(function() {alert('ji');
+    $('#addthis-config-json').focusout(function() {
     	var error = 0;
 		if ($('#addthis-config-json').val() != " ") {
 		    try {
@@ -311,7 +311,7 @@ jQuery(document).ready(function($) {
 		}
     });
     
-    $('#addthis-share-json').focusout(function() {alert('hi');
+    $('#addthis-share-json').focusout(function() {
     	var error = 0;
     	if ($('#addthis-share-json').val() != " ") {
 		    try {
