@@ -4,4 +4,7 @@
 .addthis_button_tweet {
 	min-width: 83px;
 	float:left;
-} 
+}
+.atwidget iframe {
+	max-width:none;
+}

@@ -22,7 +22,7 @@ function addthis_kses($string, $customstyles)
     $mytags['a'][ 'gplusoneannotation' ]= array();
     $mytags['a'][ 'fblikelayout' ]= array();
     $mytags['a'][ 'fblikesend' ]= array();
-    $mytags['a'][ 'fblikeshow_faces' ]= array();
+    $mytags['a'][ 'fblikeshowfaces' ]= array();
     $mytags['a'][ 'fblikewidth' ]= array();
     $mytags['a'][ 'fblikeaction' ]= array();
     $mytags['a'][ 'fblikefont' ]= array();
@@ -37,11 +37,12 @@ function addthis_kses($string, $customstyles)
     $mytags['a'][ 'twlang' ]= array();
     $mytags['a'][ 'twhashtags' ]= array();
     $mytags['a'][ 'twcounturl' ]= array();
+    $mytags['a'][ 'twscreenname' ]= array();
     $mytags['a'][ 'pipinitlayout' ]= array();
     $mytags['a'][ 'pipiniturl' ]= array();
     $mytags['a'][ 'pipinitmedia' ]= array();
     $mytags['a'][ 'pipinitdescription' ]= array();
-    
+        
     $pretags = array( 'g:plusone:', 'fb:like:', 'tw:', 'pi:pinit:');
     $posttags = array('gplusone', 'fblike', 'tw', 'pipinit');
 
@@ -55,12 +56,31 @@ function addthis_kses($string, $customstyles)
         $post_pattern[] = '/[^_]'.$attr.'/';
         $posttags[$i] = ' '.$attr;
     }
+    
     $temp_string = preg_replace( $pre_pattern, $posttags, $string);
+    if (strpos($temp_string, "twscreen_name") != false) {
+    	$temp_string = str_replace('twscreen_name', 'twscreenname', $temp_string);
+    }
+    if (strpos($temp_string, "fblikeshow_faces") != false) {
+    	$temp_string = str_replace('fblikeshow`_faces', 'fblikeshowfaces', $temp_string);
+    }
+    
     $new_temp_string = wp_kses($temp_string, $mytags);
-    $new_string = preg_replace( $post_pattern, $pretags, $new_temp_string);
+    
     // Add in our %s so that the url and title get added properly
-
-    $new_string = substr_replace($new_string, $customstyles, 4, 0);
+	if (!preg_match('/(<img[^>]+>)/i', $string, $matches)) {
+        $new_string = preg_replace( $post_pattern, $pretags, $new_temp_string);
+        $new_string = substr_replace($new_string, $customstyles, 4, 0);
+    }
+    else {
+    	$new_string = substr_replace($new_temp_string, $customstyles, 4, 0);
+    }
+    if (strpos($new_string, "twscreenname") != false) {
+    	$new_string = str_replace('twscreenname', 'tw:screen_name', $new_string);
+    }
+    if (strpos($new_string, "fblikeshowfaces") != false) {
+    	$new_string = str_replace('fblikeshowfaces', 'fb:like:show_faces', $new_string);
+    }
     
     return $new_string;
 }

@@ -144,7 +144,7 @@ function addthis_script_to_content($content)
 add_filter('language_attributes', 'addthis_language_attributes');
 function addthis_language_attributes($input)
 {
-    return $input . ' xmlns:fb="http://www.facebook.com/2008/fbml" xmlns:addthis="http://www.addthis.com/help/api-spec" ';
+    return $input . ' xmlns:fb="http://ogp.me/ns/fb#" xmlns:addthis="http://www.addthis.com/help/api-spec" ';
 }
 
 
@@ -597,7 +597,7 @@ function addthis_render_dashboard_widget() {
             'domain='.$domain.'&period='.$period.
             '&username='.$username.
             '&password='.$password.
-            $profile;
+            $profile.'&origin=wordpress_plugin';
             $stats[$metric.$dimension.$period] = wp_remote_get($url, array('period' => $period, 'domain' => $domain, 'password' => $password, 'username' => $username) );
       
             if ( is_wp_error( $stats[$metric.$dimension.$period] ) )
@@ -747,7 +747,7 @@ function addthis_render_dashboard_widget() {
         {
             $url = array_shift($shareurls);
             $displayUrl = str_replace( array('http://', 'https://', $domain), '',$url->url);
-            echo "<li><span class='urlCount'>" .  $url->shares . "</span><span class='urlUrl'>". $displayUrl . "</span></li>";
+            echo "<li><span class='urlCount'>" .  $url->shares . "</span><span class='urlUrl'>". urldecode($displayUrl) . "</span></li>";
         }
         echo "</ul>";
         echo "<h5>Top Services for shares(last month)</h5>";
@@ -761,7 +761,7 @@ function addthis_render_dashboard_widget() {
         {
             $url = array_shift($clickbackurls);
             $displayUrl = str_replace( array('http://', 'https://', $domain), '',$url->url);
-            echo "<li><span class='urlCount'>" .  $url->clickbacks . "</span><span class='urlUrl'>". $displayUrl . "</span></li>";
+            echo "<li><span class='urlCount'>" .  $url->clickbacks . "</span><span class='urlUrl'>". urldecode($displayUrl) . "</span></li>";
         }
         echo "</ul>";
         echo "<h5>Top Services for clicks(last month)</h5>";
@@ -1325,8 +1325,34 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
         $options = get_option('addthis_settings');
 
 
-    if ( is_home() || is_front_page() ) 
-        $display = (isset($options['addthis_showonhome']) &&  $options['addthis_showonhome'] == true ) ? true : false;
+	if ( is_home() || is_front_page() ) {
+    	if (isset($options['addthis_showonhome']) &&  $options['addthis_showonhome'] == true ) {
+	    	if (isset($options['addthis_showonexcerpts']) &&  $options['addthis_showonexcerpts'] == true ) {
+		    		$display = true;
+		    }
+		    else {
+				if( strpos($post->post_content, '<!--more-->') != false) {
+		    		$display = false;
+	    		}
+	    		else {
+	    			$display = true;
+	    		}
+	    	}
+    	}
+    	else {
+	    	if (isset($options['addthis_showonexcerpts']) &&  $options['addthis_showonexcerpts'] == true ) {
+	    		if( strpos($post->post_content, '<!--more-->') != false) {
+			  		$display = true;
+	    		}
+	    		else {
+	    			$display = false;
+	    		}
+		    }
+		    else {
+		    	$display = false;
+	    	}
+    	}
+    }
     elseif ( is_archive() && ! is_category() )
         $display = (isset($options['addthis_showonarchives']) && $options['addthis_showonarchives'] == true ) ? true : false;
     // Cat
@@ -1547,14 +1573,15 @@ function addthis_output_script($return = false, $justConfig = false )
     if ($justConfig)
     {
         $return = '';
-        if ( isset( $options['addthis_share_json'] ) && $options['addthis_share_json'] != '')
-            $return .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . $options['addthis_share_json'] . ';}';
+    	$share = apply_filters('addthis_share_js_var', $addthis_share );
+        if ( isset( $options['addthis_share_json'] ) && $options['addthis_share_json'] != '') {
+        	$addthis_json_share = array_key_exists('addthis_share_json', $options) ? $options['addthis_share_json'] : '';
+        	$return .= merge_share_with_json_share($addthis_share, $addthis_json_share);
+        }
         else
         {
-            $share = apply_filters('addthis_share_js_var', $addthis_share );
             if (! empty($share) )
                 $return .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
-
         }
         $return .= "\n";
 
@@ -1573,7 +1600,7 @@ function addthis_output_script($return = false, $justConfig = false )
 
 
     if ( isset( $options['addthis_share_json'] ) && $options['addthis_share_json'] != '')
-        $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . $options['addthis_share_json'] . ';}';
+        $script .= merge_share_with_json_share($addthis_share, $addthis_json_share);
     else
         $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
     $script .= '</script>';
@@ -1597,7 +1624,7 @@ function validate_addthis_api_credentials()
     $ajax_response = array('profileerror' => 'true', 'profilemessage' => '',
                            'credentialerror' => 'true', 'credentialmessage' => '');
     if ($_POST['addthis_username'] && $_POST['addthis_password'] && $_POST['addthis_profile']) {
-        $url = 'http://api.addthis.com/analytics/1.0/pub/shares.json?'.
+        $url = 'https://api.addthis.com/analytics/1.0/pub/shares.json?'.
             'username=' . urlencode($_POST['addthis_username']).
             '&password=' . urlencode($_POST['addthis_password']).
             '&pubid=' . urlencode($_POST['addthis_profile']);
@@ -1648,7 +1675,27 @@ function merge_config_with_json_config($append_string, $addthis_config, $addthis
         $append_string .= 'var addthis_config = '. json_encode($addthis_config) .';';
     return $append_string;
 }
-
+/*
+ * Merge the Add this settings with that given using JSON format
+* @param String $appendString - The string to build and return the script
+* @param array $addthis_share - The setting array for add this share
+* @param String $addthis_json_share - The JSON String
+* @return String $appendString - The string to build and return the script
+*/
+function merge_share_with_json_share($addthis_share, $addthis_json_share) {
+	$append_string = '';
+	if ( isset( $addthis_json_share ) &&   trim($addthis_json_share) != '') {
+		$addthis_share_json_list = json_decode($addthis_json_share, true);
+		if (! empty ($addthis_share_json_list) && ! empty ($addthis_share)) {
+			foreach($addthis_share_json_list as $key_json => $json_share_value) {
+				$addthis_share[$key_json] = $json_share_value;
+			}
+		}
+	}
+	if (! empty ($addthis_share) )
+		$append_string = 'if (typeof(addthis_share) == "undefined"){ addthis_share = '. json_encode($addthis_share) .';';
+	return $append_string;
+}
 /**
 * Appends AddThis button to post content.
 */
