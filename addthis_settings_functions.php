@@ -62,7 +62,7 @@ function addthis_kses($string, $customstyles)
     	$temp_string = str_replace('twscreen_name', 'twscreenname', $temp_string);
     }
     if (strpos($temp_string, "fblikeshow_faces") != false) {
-    	$temp_string = str_replace('fblikeshow`_faces', 'fblikeshowfaces', $temp_string);
+    	$temp_string = str_replace('fblikeshow_faces', 'fblikeshowfaces', $temp_string);
     }
     
     $new_temp_string = wp_kses($temp_string, $mytags);
@@ -75,11 +75,12 @@ function addthis_kses($string, $customstyles)
     else {
     	$new_string = substr_replace($new_temp_string, $customstyles, 4, 0);
     }
-    if (strpos($new_string, "twscreenname") != false) {
-    	$new_string = str_replace('twscreenname', 'tw:screen_name', $new_string);
+    
+	if (strpos($new_string, "tw:screenname") != false) {
+    	$new_string = str_replace('tw:screenname', 'tw:screen_name', $new_string);
     }
-    if (strpos($new_string, "fblikeshowfaces") != false) {
-    	$new_string = str_replace('fblikeshowfaces', 'fb:like:show_faces', $new_string);
+	if (strpos($new_string, "fb:like:showfaces") != false) {
+    	$new_string = str_replace('fb:like:showfaces', 'fb:like:show_faces', $new_string);
     }
     
     return $new_string;

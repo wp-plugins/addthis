@@ -296,17 +296,19 @@ jQuery(document).ready(function($) {
     	var error = 0;
 		if ($('#addthis-config-json').val() != " ") {
 		    try {
-			var addthis_config_json = jQuery.parseJSON($('#addthis-config-json').val());
+		    	var addthis_config_json = jQuery.parseJSON($('#addthis-config-json').val());
 		    }
 	      	    catch (e) {
-			$('#config-error').show();
-			error = 1;
-		    }
+					$('#config-error').show();
+					error = 1;
+			    }
 		}
 		if (error == 0) {
+			$('#config-error').hide();
 		    return true;
 		}
 		else {
+			$('#config-error').show();
 		    return false;
 		}
     });
@@ -318,6 +320,7 @@ jQuery(document).ready(function($) {
 		    	var addthis_share_json = jQuery.parseJSON($('#addthis-share-json').val());
 		    }
 	        catch (e) {
+	        	$('#share-error').show();
 	        	error = 1;
 		    }
 		}
