@@ -1693,7 +1693,7 @@ function merge_share_with_json_share($addthis_share, $addthis_json_share) {
 		}
 	}
 	if (! empty ($addthis_share) )
-		$append_string = 'if (typeof(addthis_share) == "undefined"){ addthis_share = '. json_encode($addthis_share) .';';
+		$append_string = 'if (typeof(addthis_share) == "undefined"){ addthis_share = '. json_encode($addthis_share) .';}';
 	return $append_string;
 }
 /**
