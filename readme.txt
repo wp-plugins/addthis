@@ -76,6 +76,12 @@ PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
 
+= 3.1 =
+* Better support for excerpts
+* Internal issues with tw:screenname resolved
+* Better JSON validation
+* Bug fixes
+
 = 3.0.5 = 
 * Bug fixes: Style conflicts resolved
 
@@ -222,6 +228,9 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+
+= 3.1 =
+Bug fixes, better validations
 
 = 3.0.5 = 
 Bug fixes
