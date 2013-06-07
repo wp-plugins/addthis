@@ -13,6 +13,7 @@
 	  
 	  $('.above-smart-sharing-container .restore-default-options').hide();
 	  $('.below-smart-sharing-container .restore-default-options').hide();
+	  $('#below').tooltip({ position: { my: "left+30 center", at: "right center" } });
     setTimeout(function() {
 
       window.customServicesAPI.events().fetchServices();

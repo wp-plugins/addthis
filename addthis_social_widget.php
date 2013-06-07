@@ -948,7 +948,7 @@ if ( isset ($data['show_below']) )
 elseif ( isset($styles[$data['below']]) )
     $options['below'] = $data['below'];
 elseif ($data['below'] == 'disable')
-    $options['below'] = $data['below'];
+	$options['below'] = $data['below'];
 elseif ($data['below'] == 'none')
 {
     $options['below'] = 'none';
@@ -1429,7 +1429,7 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     {
         if (isset ($styles[$options['above']]))
         {
-           $above = apply_filters('addthis_above_content',  $styles[$options['above']]['src']);
+           	$above = apply_filters('addthis_above_content',  $styles[$options['above']]['src']);
         }
         elseif ($options['above'] == 'custom')
         {
