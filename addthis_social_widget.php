@@ -474,7 +474,7 @@ function addthis_admin_notices(){
     elseif ( ( ! isset($options['username']) ||  $options['username'] == false) && ! get_user_meta($user_id, 'addthis_nag_username_ignore'))
     {
         echo '<div class="updated addthis_setup_nag"><p>'; 
-        printf( __('Sign up for AddThis and add your username/password to recieve analytics about how people are sharing your content.<br /> <a href="%1$s">Enter username and password</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%2$s" target="_blank">Sign Up</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%3$s">Ignore this notice</a>'),
+        printf( __('Sign up for AddThis and add your username/password to receive analytics about how people are sharing your content.<br /> <a href="%1$s">Enter username and password</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%2$s" target="_blank">Sign Up</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%3$s">Ignore this notice</a>'),
         admin_url('options-general.php?page=' . basename(__FILE__) ),
         'https://www.addthis.com/register?profile=wpp',
         '?addthis_nag_username_ignore=0');
