@@ -13,7 +13,9 @@
 	  
 	  $('.above-smart-sharing-container .restore-default-options').hide();
 	  $('.below-smart-sharing-container .restore-default-options').hide();
-	  $('#below').tooltip({ position: { my: "left+30 center", at: "right center" } });
+	  $('#below').tooltip({ position: { my: "left+15 center", at: "right center" } });
+	  $('.sortable .disabled').tooltip({ position: { my: "left+15 center", at: "right center" } });
+	  $('.sortable .close').tooltip({ position: { my: "left+10 center", at: "right center" } });
     setTimeout(function() {
 
       window.customServicesAPI.events().fetchServices();
@@ -1357,7 +1359,7 @@
         parent.fadeOut().promise().done(function() {
 
           $('.sharing-buttons .sortable:visible').prepend(parent);
-          parent.find('.close').hide().tooltip('close');
+          parent.find('.close').hide().tooltip().tooltip('close');
           parent.fadeIn();
           $('.selected-services .sortable:visible').trigger('sortupdate', parent.attr('data-service'));
 
@@ -1522,8 +1524,8 @@
           setTimeout(function() {
             $('.sortable .disabled, .sortable .close').tooltip({
               position: {
-                my: 'left top',
-                at: 'right+30 top',
+            	my: 'left+15 top',
+                at: 'right top',
                 collision: 'none',
                 tooltipClass: 'custom-tooltip-styling'
               }

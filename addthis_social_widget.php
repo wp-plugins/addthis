@@ -52,6 +52,7 @@ define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
 define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
 define( 'ADDTHIS_ATVERSION_REVERTED', 1);
+define( 'ENABLE_ADDITIONAL_PLACEMENT_OPTION', 0);
 
 $addthis_settings = array();
 $addthis_settings['isdropdown'] = 'true';
@@ -62,6 +63,7 @@ $addthis_settings['username'] = '';
 $addthis_settings['fallback_username'] = '';
 $addthis_settings['style'] = 'share';
 $addthis_settings['atversion'] = ADDTHIS_ATVERSION;
+$addthis_settings['placement'] = ENABLE_ADDITIONAL_PLACEMENT_OPTION;
 
 $addthis_languages = array(''=>'Automatic','af'=>'Afrikaaner', 'ar'=>'Arabic', 'zh'=>'Chinese', 'cs'=>'Czech', 'da'=>'Danish', 'nl'=>'Dutch', 'en'=>'English', 'fa'=>'Farsi', 'fi'=>'Finnish', 'fr'=>'French', 'ga'=>'Gaelic', 'de'=>'German', 'el'=>'Greek', 'he'=>'Hebrew', 'hi'=>'Hindi', 'it'=>'Italian', 'ja'=>'Japanese', 'ko'=>'Korean', 'lv'=>'Latvian', 'lt'=>'Lithuanian', 'no'=>'Norwegian', 'pl'=>'Polish', 'pt'=>'Portugese', 'ro'=>'Romanian', 'ru'=>'Russian', 'sk'=>'Slovakian', 'sl'=>'Slovenian', 'es'=>'Spanish', 'sv'=>'Swedish', 'th'=>'Thai', 'ur'=>'Urdu', 'cy'=>'Welsh', 'vi'=>'Vietnamese');
 
@@ -379,8 +381,16 @@ function addthis_custom_toolbox($options, $url, $title)
 
     $button = '<div class="'.$outerClasses.'" '.$identifier.' >'; 
     
-    if (isset($options['services']) )
-    {
+    if (isset($options['addthis_options']) && $options['addthis_options'] != "") {
+    	$addthis_options = split(',', $options['addthis_options']);
+    	foreach ($addthis_options as $option) {
+            $option = trim($option);  
+            if ($option != 'more') {
+                $button .= '<a class="addthis_button_'.$option.'"></a>';
+            }
+        }
+    }
+    else if (isset($options['services']) ) {
         $services = explode(',', $options['services']);
         foreach ($services as $service)
         {
@@ -1439,6 +1449,7 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
             if ($options['above_do_custom_preferred']) 
                 $aboveOptions['preferred'] = $options['above_custom_preferred'];
             $aboveOptions['more'] = $options['above_custom_more'];
+            $aboveOptions['addthis_options'] = $options['addthis_options'];
             $above = apply_filters('addthis_above_content',  addthis_custom_toolbox($aboveOptions, $url, $title) );
         }
     	elseif( $options['above'] == 'custom_string')
@@ -1456,6 +1467,7 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
         	}
         	$aboveOptions['type'] = $options['above'];
         	$aboveOptions['services'] = $options['above_chosen_list'];
+        	$aboveOptions['addthis_options'] = $options['addthis_options'];
         	$above = apply_filters('addthis_above_content',  addthis_custom_toolbox($aboveOptions, $url, $title) );
         }
     }
@@ -1476,6 +1488,7 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
             $belowOptions['services'] = $options['below_custom_services'];
             $belowOptions['preferred'] = $options['below_custom_preferred'];
             $belowOptions['more'] = $options['below_custom_more'];
+            $belowOptions['addthis_options'] = $options['addthis_options'];
             $below = apply_filters('addthis_below_content',  addthis_custom_toolbox($belowOptions, $url, $title) );
         }
     	elseif( $options['below'] == 'custom_string')
@@ -1493,6 +1506,7 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
         	}
         	$belowOptions['type'] = $options['below'];
         	$belowOptions['services'] = $options['below_chosen_list'];
+        	$belowOptions['addthis_options'] = $options['addthis_options'];
         	$below = apply_filters('addthis_above_content',  addthis_custom_toolbox($belowOptions, $url, $title) );
         }
     }
@@ -2150,14 +2164,16 @@ function addthis_plugin_options_php4() {
 					<th scope="row"><?php _e("excerpts:", 'addthis_trans_domain' ); ?></th>
 					<td><input type="checkbox" name="addthis_settings[addthis_showonexcerpts]" value="true" <?php echo ( $addthis_showonexcerpts == true ? 'checked="checked"' : ''); ?>/></td>
 				</tr>
-				<tr>
-					<th scope="row"><?php _e("after title:", 'addthis_trans_domain' ); ?></th>
-					<td><input type="checkbox" name="addthis_settings[addthis_aftertitle]" value="true" <?php echo ( $addthis_aftertitle == true ? 'checked="checked"' : ''); ?>/></td>
-				</tr>
-				<tr>
-					<th scope="row"><?php _e("before comments:", 'addthis_trans_domain' ); ?></th>
-					<td><input type="checkbox" name="addthis_settings[addthis_beforecomments]" value="true" <?php echo ( $addthis_beforecomments == true ? 'checked="checked"' : ''); ?>/></td>
-				</tr>
+				<?php if($addthis_settings['placement'] != "0") { ?>
+					<tr>
+						<th scope="row"><?php _e("after title:", 'addthis_trans_domain' ); ?></th>
+						<td><input type="checkbox" name="addthis_settings[addthis_aftertitle]" value="true" <?php echo ( $addthis_aftertitle == true ? 'checked="checked"' : ''); ?>/></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php _e("before comments:", 'addthis_trans_domain' ); ?></th>
+						<td><input type="checkbox" name="addthis_settings[addthis_beforecomments]" value="true" <?php echo ( $addthis_beforecomments == true ? 'checked="checked"' : ''); ?>/></td>
+					</tr>
+				<?php } ?>
                 <tr>
                     <th><h2>Have AddThis track &hellip;</h2></th> 
                 </tr>
@@ -2437,6 +2453,7 @@ function addthis_display_after_title($title, $filtered = true) {
             if ($options['above_do_custom_preferred']) 
                 $aboveOptions['preferred'] = $options['above_custom_preferred'];
             $aboveOptions['more'] = $options['above_custom_more'];
+            $aboveOptions['addthis_options'] = $options['addthis_options'];
             $above = apply_filters('addthis_above_content',  addthis_custom_toolbox($aboveOptions, $url, $title) );
         }
         
@@ -2449,6 +2466,7 @@ function addthis_display_after_title($title, $filtered = true) {
         	}
         	$aboveOptions['type'] = $options['above'];
         	$aboveOptions['services'] = $options['above_chosen_list'];
+        	$aboveOptions['addthis_options'] = $options['addthis_options'];
         	$above = apply_filters('addthis_above_content',  addthis_custom_toolbox($aboveOptions, $url, $title) );
         }
     }
