@@ -196,17 +196,15 @@ function _addthis_swap_first_two_elements (&$array, $key)
                 }
 				echo "<div class='$name"."_option select_row'><span class='radio'><input type='radio' $ischecked value='disable' id='disable_{$name}' name='addthis_settings[$name]' /></span><label for='disable_{$name}'>Do not show a sharing tool at the <strong>$legend</strong> of posts</label></div>";
 				
-				if ($options[$name.'_custom_string'] != "") {
-					$checked = '';
-	                if ($option == 'custom_string' || $option == 'none' && 'custom_strin' == $addthis_default_options[$name] )
-	                {
-	                    $checked = 'checked="checked"';
-	                }
-	
-	                echo "<div class='$name"."_option select_row'><span class='radio mt4'><input $checked type='radio' value='custom_string' name='addthis_settings[$name]' id='$name"."_custom_string' /></span> <label for='{$name}_custom_string'>Custom button</label><div class='clear'></div></div>";
-	                _e( sprintf("<div style='max-width: 555px;margin-left:20px' class='%s_custom_string_input'> This text box allows you to enter any AddThis markup that you wish. To see examples of what you can do, visit <a href='https://www.addthis.com/get/sharing'>AddThis.com Sharing Tools</a> and select any sharing tool. You can also check out our <a href='http://support.addthis.com/customer/portal/articles/381263-addthis-client-api#rendering-decoration'>Client API</a>. For any help you may need, please visit <a href='http://support.addthis.com'>AddThis Support</a></div>", $name ),'addthis_trans_domain');
-	                echo "<textarea style='max-width:555px;margin-left:20px'  rows='5' cols='100' name='addthis_settings[$name"."_custom_string]' class='$name"."_custom_string_input' />".esc_textarea($custom_string)."</textarea>";
-				}
+				$checked = '';
+                if ($option == 'custom_string' || $option == 'none' && 'custom_strin' == $addthis_default_options[$name] )
+                {
+                    $checked = 'checked="checked"';
+                }
+
+                echo "<div class='$name"."_option select_row'><span class='radio mt4'><input $checked type='radio' value='custom_string' name='addthis_settings[$name]' id='$name"."_custom_string' /></span> <label for='{$name}_custom_string'>Custom button</label><div class='clear'></div></div>";
+                _e( sprintf("<div style='max-width: 555px;margin-left:20px' class='%s_custom_string_input'> This text box allows you to enter any AddThis markup that you wish. To see examples of what you can do, visit <a href='https://www.addthis.com/get/sharing'>AddThis.com Sharing Tools</a> and select any sharing tool. You can also check out our <a href='http://support.addthis.com/customer/portal/articles/381263-addthis-client-api#rendering-decoration'>Client API</a>. For any help you may need, please visit <a href='http://support.addthis.com'>AddThis Support</a></div>", $name ),'addthis_trans_domain');
+                echo "<textarea style='max-width:555px;margin-left:20px'  rows='5' cols='100' name='addthis_settings[$name"."_custom_string]' class='$name"."_custom_string_input' />".esc_textarea($custom_string)."</textarea>";
 				               
                 $class = 'hidden';
                 $checked = '';
