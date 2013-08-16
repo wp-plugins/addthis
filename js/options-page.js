@@ -744,18 +744,7 @@ jQuery(document).ready(function($) {
 		if($('#disable_above').is(':checked')) { 
 			$('#above-chosen-list').val('');
 		}
-		if($('#above_custom_string').length > 0) {
-			if ( ! $('#above_custom_string').is(':checked') ) {
-				var toConfirm = confirm("Upon saving the custom code that has been saved will be removed permanently!Do you wish to continue?");
-				if (toConfirm == true)
-				{
-					return true;
-				} else {
-					return false;
-				}
-			}
-		}	
-		
+
 		if($('#below-disable-smart-sharing').is(':checked')) { 
 			if($('#button_below').is(':checked')) { 
 				$('#below-chosen-list').val('');
@@ -784,17 +773,7 @@ jQuery(document).ready(function($) {
 		if($('#disable_below').is(':checked')) { 
 			$('#below-chosen-list').val('');
 		}
-		if($('#below_custom_string').length > 0) {
-			if ( ! $('#below_custom_string').is(':checked') ) {
-				var toConfirm = confirm("Upon saving the custom code that has been saved will be removed permanently!Do you wish to continue?");
-				if (toConfirm == true)
-				{
-					return true;
-				} else {
-					return false;
-				}
-			}
-		}	
+
 	});
 	
     var s = $("#preview_floater");
