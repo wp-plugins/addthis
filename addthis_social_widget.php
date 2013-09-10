@@ -595,10 +595,8 @@ function addthis_render_dashboard_widget() {
         echo 'No Password entered';
         return false;
     }
-    $domain = get_home_url();
-   
 
-    $domain = str_replace(array('http://', 'https://'), '', $domain);
+    $domain = str_ireplace('www.', '', parse_url(get_home_url(), PHP_URL_HOST));
   
     if (isset($options['profile']))
         $profile = '&pubid='.urlencode($options['profile']);

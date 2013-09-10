@@ -29,6 +29,7 @@ function addthis_kses($string, $customstyles)
     $mytags['a'][ 'fblikecolorscheme' ]= array();
     $mytags['a'][ 'fblikeref' ]= array();
     $mytags['a'][ 'fblikehref' ]= array();
+    $mytags['a'][ 'fbsharelayout' ]= array();
     $mytags['a'][ 'twcount' ]= array();
     $mytags['a'][ 'twurl' ]= array();
     $mytags['a'][ 'twvia' ]= array();
@@ -43,8 +44,8 @@ function addthis_kses($string, $customstyles)
     $mytags['a'][ 'pipinitmedia' ]= array();
     $mytags['a'][ 'pipinitdescription' ]= array();
         
-    $pretags = array( 'g:plusone:', 'fb:like:', 'tw:', 'pi:pinit:');
-    $posttags = array('gplusone', 'fblike', 'tw', 'pipinit');
+    $pretags = array( 'g:plusone:', 'fb:like:', 'tw:', 'pi:pinit:', 'fb:share:layout');
+    $posttags = array('gplusone', 'fblike', 'tw', 'pipinit', 'fbsharelayout');
 
     foreach($pretags as $i => $attr)
     {
