@@ -379,7 +379,12 @@ function addthis_custom_toolbox($options, $url, $title)
     if (isset($options['size']) && $options['size'] == '32')
         $outerClasses .= ' addthis_32x32_style';
 
-    if (isset($options['type']) && $options['type'] != 'custom_string') {
+    $is_custom_string = false;
+    if (isset($options['type'])) {
+        $is_custom_string = true;
+    }
+    
+    if (!$is_custom_string) {
 	    $button = '<div class="'.$outerClasses.'" '.$identifier.' >'; 
 	    
 	    if (isset($options['addthis_options']) && $options['addthis_options'] != "") {
