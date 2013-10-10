@@ -1528,17 +1528,12 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
     {
         if ( isset($above) )
         {
-            if ($options['above'] == 'custom' || $options['above'] == 'custom_string')
-                $content = $above . $content;
-            else
-                $content = sprintf($above, $url_above) . $content;
+
+            $content = sprintf($above, $url_above) . $content;
         }
         if ( isset($below) )
         {
-            if ($options['below'] == 'custom' || $options['below'] == 'custom_string')
-                $content = $content . $below;
-            else
-                $content = $content . sprintf($below, $url_below); 
+            $content = $content . sprintf($below, $url_below); 
         }
         if ($filtered == true)
             add_filter('wp_trim_excerpt', 'addthis_remove_tag', 11, 2);
