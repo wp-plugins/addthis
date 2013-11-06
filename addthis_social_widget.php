@@ -46,8 +46,8 @@ function addthis_early(){
 
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PLUGIN_VERSION' , '3.5.1');
-define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.5.1');
+define( 'ADDTHIS_PLUGIN_VERSION' , '3.5.4');
+define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp');
 define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
 define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
@@ -381,6 +381,10 @@ function addthis_custom_toolbox($options, $url, $title)
 
     $is_custom_string = false;
     if (isset($options['type'])) {
+             $is_custom_string = true;
+    }
+    
+    if (!$is_custom_string) {
 	    $button = '<div class="'.$outerClasses.'" '.$identifier.' >'; 
 	    
 	    if (isset($options['addthis_options']) && $options['addthis_options'] != "") {
