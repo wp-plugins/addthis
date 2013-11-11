@@ -379,75 +379,70 @@ function addthis_custom_toolbox($options, $url, $title)
     if (isset($options['size']) && $options['size'] == '32')
         $outerClasses .= ' addthis_32x32_style';
 
-    $is_custom_string = false;
-    if (isset($options['type'])) {
-             $is_custom_string = true;
-    }
+    if (isset($options['type']) && $options['type'] != 'custom_string') {
+        $button = '<div class="'.$outerClasses.'" '.$identifier.' >'; 
+        
+        if (isset($options['addthis_options']) && $options['addthis_options'] != "") {
+            $addthis_options = split(',', $options['addthis_options']);
+            foreach ($addthis_options as $option) {
+                $option = trim($option);  
+                if ($option != 'more') {
+                    $button .= '<a class="addthis_button_'.$option.'"></a>';
+                }
+            }
+        }
+        else if (isset($options['services']) ) {
+            $services = explode(',', $options['services']);
+            foreach ($services as $service)
+            {
+                $service = trim($service);
+                if ($service == 'more' || $service == 'compact') {
+                    if (isset($options['type']) && $options['type'] != 'fb_tw_p1_sc') {
+                        $button .= '<a class="addthis_button_compact"></a>';
+                    }
+                }
+                else if ($service == 'counter') {
+                    if (isset($options['type']) && $options['type'] == 'fb_tw_p1_sc') {
+                        $button .= '<a class="addthis_counter addthis_pill_style"></a>';
+                    }
+                    else {
+                        $button .= '<a class="addthis_counter addthis_bubble_style"></a>';
+                    }
+                }
+                else if ($service == 'google_plusone') {
+                    $button .= '<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>';
+                }
+                else
+                    $button .= '<a class="addthis_button_'.strtolower($service).'"></a>';
+            }
+        }
     
-    if (!$is_custom_string) {
-	    $button = '<div class="'.$outerClasses.'" '.$identifier.' >'; 
-	    
-	    if (isset($options['addthis_options']) && $options['addthis_options'] != "") {
-	    	$addthis_options = split(',', $options['addthis_options']);
-	    	foreach ($addthis_options as $option) {
-	            $option = trim($option);  
-	            if ($option != 'more') {
-	                $button .= '<a class="addthis_button_'.$option.'"></a>';
-	            }
-	        }
-	    }
-	    else if (isset($options['services']) ) {
-	        $services = explode(',', $options['services']);
-	        foreach ($services as $service)
-	        {
-	            $service = trim($service);
-	            if ($service == 'more' || $service == 'compact') {
-	            	if (isset($options['type']) && $options['type'] != 'fb_tw_p1_sc') {
-	            		$button .= '<a class="addthis_button_compact"></a>';
-	            	}
-	            }
-	            else if ($service == 'counter') {
-	            	if (isset($options['type']) && $options['type'] == 'fb_tw_p1_sc') {
-	            		$button .= '<a class="addthis_counter addthis_pill_style"></a>';
-	            	}
-	            	else {
-	            		$button .= '<a class="addthis_counter addthis_bubble_style"></a>';
-	            	}
-	            }
-	            else if ($service == 'google_plusone') {
-	            	$button .= '<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>';
-	            }
-	            else
-	                $button .= '<a class="addthis_button_'.strtolower($service).'"></a>';
-	        }
-	    }
-    
-	    if (isset($options['preferred']) && is_numeric($options['preferred']))
-	    {
-	        for ($a = 1; $a <= $options['preferred']; $a++)
-	        {
-	            $button .= '<a class="addthis_button_preferred_'.$a.'"></a>';
-	        }
-	    }
+        if (isset($options['preferred']) && is_numeric($options['preferred']))
+        {
+            for ($a = 1; $a <= $options['preferred']; $a++)
+            {
+                $button .= '<a class="addthis_button_preferred_'.$a.'"></a>';
+            }
+        }
 
-	    if (isset($options['more']) && $options['more'] == true)
-	    {
-	            $button .= '<a class="addthis_button_compact"></a>';
-	    }
+        if (isset($options['more']) && $options['more'] == true)
+        {
+                $button .= '<a class="addthis_button_compact"></a>';
+        }
 
-	    if (isset($options['counter']) && ($options['counter'] != "") && ($options['counter'] !== false))
-	    {
-	        if ($options['counter'] === true)
-	        {  //no style was specified
-	           $button .= '<a class="addthis_counter"></a>';
-	        }
-	        else
-	        {  //a specific style was specified such as pill_style or bubble_style
-	            $button .= '<a class="addthis_counter addthis_'.$options['counter'].'"></a>';
-	        }
-	    }
-	    
-	    $button .= '</div>';
+        if (isset($options['counter']) && ($options['counter'] != "") && ($options['counter'] !== false))
+        {
+            if ($options['counter'] === true)
+            {  //no style was specified
+               $button .= '<a class="addthis_counter"></a>';
+            }
+            else
+            {  //a specific style was specified such as pill_style or bubble_style
+                $button .= '<a class="addthis_counter addthis_'.$options['counter'].'"></a>';
+            }
+        }
+        
+        $button .= '</div>';
     }
 
     return $button;
