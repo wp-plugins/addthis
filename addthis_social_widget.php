@@ -1473,7 +1473,7 @@ function addthis_display_social_widget($content, $filtered = true, $below_excerp
         }
     	elseif( $options['above'] == 'custom_string')
         {
-            $custom = preg_replace( '/<\s*div\s*/', '<div %s ', $options['above_custom_string'] );
+            $custom = preg_replace( '/<\s*div\s*/', '<div %1$s ', $options['above_custom_string'] );
             $above = apply_filters('addthis_above_content', $custom);
         }
     }
