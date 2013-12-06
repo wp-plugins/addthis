@@ -23,7 +23,7 @@
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 3.5.5
+* Version: 3.5.6
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -46,7 +46,7 @@ function addthis_early(){
 
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PLUGIN_VERSION' , '3.5.5');
+define( 'ADDTHIS_PLUGIN_VERSION' , '3.5.6');
 define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp');
 define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
@@ -1642,10 +1642,6 @@ function addthis_output_script($return = false, $justConfig = false )
         $addthis_share['url_transforms']['shorten']['twitter'] = 'bitly';
         $addthis_share['shorteners']['bitly']['login'] = esc_js($options['addthis_bitly_login']);
         $addthis_share['shorteners']['bitly']['apiKey'] = esc_js($options['addthis_bitly_key']);
-    }
-    else {
-    	$addthis_share['url_transforms']['shorten']['twitter'] = 'bitly';
-        $addthis_share['shorteners']['bitly'] = '';
     }
 
     if ($justConfig)
