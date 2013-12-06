@@ -3,7 +3,7 @@ Contributors: srijith.v, solchea, _mjk_, addthis_paul
 Tags: share, addthis, social, bookmark, sharing, bookmarking, widget,AddThis, addtoany, aim, bookmark, buzz, del.icio.us, Digg,e-mail, email, Facebook, google bookmarks, google buzz, myspace,network, NewsVine, Reddit, Share, share this, sharethis, social, socialize, stumbleupon, twitter, windows live, yahoo buzz, pintrest, widget
 Requires at least: 3.0
 Tested up to: 3.7.1
-Stable tag: 3.5.5
+Stable tag: 3.5.6
 
 AddThis Share Buttons help drive traffic to your site by helping visitors share, bookmark and email your content to over 330 services.
 
@@ -56,7 +56,7 @@ All of the options required through this plugin require javascript.   JavaScript
 1. It's free!
 
 = Who else uses AddThis? =
-Over 14,000,000 sites have installed AddThis. With over a billion unique users, AddThis is helping share content all over the world, in more than sixty languages. You might be surprised who's sharing their website using AddThis--<a href="http://www.addthis.com/features#partners">here are just a few</a>.
+Over 14,000,000 sites have installed AddThis. With over a billion unique users, AddThis is helping share content all over the world, in more than sixty languages.
 
 = What services does AddThis support? =
 We currently support over 330 services, from email and blogging platforms to social networks and news aggregators, and we add new services every month. Want to know if your favorite service is supported? This list is accurate up to the minute: <a href="http://www.addthis.com/services">http://www.addthis.com/services</a>.
@@ -75,6 +75,9 @@ In the screen options you can enable the AddThis meta box.  Check the box and sa
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+
+= 3.5.6 =
+* Fix for better analytics
 
 = 3.5.5 =
 * Minor bug fixes. 
