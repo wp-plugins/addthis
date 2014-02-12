@@ -23,7 +23,7 @@
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 3.6
+* Version: 3.5.7
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -46,8 +46,8 @@ function addthis_early(){
 
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PLUGIN_VERSION' , '3.5.6');
-define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.5.6');
+define( 'ADDTHIS_PLUGIN_VERSION' , '3.5.7');
+define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.5.7');
 define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
 define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
@@ -2429,7 +2429,7 @@ function is_pro_user() {
     if ($profile) {
         $profile_code = str_replace('-', '', $profile);
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://q.addthis.com/feeds/1.0/config.json?pubid=" . $profile . "&callback=_ate.cbs.fds_" . $profile_code);
+        curl_setopt($ch, CURLOPT_URL, "http://q.addthis.com/feeds/1.0/config.json?pubid=" . $profile);
 
         // receive server response ...
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -2437,11 +2437,10 @@ function is_pro_user() {
         // further processing ....
         $server_output = curl_exec($ch);
         curl_close($ch);
-        $first_index = strpos($server_output, '({');
-        $last_index = strrpos($server_output, '})');
 
+        $array = json_decode($server_output);
         // check for pro user
-        if (($last_index - $first_index) > 2) {
+        if (array_key_exists('_default',$array)) {
             $isPro = true;
         } else {
             $isPro = false;
