@@ -46,8 +46,8 @@ function addthis_early(){
 
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PLUGIN_VERSION' , '3.5.6');
-define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.5.6');
+define( 'ADDTHIS_PLUGIN_VERSION' , '3.5.7');
+define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.5.7');
 define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
 define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
@@ -2035,7 +2035,18 @@ function addthis_plugin_options_php4() {
         extract($options);        
     ?>
 
-    <p><?php echo $addthis_addjs->getAtPluginPromoText();  ?></p>
+    <p>
+        <?php if(!is_pro_user()) { ?>
+            <div class="updated addthis_setup_nag">
+                <p>AddThis Pro now available - start your trial at 
+                    <a href="http://www.addthis.com" target="_blank">www.addthis.com</a> 
+                    and get premium widgets, personalized content recommendations, 
+                    advanced customization options and priority support.
+                </p>
+            </div>
+        <?php } ?>
+        <?php echo $addthis_addjs->getAtPluginPromoText();  ?>
+    </p>
     <img alt='addthis' src="//cache.addthis.com/icons/v1/thumbs/32x32/more.png" class="header-img"/>
     <span class="addthis-title">AddThis</span> <span class="addthis-plugin-name">Share</span>
     <div class="page-header" id="tabs">
@@ -2409,6 +2420,34 @@ if (! function_exists('get_first_twitter_username'))
     }
 }
 
+
+// check for pro user
+function is_pro_user() {
+    $isPro = false;
+    $options = get_option('addthis_settings');
+    $profile = $options['profile'];
+    if ($profile) {
+        $profile_code = str_replace('-', '', $profile);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://q.addthis.com/feeds/1.0/config.json?pubid=" . $profile);
+
+        // receive server response ...
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        // further processing ....
+        $server_output = curl_exec($ch);
+        curl_close($ch);
+
+        $array = json_decode($server_output);
+        // check for pro user
+        if (array_key_exists('_default',$array)) {
+            $isPro = true;
+        } else {
+            $isPro = false;
+        }
+    }
+    return $isPro;
+}
 
 require_once('addthis_post_metabox.php');
 
