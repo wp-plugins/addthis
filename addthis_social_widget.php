@@ -23,7 +23,7 @@
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 3.5.7
+* Version: 3.5.8
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -46,8 +46,8 @@ function addthis_early(){
 
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PLUGIN_VERSION' , '3.5.7');
-define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.5.7');
+define( 'ADDTHIS_PLUGIN_VERSION' , '3.5.8');
+define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.5.8');
 define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
 define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
@@ -2036,7 +2036,7 @@ function addthis_plugin_options_php4() {
     ?>
 
     <p>
-        <?php if(!is_pro_user()) { ?>
+        <?php if(!at_share_is_pro_user()) { ?>
             <div class="updated addthis_setup_nag">
                 <p>AddThis Pro now available - start your trial at 
                     <a href="http://www.addthis.com" target="_blank">www.addthis.com</a> 
@@ -2420,14 +2420,12 @@ if (! function_exists('get_first_twitter_username'))
     }
 }
 
-
 // check for pro user
-function is_pro_user() {
+function at_share_is_pro_user() {
     $isPro = false;
     $options = get_option('addthis_settings');
     $profile = $options['profile'];
     if ($profile) {
-        $profile_code = str_replace('-', '', $profile);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://q.addthis.com/feeds/1.0/config.json?pubid=" . $profile);
 
@@ -2450,4 +2448,3 @@ function is_pro_user() {
 }
 
 require_once('addthis_post_metabox.php');
-
