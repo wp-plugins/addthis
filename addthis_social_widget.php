@@ -23,7 +23,7 @@
 * Plugin Name: AddThis Social Bookmarking Widget
 * Plugin URI: http://www.addthis.com
 * Description: Help your visitor promote your site! The AddThis Social Bookmarking Widget allows any visitor to bookmark your site easily with many popular services. Sign up for an AddThis.com account to see how your visitors are sharing your content--which services they're using for sharing, which content is shared the most, and more. It's all free--even the pretty charts and graphs.
-* Version: 3.5.8
+* Version: 3.5.9
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -47,7 +47,7 @@ function addthis_early(){
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
 define( 'ADDTHIS_PLUGIN_VERSION' , '3.5.8');
-define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.5.8');
+define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-3.5.9');
 define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
 define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
@@ -2426,16 +2426,8 @@ function at_share_is_pro_user() {
     $options = get_option('addthis_settings');
     $profile = $options['profile'];
     if ($profile) {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://q.addthis.com/feeds/1.0/config.json?pubid=" . $profile);
-
-        // receive server response ...
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        // further processing ....
-        $server_output = curl_exec($ch);
-        curl_close($ch);
-
+        $request = wp_remote_get( "http://q.addthis.com/feeds/1.0/config.json?pubid=" . $profile );
+        $server_output = wp_remote_retrieve_body( $request );
         $array = json_decode($server_output);
         // check for pro user
         if (array_key_exists('_default',$array)) {
