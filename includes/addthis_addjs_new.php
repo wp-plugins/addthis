@@ -13,15 +13,6 @@ Class AddThis_addjs{
 
     private $_cuid;
 
-    private $_atPlugins = array(
-        'AddThis Social Bookmarking Widget' => array('http://wordpress.org/extend/plugins/addthis/', 'Share') ,
-        'AddThis Follow Widget' => array('http://wordpress.org/extend/plugins/addthis-follow/', 'Follow'),
-//        'AddThis Trending Content Widget' => array('http://wordpress.org/extend/plugins/addthis-trending', 'Trending' ),
-        'AddThis Welcome Bar' => array('http://wordpress.org/extend/plugins/addthis-welcome/', 'Welcome'),
-    	'AddThis Social Sign In' => array('http://wordpress.org/extend/plugins/addthis-social-sign-in/', 'SSI'),  
-    );
-    private $_atInstalled = array();
-
     var $pubid;
     
     var $jsToAdd;
@@ -117,7 +108,7 @@ Class AddThis_addjs{
     }
 
     function wrapJs(){
-        $this->jsToAdd .= "var addthis_product = '".$this->productCode."';\n";
+        $this->jsToAdd .= "var addthis_for_wordpress = '".$this->productCode."';\n";
         $this->jsToAdd = '<script type="text/javascript">' . $this->jsToAdd . '</script>';
     }
 
@@ -144,10 +135,6 @@ Class AddThis_addjs{
     function maybe_add_footer_comment(){
             add_action( 'wp_footer', array($this, 'test_footer' ), 99999 ); // Some obscene priority, make sure we run last
     }
-
-    function test_footer(){
-        echo '<!--wp_footer-->';
-    }
     
     /* END testing for wp_footer in a theme stuff */
     function addToScript($newData){
@@ -168,8 +155,10 @@ Class AddThis_addjs{
         $addthis_asynchronous_loading = (isset($addthis_settings_options['addthis_asynchronous_loading']))?$addthis_settings_options['addthis_asynchronous_loading']:false;
         if(isset($addthis_asynchronous_loading) && $addthis_asynchronous_loading) {
             $this->jsToAdd .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->pubid ).'&async=1"></script>';
+            //$this->jsToAdd .= '<script type="text/javascript" src="http://cache-dev.addthis.com/cachefly/js/300/addthis_widget.js&async=1"></script>';
             $this->jsToAdd .= '<script type="text/javascript">jQuery(document).ready(function($) { addthis.init(); }); </script>';
         } else {
+            //$this->jsToAdd .= '<script type="text/javascript" src="http://cache-dev.addthis.com/cachefly/js/300/addthis_widget.js#pubid='. urlencode( $this->pubid ).'"></script>';
             $this->jsToAdd .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->pubid ).'"></script>';
         }
     }
@@ -181,36 +170,21 @@ Class AddThis_addjs{
         }
     }
 
-
-    /*  User name and other shared resources */
-    function getUsername(){
-        return (isset($this->_options['username']))?  $this->_options['username'] : false;
-
-    }
-    function setUsername($username){
-        $this->_options['username'] = sanitize_text_field($username);
-        update_option( 'addthis_settings', $options); 
-    }
-
     function getProfileId(){
-        return( isset( $this->_options['profile'] ) && ! empty($this->_options['profile']) )?  $this->_options['profile'] : $this->_cuid;
+        return( isset( $this->_options['profile'] ) && ! empty($this->_options['profile']) )?  $this->_options['profile'] : null;
     }
 
     function setProfileId($profile){
         $this->_options['profile'] = sanitize_text_field($profile);
         update_option( 'addthis_settings', $this->_options); 
-    }   
-
-    function getPassword(){
-        return (isset($this->_options['password']))?  $this->_options['password'] : $this->_cuid;
     }
 
-    function setPassword($password){
-        $this->_options['password'] = sanitize_text_field($password);
-        update_option( 'addthis_settings', $options); 
+    function test_footer(){
+        echo '<!--wp_footer-->';
     }
 
     function getAtPluginPromoText(){
+        // Included not to break the other plugins(smartlayer)
         if (! did_action('admin_init') && !  current_filter('admin_init'))
         {
             _doing_it_wrong('getAtPluginPromoText', 'This function should only be called on an admin page load and no earlier the admin_init', 1);
