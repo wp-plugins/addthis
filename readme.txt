@@ -1,6 +1,6 @@
 === Smart Website Tools by AddThis ===
 Contributors: srijith.v, solchea, _mjk_, addthis_paul
-Tags: AddThis, addtoany, bookmark, bookmarking, email, e­mail, sharing buttons, share, share this,facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button
+Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
 Tested up to: 4.0
 Stable tag: 4.0
@@ -10,26 +10,17 @@ your website smarter.
 
 == Description ==
 
-Traditionally known as the "sharing tool", AddThis has taken website tools to the next level through the 
-creation of recommended content and conversion tools while also streamlining and evolving their suite of 
-social tools, including sharing and following buttons.
+Traditionally known as the “sharing tool”, AddThis has taken website tools to the next level through the creation of recommended content and conversion tools while also streamlining and evolving their suite of social tools, including sharing and following buttons.
 
-**Social Tools**:  Promote your content easily by sharing to over 330 of the most popular social networking 
-and bookmarking sites (like Facebook, Twitter, Pinterest, Google+, WhatsApp, LinkedIn and more). Clean, 
-customizable and simple social buttons are unobtrusive, quick to load and recognized all over the web.
+**Social Tools:**  Promote your content easily by sharing to over 330 of the most popular social networking and bookmarking sites (like Facebook, Twitter, Pinterest, Google+, WhatsApp, LinkedIn and more). Clean, customizable and simple social buttons are unobtrusive, quick to load and recognized all over the web. 
 
-**Recommended Content Tools**: Keep visitors on your site longer with the use of our recommended content 
-based on what’s trending, giving your user a unique experience and keeps them engaged with your content 
-longer.
+**Recommended Content Tools:** Keep visitors on your site longer with the use of our recommended content based on what’s trending, giving your user a unique experience and keeps them engaged with your content longer. 
 
-**Conversion Tools**: Reach business goals quickly with the use of our conversion tools, including email 
-subscriptions, event registration and more.
+**Conversion Tools:** Reach business goals quickly with the use of our conversion tools, including email subscriptions, event registration and more. 
 
-**Analytics**: Use the AddThis dashboard to find out how your visitors are sharing content, what content is 
-trending, which services visitors for sharing, how many more followers you've gotten, and much, much more.
+**Analytics:** Use the AddThis dashboard to find out how your visitors are sharing content, what content is trending, which services visitors for sharing, how many more followers you’ve gotten, and much, much more. 
 
-Many of our tools are free, but Pro users get the benefit of exclusive widgets, including mobile­friendly tools 
-and retina display buttons, priority support and deeper analytics.
+Many of our tools are free, but Pro users get the benefit of exclusive widgets, including mobile-friendly tools and retina display buttons, priority support and deeper analytics. 
 
 == Installation ==
 
@@ -81,9 +72,9 @@ In the screen options you can enable the AddThis meta box. Check the box and sav
 
 == Screenshots ==
 
-1. The admin dashboard widget
-2. Previewing how your options look
-3. The settings interface.
+1. Analytics
+2. Tool Gallery
+3. Customization options
 
 == PHP Version ==
 
