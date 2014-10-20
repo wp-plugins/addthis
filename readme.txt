@@ -282,7 +282,7 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 == Upgrade Notice ==
 = 4.0 =
-* Updgraded with AddThis Dashboard integration. Easily manage your configurations in a single place! 
+* WordPress Plugin Upgraded with AddThis Dashboard integration and Access To Pro Tools.
 
 = 3.5.10 =
 * Minor bug fix
