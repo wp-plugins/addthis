@@ -14,18 +14,18 @@ Traditionally known as the "sharing tool", AddThis has taken website tools to th
 creation of recommended content and conversion tools while also streamlining and evolving their suite of 
 social tools, including sharing and following buttons.
 
-Social Tools:  Promote your content easily by sharing to over 330 of the most popular social networking 
+**Social Tools**:  Promote your content easily by sharing to over 330 of the most popular social networking 
 and bookmarking sites (like Facebook, Twitter, Pinterest, Google+, WhatsApp, LinkedIn and more). Clean, 
 customizable and simple social buttons are unobtrusive, quick to load and recognized all over the web.
 
-Recommended Content Tools: Keep visitors on your site longer with the use of our recommended content 
+**Recommended Content Tools**: Keep visitors on your site longer with the use of our recommended content 
 based on what’s trending, giving your user a unique experience and keeps them engaged with your content 
 longer.
 
-Conversion Tools: Reach business goals quickly with the use of our conversion tools, including email 
+**Conversion Tools**: Reach business goals quickly with the use of our conversion tools, including email 
 subscriptions, event registration and more.
 
-Analytics: Use the AddThis dashboard to find out how your visitors are sharing content, what content is 
+**Analytics**: Use the AddThis dashboard to find out how your visitors are sharing content, what content is 
 trending, which services visitors for sharing, how many more followers you've gotten, and much, much more.
 
 Many of our tools are free, but Pro users get the benefit of exclusive widgets, including mobile­friendly tools 
