@@ -1,5 +1,5 @@
 === Smart Website Tools by AddThis ===
-Contributors: srijith.v, solchea, _mjk_, addthis_paul
+Contributors: srijith.v, solchea, _mjk_, addthis_paul, abramsm
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
 Tested up to: 4.0
