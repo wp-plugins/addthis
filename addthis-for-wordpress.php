@@ -355,22 +355,11 @@ class Addthis_Wordpress
                      "'>Next</a>";
         } else {
 
-		$addthis_options = get_option('addthis_settings');
-		if(isset($addthis_options['above']) && isset($addthis_options['profile'])){
-
-			    $html .= "<a class='addthis_button' target='_blank'".
-				     "href='".self::ADDTHIS_SITE_URL."?cms=wp&pubid=".self::getPubid().
-				     "'>".
-				     "To control your AddThis plugins, click here &#8594;".
-				     "</a>";
-
-		} else {
-			    $html .= "<a class='addthis_button' target='_blank'".
-				     "href='".self::ADDTHIS_SITE_URL_WITH_PUB."/".self::getPubid().
-				     "'>".
-				     "To control your AddThis plugins, click here &#8594;".
-				     "</a>";
-		}            
+            $html .= "<a class='addthis_button' target='_blank'".
+                     "href='".self::ADDTHIS_SITE_URL."?cms=wp&pubid=".self::getPubid().
+                     "'>".
+                     "To control your AddThis plugins, click here &#8594;".
+                     "</a>";          
         }
 
         $html .= "<div class='addthis_seperator'>&nbsp;</div>";
