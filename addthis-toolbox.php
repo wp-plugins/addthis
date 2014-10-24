@@ -62,7 +62,11 @@ class Addthis_ToolBox
     public function __construct()
     {
         add_filter('the_content', array($this, 'addWidget'));
-        add_filter('the_excerpt', array($this, 'addWidget'));
+        if ( has_excerpt()) { die('sss');
+            add_filter('the_excerpt', array($this, 'addWidget'));
+        } else {
+            add_filter('get_the_excerpt', array($this, 'addWidget'));
+        }
     }
 
     /**
