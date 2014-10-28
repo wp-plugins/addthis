@@ -33,7 +33,7 @@ else return;
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
 define( 'ADDTHIS_PLUGIN_VERSION' , '4.0');
-define( 'ADDTHIS_PRODUCT_VERSION' , '4.0');
+define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-4.0');
 define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
 define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
