@@ -368,6 +368,10 @@ class Addthis_Wordpress
                      "</a>";          
         }
 
+       $html .="<p class='addthis_support'> If you don’t see your tools after configuring them in the dashboard, please contact ".
+		"<a href='http://support.addthis.com/'>AddThis Support</a></p>";
+
+
         $html .= "<div class='addthis_seperator'>&nbsp;</div>";
         $html .= "<a href = '".
                   self::getSettingsPageUrl()."&advanced_settings=true'".
