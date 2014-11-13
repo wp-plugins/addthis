@@ -32,7 +32,7 @@ $pathParts = pathinfo(__FILE__);
 $path = $pathParts['dirname'];
 
 if (!defined('ADDTHIS_PLUGIN_VERSION')) {
-    define('ADDTHIS_PLUGIN_VERSION', '3.5.11');
+    define('ADDTHIS_PLUGIN_VERSION', '4.0.1');
 }
 
 if (!defined('ADDTHIS_ATVERSION')) {
