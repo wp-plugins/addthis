@@ -32,7 +32,7 @@ $pathParts = pathinfo(__FILE__);
 $path = $pathParts['dirname'];
 
 if (!defined('ADDTHIS_PLUGIN_VERSION')) {
-    define('ADDTHIS_PLUGIN_VERSION', '3.5.11');
+    define('ADDTHIS_PLUGIN_VERSION', '4.0.1');
 }
 
 if (!defined('ADDTHIS_ATVERSION')) {
@@ -367,6 +367,10 @@ class Addthis_Wordpress
                      "To control your AddThis plugins, click here &#8594;".
                      "</a>";          
         }
+
+       $html .="<p class='addthis_support'> If you don’t see your tools after configuring them in the dashboard, please contact ".
+		"<a href='http://support.addthis.com/'>AddThis Support</a></p>";
+
 
         $html .= "<div class='addthis_seperator'>&nbsp;</div>";
         $html .= "<a href = '".
