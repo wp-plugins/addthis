@@ -78,7 +78,7 @@ class Addthis_ToolBox
      */
     public function addWidget($content)
     {
-        if (Addthis_Wordpress::getPubid()) {
+        if (Addthis_Wordpress::getPubid() && !is_404()) {
             if (is_home() || is_front_page()) {
                 $content  = self::_buildDiv(self::AT_ABOVE_POST_HOME) . 
                             self::_buildDiv(self::AT_CONTENT_ABOVE_POST_HOME) . 
