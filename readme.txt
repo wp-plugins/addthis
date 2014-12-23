@@ -2,7 +2,7 @@
 Contributors: srijith.v, solchea, _mjk_, addthis_paul, abramsm
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
-Tested up to: 4.0
+Tested up to: 4.1
 Stable tag: 4.0.1
 
 AddThis provides the best sharing, social, recommended content, and conversion tools to help you make 
