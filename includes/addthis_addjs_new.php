@@ -67,10 +67,10 @@ Class AddThis_addjs{
         add_action('admin_init', array($this, 'register_post_at_flag'));
 
         // for saving custom field value for show/hide addthis sharing button in admin post add/edit page.
-        add_action('pre_post_update', array($this, 'save_product_data'));
-        add_action('save_post', array($this, 'save_product_data'));
-        add_action('publish_post', array($this, 'save_product_data'));
-        add_action('edit_page_form', array($this, 'save_product_data'));
+        add_action('pre_post_update', array($this, 'save_at_flag'));
+        add_action('save_post', array($this, 'save_at_flag'));
+        add_action('publish_post', array($this, 'save_at_flag'));
+        add_action('edit_page_form', array($this, 'save_at_flag'));
 
 
         // Footer
@@ -201,5 +201,36 @@ Class AddThis_addjs{
             return null;
         }
         return null;
+    }
+
+    /*
+     * Function to add checkbox to show/hide Addthis sharing buttons in admin post add/edit page.
+     */
+    public function register_post_at_flag() {
+        add_meta_box('at_widget', __('AddThis For Wordpress'), array($this, 'add_at_flag_meta_box'), 'post', 'advanced', 'high');
+    }
+    /*
+     * Function to add checkbox to show/hide Addthis sharing buttons in admin post add/edit page.
+     */
+    public function add_at_flag_meta_box($post){
+        $at_flag = get_post_meta($post->ID, '_at_widget', true);
+        echo "<label for='_at_widget'>".__('Show AddThis Sharing buttons: ', 'foobar')."</label>";
+        if($at_flag != '' && $at_flag == '1'){
+            echo "<input type='checkbox' name='_at_widget' id='at_widget' value='1' checked='checked'/>";
+        } else if($at_flag == '' || $at_flag == '0'){
+            echo "<input type='checkbox' name='_at_widget' id='at_widget' value='1'/>";
+        }
+    }
+    /*
+     * Function to add save the value of checkbox to show/hide Addthis sharing buttons in admin post add/edit page.
+     */
+    function save_at_flag(){
+        //print_r($post);
+        global $post;
+        if(isset($_POST['_at_widget']))
+            update_post_meta($post->ID, '_at_widget', $_POST['_at_widget']);
+        else
+            update_post_meta($post->ID, '_at_widget', '0');
+        //update_post_meta($post->ID, '_product_number', $_POST['_product_number']);
     }
 }
