@@ -63,6 +63,15 @@ Class AddThis_addjs{
         // In order for our wp_footer magic to work, we need to sometimes add our stuff 
         add_action('init', array($this, 'maybe_add_footer_comment'));
 
+        // for adding option for show/hide addthis sharing button in admin post add/edit page.
+        add_action('admin_init', array($this, 'register_post_at_flag'));
+
+        // for saving custom field value for show/hide addthis sharing button in admin post add/edit page.
+        add_action('pre_post_update', array($this, 'save_product_data'));
+        add_action('save_post', array($this, 'save_product_data'));
+        add_action('publish_post', array($this, 'save_product_data'));
+        add_action('edit_page_form', array($this, 'save_product_data'));
+
 
         // Footer
         if ( isset($this->_options['wpfooter']) && $this->_options['wpfooter'])
@@ -159,7 +168,7 @@ Class AddThis_addjs{
                 $this->jsToAdd .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->pubid ).'&async=1"></script>';
                 $this->jsToAdd .= '<script type="text/javascript">jQuery(document).ready(function($) { addthis.init(); }); </script>';
             } else {
-                $this->jsToAdd .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->pubid ).'&async=1"></script>';
+                $this->jsToAdd .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->pubid ).'&async=15"></script>';
             }
         }
     }

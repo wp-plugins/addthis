@@ -79,24 +79,51 @@ class Addthis_ToolBox
     public function addWidget($content)
     {
         if (Addthis_Wordpress::getPubid() && !is_404()) {
+            global $post;
+            $postid = $post->ID;
+            $at_flag = get_post_meta( $postid, '_at_widget', TRUE );
             if (is_home() || is_front_page()) {
-                $content  = self::_buildDiv(self::AT_ABOVE_POST_HOME) . 
-                            self::_buildDiv(self::AT_CONTENT_ABOVE_POST_HOME) . 
-                            $content;
-                $content .= self::_buildDiv(self::AT_BELOW_POST_HOME);
-                $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST_HOME);
+                if($at_flag != '' && $at_flag == '1'){
+                    $content  = self::_buildDiv(self::AT_ABOVE_POST_HOME) . 
+                                self::_buildDiv(self::AT_CONTENT_ABOVE_POST_HOME) . 
+                                $content;
+                    $content .= self::_buildDiv(self::AT_BELOW_POST_HOME);
+                    $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST_HOME);
+                } else if($at_flag == ''){
+                    $content  = self::_buildDiv(self::AT_ABOVE_POST_HOME) . 
+                                self::_buildDiv(self::AT_CONTENT_ABOVE_POST_HOME) . 
+                                $content;
+                    $content .= self::_buildDiv(self::AT_BELOW_POST_HOME);
+                    $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST_HOME);
+                }
             } else if (is_page()) {
-                $content  = self::_buildDiv(self::AT_ABOVE_POST_PAGE) . 
-                            self::_buildDiv(self::AT_CONTENT_ABOVE_POST_PAGE) . 
-                            $content;
-                $content .= self::_buildDiv(self::AT_BELOW_POST_PAGE);
-                $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST_PAGE);
+                if($at_flag != '' && $at_flag == '1'){
+                    $content  = self::_buildDiv(self::AT_ABOVE_POST_PAGE) . 
+                                self::_buildDiv(self::AT_CONTENT_ABOVE_POST_PAGE) . 
+                                $content;
+                    $content .= self::_buildDiv(self::AT_BELOW_POST_PAGE);
+                    $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST_PAGE);
+                } else if($at_flag == ''){
+                    $content  = self::_buildDiv(self::AT_ABOVE_POST_PAGE) . 
+                                self::_buildDiv(self::AT_CONTENT_ABOVE_POST_PAGE) . 
+                                $content;
+                    $content .= self::_buildDiv(self::AT_BELOW_POST_PAGE);
+                    $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST_PAGE);
+                }
             } else if (is_single()) {
-                $content  = self::_buildDiv(self::AT_ABOVE_POST) . 
+                if($at_flag != '' && $at_flag == '1'){
+                    $content  = self::_buildDiv(self::AT_ABOVE_POST) . 
+                                self::_buildDiv(self::AT_CONTENT_ABOVE_POST) . 
+                                $content;
+                    $content .= self::_buildDiv(self::AT_BELOW_POST);
+                    $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST);
+                } else if($at_flag == ''){
+                    $content  = self::_buildDiv(self::AT_ABOVE_POST) . 
                             self::_buildDiv(self::AT_CONTENT_ABOVE_POST) . 
                             $content;
-                $content .= self::_buildDiv(self::AT_BELOW_POST);
-                $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST);
+                    $content .= self::_buildDiv(self::AT_BELOW_POST);
+                    $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST);
+                }
             }
         }
 
