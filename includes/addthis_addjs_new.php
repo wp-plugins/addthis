@@ -222,15 +222,13 @@ Class AddThis_addjs{
         }
     }
     /*
-     * Function to add save the value of checkbox to show/hide Addthis sharing buttons in admin post add/edit page.
+     * Function to save the value of checkbox to show/hide Addthis sharing buttons in admin post add/edit page.
      */
     function save_at_flag(){
-        //print_r($post);
         global $post;
         if(isset($_POST['_at_widget']))
             update_post_meta($post->ID, '_at_widget', $_POST['_at_widget']);
         else
             update_post_meta($post->ID, '_at_widget', '0');
-        //update_post_meta($post->ID, '_product_number', $_POST['_product_number']);
     }
 }
