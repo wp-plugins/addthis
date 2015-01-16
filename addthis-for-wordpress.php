@@ -172,7 +172,6 @@ class Addthis_Wordpress
         if ($this->_checkAddPubid()) {
             $updateResult = $this->updateSettings($this->_postVariables);
         }
-        
         wp_enqueue_script(
             'addThisScript',
             plugins_url(ADDTHIS_JS_PATH, __FILE__)
@@ -193,7 +192,6 @@ class Addthis_Wordpress
      */
     public function updateSettings($settings)
     {
-        //global $addthis_addjs;
         if(isset($settings['pubid'])){
             $this->_options['profile'] = $settings['pubid'];
         }
@@ -421,22 +419,6 @@ class Addthis_Wordpress
         $html .= "<a href = '".
                   self::getSettingsPageUrl()."&advanced_settings=true'".
                   " class='addthis_reset_button'>Edit Profile Settings</a>";
-        
-        if ($this->_pubid) {
-            $asyncLoading = (isset($this->_options) 
-                            && isset($this->_options['addthis_asynchronous_loading']))
-                            && $this->_options['addthis_asynchronous_loading']
-                            ? 'checked'
-                            : '';
-            $html .= "<div class='addthis_reset_button addthis_async'>";
-            $html .= "<span>Asynchronous Loading : </span>";
-            $html .= "<input id='async_load' type='checkbox' name='async_loading' ".
-                      $asyncLoading.">";
-            $html .= "<span class='at-loader hide'>".
-                     "<img src='".plugins_url('images/ajax-loader.gif', __FILE__)."'>".
-                     "</span>";
-            $html .= "</div>";
-        }
 
         return $html;
     }
@@ -526,20 +508,7 @@ class Addthis_Wordpress
         $html .=  "<input type='text' value='".$pubId."' ".
                       "name='pubid' id='addthis-pubid'/>";
         $html .=  "</div></div>";
-        
-        //$asyncLoading = (isset($this->_options) 
-        //                && isset($this->_options['addthis_asynchronous_loading']))
-        //               ? 'checked'
-        //                : '';
-        
-//        $html .= "<div class='clear_both'>";
-//        $html .= "<span>Asynchronous Loading : </span>";
-//        $html .= "<input type='checkbox' name='async_loading' ".
-//                  $asyncLoading.">";
-//        $html .= "</div>";
-        
-        
-        
+
         $submitButtonValue = "Confirm and Save";
         
         if (isset($this->_getVariables['advanced_settings'])) {

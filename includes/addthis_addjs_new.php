@@ -67,11 +67,7 @@ Class AddThis_addjs{
         add_action('admin_init', array($this, 'register_post_at_flag'));
 
         // for saving custom field value for show/hide addthis sharing button in admin post add/edit page.
-        add_action('pre_post_update', array($this, 'save_at_flag'));
         add_action('save_post', array($this, 'save_at_flag'));
-        add_action('publish_post', array($this, 'save_at_flag'));
-        add_action('edit_page_form', array($this, 'save_at_flag'));
-
 
         // Footer
         if ( isset($this->_options['wpfooter']) && $this->_options['wpfooter'])
@@ -164,12 +160,8 @@ Class AddThis_addjs{
             //Load addthis script only if the page is not 404
             $addthis_settings_options = get_option('addthis_settings');
             $addthis_asynchronous_loading = (isset($addthis_settings_options['addthis_asynchronous_loading']))?$addthis_settings_options['addthis_asynchronous_loading']:false;
-            if(isset($addthis_asynchronous_loading) && $addthis_asynchronous_loading) {
-                $this->jsToAdd .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->pubid ).'&async=1"></script>';
-                $this->jsToAdd .= '<script type="text/javascript">jQuery(document).ready(function($) { addthis.init(); }); </script>';
-            } else {
-                $this->jsToAdd .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->pubid ).'&async=15"></script>';
-            }
+            $this->jsToAdd .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->pubid ).'" async="async"></script>';
+            $this->jsToAdd .= '<script type="text/javascript">jQuery(document).ready(function($) { addthis.init(); }); </script>';
         }
     }
 
@@ -208,6 +200,7 @@ Class AddThis_addjs{
      */
     public function register_post_at_flag() {
         add_meta_box('at_widget', __('AddThis For Wordpress'), array($this, 'add_at_flag_meta_box'), 'post', 'advanced', 'high');
+        add_meta_box('at_widget', __('AddThis For Wordpress'), array($this, 'add_at_flag_meta_box'), 'page', 'advanced', 'high');
     }
     /*
      * Function to add checkbox to show/hide Addthis sharing buttons in admin post add/edit page.
@@ -215,9 +208,9 @@ Class AddThis_addjs{
     public function add_at_flag_meta_box($post){
         $at_flag = get_post_meta($post->ID, '_at_widget', true);
         echo "<label for='_at_widget'>".__('Show AddThis Sharing buttons: ', 'foobar')."</label>";
-        if($at_flag != '' && $at_flag == '1'){
+        if($at_flag == '' || $at_flag == '1'){
             echo "<input type='checkbox' name='_at_widget' id='at_widget' value='1' checked='checked'/>";
-        } else if($at_flag == '' || $at_flag == '0'){
+        } else if($at_flag == '0'){
             echo "<input type='checkbox' name='_at_widget' id='at_widget' value='1'/>";
         }
     }
