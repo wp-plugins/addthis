@@ -228,7 +228,7 @@ a.addthis_configure, a.addthis_configure:hover {
     margin-right: 25px;
     padding: 3px;
     text-align: center;
-    width: 155px;
+    width: 160px;
     text-decoration: none;
     font-size: inherit;
     line-height: none;
@@ -247,4 +247,13 @@ a.addthis_configure, a.addthis_configure:hover {
 
 .addthis_confirm_div input[type="text"] {
     font-size: 12px;
+}
+
+.addthis_async {
+    border: 0px solid gray;
+    width: 180px;
+}
+
+.hide {
+    visibility: hidden;
 }

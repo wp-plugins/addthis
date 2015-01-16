@@ -49,12 +49,20 @@ class Addthis_ToolBox
     const AT_BELOW_POST_PAGE = "at-below-post-page";
     const AT_ABOVE_POST = "at-above-post";
     const AT_BELOW_POST = "at-below-post";
+    const AT_ABOVE_POST_CAT_PAGE = "at-above-post-cat-page";
+    const AT_BELOW_POST_CAT_PAGE = "at-below-post-cat-page";
+    const AT_ABOVE_POST_ARCH_PAGE = "at-above-post-arch-page";
+    const AT_BELOW_POST_ARCH_PAGE = "at-below-post-arch-page";    
     const AT_CONTENT_BELOW_POST_HOME = "at-below-post-homepage-recommended";
     const AT_CONTENT_BELOW_POST_PAGE = "at-below-post-page-recommended";
     const AT_CONTENT_BELOW_POST = "at-below-post-recommended";
+    const AT_CONTENT_BELOW_CAT_PAGE = "at-below-post-cat-page-recommended";
+    const AT_CONTENT_BELOW_ARCH_PAGE = "at-below-post-arch-page-recommended";    
     const AT_CONTENT_ABOVE_POST_HOME = "at-above-post-homepage-recommended";
     const AT_CONTENT_ABOVE_POST_PAGE = "at-above-post-page-recommended";
     const AT_CONTENT_ABOVE_POST = "at-above-post-recommended";
+    const AT_CONTENT_ABOVE_CAT_PAGE = "at-above-post-cat-page-recommended";
+    const AT_CONTENT_ABOVE_ARCH_PAGE = "at-above-post-arch-page-recommended";
 
     /**
      * Initializes the widget class.
@@ -78,26 +86,51 @@ class Addthis_ToolBox
      */
     public function addWidget($content)
     {
-        if (Addthis_Wordpress::getPubid()) {
+        if (Addthis_Wordpress::getPubid() && !is_404()) {
+            global $post;
+            $postid = $post->ID;
+            $at_flag = get_post_meta( $postid, '_at_widget', TRUE );
             if (is_home() || is_front_page()) {
-                $content  = self::_buildDiv(self::AT_ABOVE_POST_HOME) . 
-                            self::_buildDiv(self::AT_CONTENT_ABOVE_POST_HOME) . 
-                            $content;
-                $content .= self::_buildDiv(self::AT_BELOW_POST_HOME);
-                $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST_HOME);
+                if($at_flag == '' || $at_flag == '1'){
+                    $content  = self::_buildDiv(self::AT_ABOVE_POST_HOME) . 
+                                self::_buildDiv(self::AT_CONTENT_ABOVE_POST_HOME) . 
+                                $content;
+                    $content .= self::_buildDiv(self::AT_BELOW_POST_HOME);
+                    $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST_HOME);
+                }
             } else if (is_page()) {
-                $content  = self::_buildDiv(self::AT_ABOVE_POST_PAGE) . 
-                            self::_buildDiv(self::AT_CONTENT_ABOVE_POST_PAGE) . 
-                            $content;
-                $content .= self::_buildDiv(self::AT_BELOW_POST_PAGE);
-                $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST_PAGE);
+                if($at_flag == '' || $at_flag == '1'){
+                    $content  = self::_buildDiv(self::AT_ABOVE_POST_PAGE) . 
+                                self::_buildDiv(self::AT_CONTENT_ABOVE_POST_PAGE) . 
+                                $content;
+                    $content .= self::_buildDiv(self::AT_BELOW_POST_PAGE);
+                    $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST_PAGE);
+                }
             } else if (is_single()) {
-                $content  = self::_buildDiv(self::AT_ABOVE_POST) . 
-                            self::_buildDiv(self::AT_CONTENT_ABOVE_POST) . 
-                            $content;
-                $content .= self::_buildDiv(self::AT_BELOW_POST);
-                $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST);
-            }
+                if($at_flag == '' || $at_flag == '1'){
+                    $content  = self::_buildDiv(self::AT_ABOVE_POST) . 
+                                self::_buildDiv(self::AT_CONTENT_ABOVE_POST) . 
+                                $content;
+                    $content .= self::_buildDiv(self::AT_BELOW_POST);
+                    $content .= self::_buildDiv(self::AT_CONTENT_BELOW_POST);
+                }
+            }  else if (is_category()) {
+                if($at_flag == '' || $at_flag == '1'){
+                    $content  = self::_buildDiv(self::AT_ABOVE_POST_CAT_PAGE) . 
+                                self::_buildDiv(self::AT_CONTENT_ABOVE_CAT_PAGE) . 
+                                $content;
+                    $content .= self::_buildDiv(self::AT_BELOW_POST_CAT_PAGE);
+                    $content .= self::_buildDiv(self::AT_CONTENT_BELOW_CAT_PAGE);
+                }
+            }  else if (is_archive()) {
+                if($at_flag == '' || $at_flag == '1'){
+                    $content  = self::_buildDiv(self::AT_ABOVE_POST_ARCH_PAGE) . 
+                                self::_buildDiv(self::AT_CONTENT_ABOVE_ARCH_PAGE) . 
+                                $content;
+                    $content .= self::_buildDiv(self::AT_BELOW_POST_ARCH_PAGE);
+                    $content .= self::_buildDiv(self::AT_CONTENT_BELOW_ARCH_PAGE);
+                }
+            }     
         }
 
         return $content;
@@ -114,7 +147,7 @@ class Addthis_ToolBox
     {
         $title = get_the_title();
         $url   = get_permalink();
-        return "<div class='".$class." addthis-toolbox'".
+        return "<div class='".$class." addthis-toolbox at-wordpress-hide'".
                    " data-title='".$title."' data-url='".$url."'>".
                 "</div>";
     }

@@ -2,8 +2,8 @@
 Contributors: srijith.v, solchea, _mjk_, addthis_paul, abramsm
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
-Tested up to: 4.0
-Stable tag: 4.0.1
+Tested up to: 4.1
+Stable tag: 4.0.2
 
 AddThis provides the best sharing, social, recommended content, and conversion tools to help you make 
 your website smarter. 
@@ -81,6 +81,10 @@ In the screen options you can enable the AddThis meta box. Check the box and sav
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+
+= 4.0.2 =
+* Control inline share buttons for each page/post
+* Bug fixes
 
 = 4.0.1 =
 * Frictionless integration with AddThis Dashboard. 
@@ -275,6 +279,11 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+
+= 4.0.2 =
+* Control inline share buttons for each page/post
+* Bug fixes
+
 = 4.0.1 =
 * Fix for automatically converting profile types to Wordpress type. 
 

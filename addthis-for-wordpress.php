@@ -73,6 +73,9 @@ class Addthis_Wordpress
     
     /** Addthis Profile id **/
     private $_pubid;
+    
+    /** Addthis Settings **/
+    private $_options;
 
     /**
      * Initializes the plugin.
@@ -83,11 +86,16 @@ class Addthis_Wordpress
      * */
     public function __construct($upgrade)
     {
+        // Save async load settings via ajax request
+        add_action( 'wp_ajax_at_async_loading', array($this, 'addthisAsyncLoading'));
         $this->_upgrade = $upgrade;
         $this->_getVariables = $_GET;
         $this->_postVariables = $_POST;
+        $this->_options = $this->getSettings();
         
-        $this->_pubid = self::getPubid();
+        $this->_pubid = (isset($this->_options) 
+                        && isset($this->_options['profile']))
+                        ? $this->_options['profile'] : null;
 
         include_once 'addthis-toolbox.php';
         new Addthis_ToolBox;
@@ -162,7 +170,7 @@ class Addthis_Wordpress
         $updateResult = null;
 
         if ($this->_checkAddPubid()) {
-            $updateResult = $this->updatePubid($this->_postVariables['pubid']);
+            $updateResult = $this->updateSettings($this->_postVariables);
         }
         wp_enqueue_script(
             'addThisScript',
@@ -182,13 +190,18 @@ class Addthis_Wordpress
      * 
      *  @return string
      */
-    public function updatePubid($pubId)
+    public function updateSettings($settings)
     {
-        global $addthis_addjs;
-        $addthis_addjs->setProfileId($pubId);
-        $this->_pubid = $pubId;
+        if(isset($settings['pubid'])){
+            $this->_options['profile'] = $settings['pubid'];
+        }
+        if(isset($settings['async_loading'])){
+            $this->_options['addthis_asynchronous_loading'] = $settings['async_loading'];
+        }
+        update_option('addthis_settings', $this->_options);
+        $this->_pubid = $this->_options['profile'];
         return "<div class='addthis_updated wrap'>".
-                    "AddThis Profile ID updated successfully!!!".
+                    "AddThis Profile Settings updated successfully!!!".
                "</div>";
     }
 
@@ -205,6 +218,16 @@ class Addthis_Wordpress
         } else {
             return null;
         }
+    }
+    
+    /**
+     *  Get addthis settings array
+     * 
+     *  @return string
+     */
+    public function getSettings()
+    {
+        return get_option('addthis_settings');
     }
 
     /**
@@ -251,6 +274,26 @@ class Addthis_Wordpress
                          && isset ($this->_postVariables['submit']);
 
         return $successReturn;
+    }
+    
+    /**
+     *  Check if there is request to update async loading
+     *
+     *  @return boolean
+     */
+    private function _checkAsyncLoading()
+    {
+        $successReturn = isset ($this->_postVariables['async_loading']);
+
+        return $successReturn;
+    }
+    
+    public function addthisAsyncLoading()
+    {
+        if ($this->_checkAsyncLoading()) {
+            $updateResult = $this->updateSettings($this->_postVariables);
+        }
+        die; //exit from the ajax request
     }
 
     /**
@@ -465,6 +508,7 @@ class Addthis_Wordpress
         $html .=  "<input type='text' value='".$pubId."' ".
                       "name='pubid' id='addthis-pubid'/>";
         $html .=  "</div></div>";
+
         $submitButtonValue = "Confirm and Save";
         
         if (isset($this->_getVariables['advanced_settings'])) {

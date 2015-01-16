@@ -23,4 +23,17 @@ jQuery(document).ready(function($) {
             jQuery(this).attr('title', 'Please fill Profile Id');
         }
     });
+    
+    jQuery('#async_load').change(function(){
+        
+        var syncLoad = jQuery(this).is(':checked')?1:0;
+        var data     = {
+                            action: "at_async_loading",
+                            async_loading: syncLoad
+        };
+        jQuery('.at-loader').css('visibility', 'visible');
+        jQuery.post(ajaxurl, data, function(response){
+            jQuery('.at-loader').css('visibility', 'hidden');
+        });   
+    });
 });
