@@ -23,7 +23,7 @@
 * Plugin Name: AddThis for WordPress
 * Plugin URI: http://www.addthis.com
 * Description: Use the AddThis suite of website tools which includes sharing, following, recommended content, and conversion tools to help you make your website smarter. With AddThis, you can see how your users are engaging with your content, provide a personalized experience for each user and encourage them to share, subscribe or follow.
-* Version: 4.0.2
+* Version: 4.0.3
 *
 * Author: The AddThis Team
 * Author URI: http://www.addthis.com/blog
@@ -32,8 +32,8 @@ if (!defined('ADDTHIS_INIT')) define('ADDTHIS_INIT', 1);
 else return;
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PLUGIN_VERSION' , '4.0.2');
-define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-4.0.2');
+define( 'ADDTHIS_PLUGIN_VERSION' , '4.0.3');
+define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-4.0.3');
 define( 'ADDTHIS_ATVERSION', '300');
 define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
 define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
