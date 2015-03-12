@@ -1,5 +1,7 @@
 <?php
 
+define('ADD_DIVS_TO_CODED_EXCERPTS_PATH', 'js/add-divs-to-coded-excerpts.js');
+
 /**
  * Class for managing AddThis script includes across all its plugins.
  */
@@ -155,15 +157,31 @@ Class AddThis_addjs{
         }
     }
 
+    /**
+     * Queries window.document for a 3-letter non-printing code
+     *   The order of the code identifies a type of excerpt (archive, category, etc).
+     *   Inserts sharetoolbox and recommendedbox divs on either side of the excerpt.
+     *
+     * @alters window.document
+     */
+    function addDivsToCodedExcerpts() {
+        wp_enqueue_script(
+            'addThisDivScript',
+            plugins_url(ADD_DIVS_TO_CODED_EXCERPTS_PATH, __FILE__)
+        );
+    }
+
     function addWidgetToJs(){
         if (!is_404()) {
+            $this->addDivsToCodedExcerpts();
+            
             //Load addthis script only if the page is not 404
             $addthis_settings_options = get_option('addthis_settings');
             $addthis_asynchronous_loading = (isset($addthis_settings_options['addthis_asynchronous_loading']))?$addthis_settings_options['addthis_asynchronous_loading']:false;
             $this->jsToAdd .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->pubid ).'" async="async"></script>';
         }
     }
-
+    
     function addAfterToJs(){
         if (! empty($this->jsAfterAdd)) {
             $this->jsToAdd .= '<script type="text/javascript">' . $this->jsAfterAdd . '</script>';
@@ -218,6 +236,12 @@ Class AddThis_addjs{
      */
     function save_at_flag(){
         global $post;
+
+        //Ignore if trigger is by theme specific actions without post object
+        if (!isset($post)) {
+            return;
+        }
+
         if(isset($_POST['_at_widget']))
             update_post_meta($post->ID, '_at_widget', $_POST['_at_widget']);
         else

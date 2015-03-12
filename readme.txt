@@ -3,7 +3,7 @@ Contributors: srijith.v, solchea, _mjk_, addthis_paul, abramsm
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
 Tested up to: 4.1
-Stable tag: 4.0.3
+Stable tag: 4.0.4
 
 AddThis provides the best sharing, social, recommended content, and conversion tools to help you make 
 your website smarter. 
@@ -82,18 +82,34 @@ PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
 
+= 4.0.4 =
+* Fixed issues with certain themes using get_the_excerpt method
+* Fixed issue with Share layer and Recommended layer showing up in wrong order
+* Fixed issue with Recommended layer showing up page title instead of Recommended layer title
+* Fixed PHP warnings in Divi theme
+
 = 4.0.3 =
-* Minor bug fix - JS error corrected. 
+* Removed addthis initialization function (addthis.init()) to avoid javascript error in async mode.
+* Added option to show inline sharing buttons on category and archive pages
 
 = 4.0.2 =
 * Control inline share buttons for each page/post
-* Bug fixes
+* Implemented asynchronous script loading
+* Added option to add checkbox to show/hide Addthis sharing buttons in admin post add/edit page. 
+* Prevented buttons showing on 404 error pages
+* CSS fixes
+* Added css classes to prevent inline div from taking extra spaces
 
 = 4.0.1 =
-* Frictionless integration with AddThis Dashboard. 
+* Frictionless integration with AddThis Dashboard.
+* Updated services list in description
+* Added new snapshots to give more idea on the new plugin flow
+* Minor text changes
 
 = 4.0 =
-* Integrated with AddThis Dashboard. 
+* Integrated with AddThis Dashboard.
+* Managed the plugin in such a way that, tool settings can be controlled from AddThis Dashboard
+* Provided options to upgrade to new setup for the existing users
 
 = 3.5.10 =
 * Minor bug fix
@@ -283,18 +299,34 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 == Upgrade Notice ==
 
-= 4.0.3 = 
-* Minor bug fix
+= 4.0.4 =
+* Fixed issues with certain themes using get_the_excerpt method
+* Fixed issue with Share layer and Recommended layer showing up in wrong order
+* Fixed issue with Recommended layer showing up page title instead of Recommended layer title
+* Fixed PHP warnings in Divi theme
+
+= 4.0.3 =
+* Removed addthis initialization function (addthis.init()) to avoid javascript error in async mode.
+* Added option to show inline sharing buttons on category and archive pages
 
 = 4.0.2 =
 * Control inline share buttons for each page/post
-* Bug fixes
+* Implemented asynchronous script loading
+* Added option to add checkbox to show/hide Addthis sharing buttons in admin post add/edit page. 
+* Prevented buttons showing on 404 error pages
+* CSS fixes
+* Added css classes to prevent inline div from taking extra spaces
 
 = 4.0.1 =
-* Fix for automatically converting profile types to Wordpress type. 
+* Frictionless integration with AddThis Dashboard.
+* Updated services list in description
+* Added new snapshots to give more idea on the new plugin flow
+* Minor text changes
 
 = 4.0 =
-* WordPress Plugin Upgraded with AddThis Dashboard integration and Access To Pro Tools.
+* Integrated with AddThis Dashboard.
+* Managed the plugin in such a way that, tool settings can be controlled from AddThis Dashboard
+* Provided options to upgrade to new setup for the existing users
 
 = 3.5.10 =
 * Minor bug fix
