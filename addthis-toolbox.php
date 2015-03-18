@@ -64,6 +64,10 @@ class Addthis_ToolBox
     const AT_CONTENT_ABOVE_CAT_PAGE = "at-above-post-cat-page-recommended";
     const AT_CONTENT_ABOVE_ARCH_PAGE = "at-above-post-arch-page-recommended";
 
+    //This associative array keeps relates a post ID to a Title and URL
+    //  Javascript code will later use this to identify and mark up posts
+    public static $postTitlesAndUrlsById;
+    
     /**
      * Initializes the widget class.
      * */
@@ -75,6 +79,7 @@ class Addthis_ToolBox
         } else {
             add_filter('get_the_excerpt', array($this, 'addExcerptCode'));
         }
+        self::$postTitlesAndUrlsById = array();
     }
     
     /**
@@ -89,26 +94,38 @@ class Addthis_ToolBox
      * @return string
      */
     public function addExcerptCode($content)
-    {   
-        if(preg_match('/[\005-\007]{3}/', $content) == false) {
+    {
+        self::$postTitlesAndUrlsById[] = array(
+            'id' => get_the_ID(),
+            'title' => get_the_title(),
+            'url' => get_permalink(),
+            'content' => $content
+        );   
+        
+        if(preg_match('/[\+\-\*]{3}/', $content) == false) {
             //Homepage = 567
             if (is_home() || is_front_page()) {
-                return chr(5) . chr(6) . chr(7) . $content;
+                return '+' . '-' . '*' . $content;
             //Page = 576
             } else if (is_page()) {
-                return chr(5) . chr(7) . chr(6) . $content;
+                return '+' . '*' . '-' . $content;
             //Single Post = 675
             } else if (is_single()) {
-                return chr(6) . chr(7) . chr(5) . $content;
+                return '-' . '*' . '+' . $content;
             //Category = 657
             }  else if (is_category()) {
-                return chr(6) . chr(5) . chr(7) . $content;
+                return '-' . '+' . '*' . $content;
             //Archive = 756
             }  else if (is_archive()) {
-                return chr(7) . chr(5) . chr(6) . $content;
+                return '*' . '+' . '-' . $content;
             }
         }
         return $content;
+    }
+    
+    public static function getPostTitlesAndUrls()
+    {
+        return self::$postTitlesAndUrlsById;
     }
 
     /**

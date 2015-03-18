@@ -169,6 +169,13 @@ Class AddThis_addjs{
             'addThisDivScript',
             plugins_url(ADD_DIVS_TO_CODED_EXCERPTS_PATH, __FILE__)
         );
+        
+        //Add a new Javascript variable to addThisDivScript that contains $postTitlesAndUrls
+        wp_localize_script(
+            'addThisDivScript',
+            'postTitlesAndUrls',
+            Addthis_ToolBox::getPostTitlesAndUrls()
+	);
     }
 
     function addWidgetToJs(){
