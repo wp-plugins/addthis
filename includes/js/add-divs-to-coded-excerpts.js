@@ -98,13 +98,15 @@ function findCorrespondingPostObjById(excerptNode, postList) {
 /**
  * Halts on first success
  */
+var nodeMarker = 0;
 function getFirstElderWithCondition(node, conditionFunc) {
+    nodeMarker++;
     //breadth first search
     var queue = [];
     queue.push(node);
     //while Q is not empty
     var pos = 0;
-    while(queue.length > 0) {
+    while(queue.length > 0 && pos < 500) {
         var node = queue.shift();
         
         //check the condition (which is the point of the search)
@@ -116,7 +118,14 @@ function getFirstElderWithCondition(node, conditionFunc) {
         var parentNode = node.parentNode;
         if(parentNode) {
             adjacentNodes.push(parentNode);
-            adjacentNodes = adjacentNodes.concat(getSiblings(parentNode));
+            var siblings = getSiblings(parentNode);
+            for(var k=0; k<siblings.length; k++) {
+                var sib = siblings[k];
+                if(!sib['visited' + nodeMarker]) {
+                    sib['visited' + nodeMarker] = true;
+                    adjacentNodes.push(sib);
+                }
+            }
         }
         //for all edges from v to w in G.adjacentEdges(v) do
         for(var i=0; i<adjacentNodes.length; i++) {
@@ -231,6 +240,9 @@ function getSiblings(n) {
     return siblings;
 }
 
+/**
+ * Returns the longest common substring
+ */
 function longestCommonSubstring(string1, string2){
 	// init max value
 	var longestCommonSubstring = 0;

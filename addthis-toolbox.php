@@ -95,29 +95,31 @@ class Addthis_ToolBox
      */
     public function addExcerptCode($content)
     {
-        self::$postTitlesAndUrlsById[] = array(
-            'id' => get_the_ID(),
-            'title' => get_the_title(),
-            'url' => get_permalink(),
-            'content' => $content
-        );   
-        
-        if(preg_match('/[\+\-\*]{3}/', $content) == false) {
-            //Homepage = 567
-            if (is_home() || is_front_page()) {
-                return '+' . '-' . '*' . $content;
-            //Page = 576
-            } else if (is_page()) {
-                return '+' . '*' . '-' . $content;
-            //Single Post = 675
-            } else if (is_single()) {
-                return '-' . '*' . '+' . $content;
-            //Category = 657
-            }  else if (is_category()) {
-                return '-' . '+' . '*' . $content;
-            //Archive = 756
-            }  else if (is_archive()) {
-                return '*' . '+' . '-' . $content;
+        if(!is_feed()) {
+            self::$postTitlesAndUrlsById[] = array(
+                'id' => get_the_ID(),
+                'title' => get_the_title(),
+                'url' => get_permalink(),
+                'content' => $content
+            );   
+            
+            if(preg_match('/[\+\-\*]{3}/', $content) == false) {
+                //Homepage = + - *
+                if (is_home() || is_front_page()) {
+                    return '+' . '-' . '*' . $content;
+                //Page = + * -
+                } else if (is_page()) {
+                    return '+' . '*' . '-' . $content;
+                //Single Post = - * +
+                } else if (is_single()) {
+                    return '-' . '*' . '+' . $content;
+                //Category = - + *
+                }  else if (is_category()) {
+                    return '-' . '+' . '*' . $content;
+                //Archive = * + -
+                }  else if (is_archive()) {
+                    return '*' . '+' . '-' . $content;
+                }
             }
         }
         return $content;
@@ -137,7 +139,7 @@ class Addthis_ToolBox
      */
     public function addWidget($content)
     {
-        if (Addthis_Wordpress::getPubid() && !is_404()) {
+        if (Addthis_Wordpress::getPubid() && !is_404() && !is_feed()) {
             global $post;
             $postid = $post->ID;
             $at_flag = get_post_meta( $postid, '_at_widget', TRUE );
