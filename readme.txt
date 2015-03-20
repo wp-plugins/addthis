@@ -3,7 +3,7 @@ Contributors: srijith.v, solchea, _mjk_, addthis_paul, abramsm
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
 Tested up to: 4.1
-Stable tag: 4.0.6
+Stable tag: 4.0.7
 
 AddThis provides the best sharing, social, recommended content, and conversion tools to help you make 
 your website smarter. 
@@ -81,6 +81,10 @@ In the screen options you can enable the AddThis meta box. Check the box and sav
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+
+= 4.0.7 =
+* Added node marker and loop cap to getFirstElderWithCondition to solve infinite loop
+* Fixed the issue where characters *,+,- were printed in feeds
 
 = 4.0.6 =
 * Adds data-url and data-title attributes to get_the_excerpt toolbox divs
@@ -304,6 +308,10 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+
+= 4.0.7 =
+* Added node marker and loop cap to getFirstElderWithCondition to solve infinite loop
+* Fixed the issue where characters *,+,- were printed in feeds
 
 = 4.0.6 =
 * Adds data-url and data-title attributes to get_the_excerpt toolbox divs
