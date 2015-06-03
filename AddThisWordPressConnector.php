@@ -25,9 +25,10 @@ if (!class_exists('AddthisWordpressConnector')) {
     Class AddthisWordpressConnector implements AddThisCmsConnectorInterface {
 
         static $settingsVariableName = 'addthis_settings';
-        static $pluginVersion = '5.0.2';
+        static $pluginVersion = '5.0.3';
         static $settingsPageId = 'addthis_social_widget';
         static $anonymousProfileIdPrefix = 'wp';
+        static $productPrefix = 'wpp';
         protected $configs = null;
 
         protected $defaultConfigs = array(
@@ -85,6 +86,11 @@ if (!class_exists('AddthisWordpressConnector')) {
 
         static function getAnonymousProfileIdPrefix() {
             return self::$anonymousProfileIdPrefix;
+        }
+
+        static function getProductVersion() {
+            $productVersion = self::$productPrefix . '-' . self::getPluginVersion();
+            return $productVersion;
         }
 
         /**

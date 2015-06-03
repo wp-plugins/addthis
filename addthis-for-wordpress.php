@@ -455,7 +455,7 @@ function Addthis_Wordpress_early()
     global $cmsConnector;
 
     if (!isset($addthis_addjs)) {
-        include 'includes/addthis_addjs_new.php';
+        include 'addthis_addjs_new.php';
         $addthis_addjs = new AddThis_addjs($addThisConfigs, $cmsConnector);
     }
 }

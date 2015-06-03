@@ -22,9 +22,17 @@
 if (!interface_exists('AddThisCmsConnectorInterface')) {
 	interface AddThisCmsConnectorInterface
 	{
+	    static function getCmsVersion();
+	    static function getCmsMinorVersion();
+	    static function getPluginVersion();
+	    static function getProductVersion();
 	    public function getSharingButtonLocations();
 	    public function getConfigs();
 	    public function getContentTypes();
 	    public function saveConfigs($configs);
+	    public function getSettingsPageUrl();
+	    public function getPluginCssFolderUrl();
+	    public function getPluginImageFolderUrl();
+	    public function getPluginJsFolderUrl();
 	}
 }

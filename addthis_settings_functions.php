@@ -108,47 +108,6 @@ function addthis_kses($string, $customstyles)
 }
 
 /**
- * AddThis version notification message
- * @param int $atversion_update_status
- * @param int $atversion
- */
-function _addthis_version_notification($atversion_update_status, $atversion)
-{
-    global $cmsConnector;
-
-    //Fresh install Scenario. ie., atversion = 300 without reverting back.
-    if($atversion_update_status == ADDTHIS_ATVERSION_AUTO_UPDATE && $atversion >= ADDTHIS_ATVERSION) {
-            return;
-    }
-    ob_start();
-    // In the automatic update by the system the $atversion_update_status is 0
-    // On subsequent update using notification link the  $atversion_update_status = -1
-    // In both cases display the revert link
-    if ($atversion_update_status == ADDTHIS_ATVERSION_AUTO_UPDATE || $atversion_update_status == ADDTHIS_ATVERSION_MANUAL_UPDATE) {
-        ?>
-        <div class="addthis-notification addthis-success-message">
-            <div style="float:left">Your AddThis sharing plugin has been updated.</div>
-            <div style="float:right">
-                <a href="#" class="addthis-revert-atversion">Revert back to previous version</a>
-            </div>
-        </div>
-        <?php
-    } else {
-        ?>
-        <div class="addthis-notification addthis-warning-message">
-            <div style="float:left">Update AddThis to activate new features that will make sharing even easier.</div>
-            <div style="float:right">
-                <a href="#" class="addthis-update-atversion"><img alt="update" src="<?php echo $cmsConnector->getPluginImageFolderUrl() . 'update.png';?>" /></a>
-            </div>
-        </div>
-        <?php
-    }
-    $notification_content = ob_get_contents();
-    ob_end_clean();
-    return $notification_content;
-}
-
-/**
  * Swap the order of occurrence of two keys in an associative array
  * @param type $array
  * @param type $key
