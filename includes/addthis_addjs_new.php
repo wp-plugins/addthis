@@ -30,7 +30,6 @@ Class AddThis_addjs{
 
     private $_options;
 
-    private $_cuid;
     private $addThisConfigs;
 
     var $jsToAdd;
@@ -65,10 +64,6 @@ Class AddThis_addjs{
         if (is_array($this->_options)) {
             $this->atversion = array_key_exists('atversion_update_status', $this->_options) && $this->_options['atversion_update_status'] == ADDTHIS_ATVERSION_REVERTED ? $this->_options['atversion'] : ADDTHIS_ATVERSION;
         }
-        // set the cuid
-        $base = get_option('home');
-        $cuid = hash_hmac('md5', $base, 'addthis');
-        $this->_cuid = $cuid;
 
         // If the footer option isn't set, check for it
         if (! isset($this->_options['wpfooter']) && current_user_can('manage_options'))
@@ -212,7 +207,7 @@ Class AddThis_addjs{
                     ' . $addthis_share_js . '
                 </script>';
 
-            $this->jsToAdd .= $firstScriptHalf . $this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->addThisConfigs->getProfileId() ).'" ' . $async. '></script>';
+            $this->jsToAdd .= $firstScriptHalf . $this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->addThisConfigs->getUsableProfileId() ).'" ' . $async. '></script>';
         }
     }
 

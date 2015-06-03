@@ -331,7 +331,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             // if the option saved, delete the old options
 
             delete_option('addthis_asynchronous_loading');
-            delete_option('addthis_fallback_username');
             delete_option('addthis_product');
             delete_option('addthis_isdropdown');
             delete_option('addthis_menu_type');
@@ -385,20 +384,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     function addthis_check_footer() {
 
     }
-
-
-    /**
-    * Generates unique IDs
-    */
-    function cuid()
-    {
-        $base = get_option('home');
-        $cuid = hash_hmac('md5', $base, 'addthis');
-        return $cuid;
-    }
-
-    define('ADDTHIS_FALLBACK_USERNAME', 'wp-'.cuid() );
-
 
     /**
     * For templates, we need a wrapper for printing out the code on demand.
@@ -988,8 +973,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
 
         $addthis_settings['menu_type'] = get_option('addthis_menu_type');
 
-        $addthis_settings['fallback_username'] = get_option('addthis_fallback_username');
-
         $language = get_option('addthis_language');
         $addthis_settings['language'] = $language;
 
@@ -1338,13 +1321,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
                  .'<script type="text/javascript">'
                  ."var addthis_product = '".ADDTHIS_PRODUCT_VERSION."';\n";
 
-
-        $pub = $addThisConfigs->getProfileId();
-        if (empty($pubid)) {
-            $pub = 'wp-'.cuid();
-        }
-        $pub = urlencode($pub);
-
         $addthis_config = array();
         $addthis_share = array();
 
@@ -1426,9 +1402,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
         $script .= '</script>';
 
-
-        $script .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$atversion.'/addthis_widget.js#pubid='.$pub.'"></script>';
-
+        $script .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$atversion.'/addthis_widget.js#pubid='. urlencode($addThisConfigs->getUsableProfileId()) . '"></script>';
 
         if ( ! is_admin() && ! is_feed() )
             echo $script;
@@ -1548,11 +1522,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             }
         }
 
-        $pub = $addThisConfigs->getProfileId();
-        if (empty($pub)) {
-            $pub = 'wp-'.cuid();
-        }
-        $pub = urlencode($pub);
+        $pub = urlencode($addThisConfigs->getUsableProfileId());
 
         $link  = !is_null($url) ? $url : ($onSidebar ? get_bloginfo('url') : get_permalink());
         $title = !is_null($title) ? $title : ($onSidebar ? get_bloginfo('title') : the_title('', '', false));
@@ -2287,18 +2257,18 @@ function _addthis_profile_id_card($credential_validation_status = false) {
         $security = wp_nonce_field('update_' . $fieldName, $fieldName . '_nonce');
     }
 
-    if (!$addThisConfigs->getProfileId()) {
-        $description = $noPubIdDescription;
-        $buttonUrl = _addthis_profile_setup_url();
-        $buttonText = $noPubIdButtonText;
-        $alternatePath = '<p>Alternately, you can input your profile id manually below.</p>';
-        $target = '';
-    } else {
+    if ($addThisConfigs->getProfileId()) {
         $description = $pubIdDescription;
         $buttonUrl = _addthis_analytics_url();
         $buttonText = $pubIdButtonText;
         $alternatePath = '';
         $target = 'target="_blank"';
+    } else {
+        $description = $noPubIdDescription;
+        $buttonUrl = _addthis_profile_setup_url();
+        $buttonText = $noPubIdButtonText;
+        $alternatePath = '<p>Alternately, you can input your profile id manually below.</p>';
+        $target = '';
     }
 
     $html = '

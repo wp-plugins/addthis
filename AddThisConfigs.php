@@ -192,13 +192,37 @@ if (!class_exists('AddThisConfigs')) {
 
         public function getProfileId() {
             $this->getConfigs();
-            if(isset($this->configs['addthis_profile'])
-                && !empty($this->configs['addthis_profile'])
+            if(   isset($this->configs['addthis_profile'])
+               && !empty($this->configs['addthis_profile'])
             ) {
                 return $this->configs['addthis_profile'];
             }
 
             return '';
+        }
+
+        public function getAnonymousProfileId() {
+            $this->getConfigs();
+            if(   !isset($this->configs['addthis_anonymous_profile'])
+               || !$this->configs['addthis_anonymous_profile']
+            ) {
+                $prefix = $this->cmsInterface->getAnonymousProfileIdPrefix();
+                $url = $this->cmsInterface->getHomepageUrl();
+                $postfix = hash_hmac('md5', $url, 'addthis');
+                $this->configs['addthis_anonymous_profile'] = $prefix . '-' . $postfix;
+                $this->saveConfigs();
+            }
+
+            return $this->configs['addthis_anonymous_profile'];
+        }
+
+
+        public function getUsableProfileId() {
+            if ($this->getProfileId()) {
+                return $this->getProfileId();
+            }
+
+            return $this->getAnonymousProfileId();
         }
     }
 }

@@ -449,6 +449,7 @@ function _addthis_deprecated_fields() {
         'addthis_copytracking1',
         'addthis_copytracking2',
         'addthis_copytrackingremove',
+        'addthis_fallback_username',
         'addthis_for_wordpress',
         'addthis_nag_username_ignore',
         'addthis_options',
