@@ -3,7 +3,7 @@
  * Plugin Name: AddThis Sharing Buttons
  * Plugin URI: http://www.addthis.com
  * Description: Use the AddThis suite of website tools which includes sharing, following, recommended content, and conversion tools to help you make your website smarter. With AddThis, you can see how your users are engaging with your content, provide a personalized experience for each user and encourage them to share, subscribe or follow.
- * Version: 5.0
+ * Version: 5.0.3
  * Author: The AddThis Team
  * Author URI: http://www.addthis.com/
  * License: GPL2
@@ -31,10 +31,7 @@ if (!defined('ADDTHIS_INIT')) define('ADDTHIS_INIT', 1);
 else return;
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_PRODUCT_VERSION' , 'wpp-5.0');
 define( 'ADDTHIS_ATVERSION', '300');
-define( 'ADDTHIS_ATVERSION_MANUAL_UPDATE', -1);
-define( 'ADDTHIS_ATVERSION_AUTO_UPDATE', 0);
 define( 'ADDTHIS_ATVERSION_REVERTED', 1);
 define( 'ENABLE_ADDITIONAL_PLACEMENT_OPTION', 0);
 
@@ -133,7 +130,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
         global $addThisConfigs;
         global $cmsConnector;
         if (!isset($addthis_addjs)){
-            require('includes/addthis_addjs_new.php');
+            require('addthis_addjs_new.php');
             $addthis_addjs = new AddThis_addjs($addThisConfigs, $cmsConnector);
         }
     }
@@ -1315,11 +1312,12 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     function addthis_output_script($return = false, $justConfig = false )
     {
         global $addThisConfigs;
+        global $cmsConnector;
         $options = $addThisConfigs->getConfigs();
 
         $script = "\n<!-- AddThis Button Begin -->\n"
                  .'<script type="text/javascript">'
-                 ."var addthis_product = '".ADDTHIS_PRODUCT_VERSION."';\n";
+                 ."var addthis_product = '". $cmsConnector->getProductVersion() ."';\n";
 
         $addthis_config = array();
         $addthis_share = array();
@@ -1506,6 +1504,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
         addthis_set_addthis_settings();
         global $addthis_settings;
         global $addThisConfigs;
+        global $cmsConnector;
 
         // add nothing to RSS feed or search results; control adding to static/archive/category pages
         if (!$onSidebar)
@@ -1530,7 +1529,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
         $content .= "\n<!-- AddThis Button BEGIN -->\n"
                     .'<script type="text/javascript">'
                     ."\n//<!--\n"
-                    ."var addthis_product = '".ADDTHIS_PRODUCT_VERSION."';\n";
+                    ."var addthis_product = '". $cmsConnector->getProductVersion() ."';\n";
 
 
         if (strlen($addthis_settings['customization']))
@@ -1679,11 +1678,6 @@ EOF;
         global $cmsConnector;
 
         $options = $addThisConfigs->getConfigs();
-
-        $version_notification_content = _addthis_version_notification(
-            $options['atversion_update_status'],
-            $options['atversion']
-        );
 
         ?>
         <div class="Main-content" id="tabs">
@@ -2620,7 +2614,7 @@ function addthis_profile_id_csr_confirmation($fieldName = 'addthis_settings[addt
             <div class="addthis_pub_id">
                 <ul class="addthis-csr-confirm-list">
                     <li class="addthis-csr-item wp_div">
-                        <img src="'.plugins_url('images/wordpress.png', __FILE__).'">
+                        <img src="'.$cmsConnector->getPluginImageFolderUrl().'wordpress.png">
                         <span>Your WordPress Site:</span>
                         <input
                             type="text"
@@ -2630,11 +2624,11 @@ function addthis_profile_id_csr_confirmation($fieldName = 'addthis_settings[addt
                             onfocus="this.blur()"/>
                     </li>
                     <li class="addthis-csr-item arrow_div">
-                        <img src="'.plugins_url('images/arrow_right.png', __FILE__).'">
-                        <img src="'.plugins_url('images/arrow_left.png', __FILE__).'">
+                        <img src="'.$cmsConnector->getPluginImageFolderUrl().'arrow_right.png">
+                        <img src="'.$cmsConnector->getPluginImageFolderUrl().'arrow_left.png">
                     </li>
                     <li class="addthis-csr-item addthis_div">
-                        <img src="'.plugins_url('images/addthis.png', __FILE__).'">
+                        <img src="'.$cmsConnector->getPluginImageFolderUrl().'addthis.png">
                         <span>AddThis Profile ID:</span>
                         <input
                             type="text"

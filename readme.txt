@@ -1,9 +1,9 @@
 === Smart Website Tools by AddThis ===
-Contributors: abramsm, srijith.v, vipinss, dnrahamim, jgrodel, bradaddthiscom, mkitzman, kirk-at-addthis, addthis_paul
+Contributors: abramsm, srijith.v, vipinss, dnrahamim, jgrodel, bradaddthiscom, mkitzman, kirk-at-addthis, addthis_paul, addthis_matt
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 5.0
+Stable tag: 5.0.3
 
 AddThis provides the best sharing, social, recommended content, and conversion tools to help you make
 your website smarter.
@@ -72,19 +72,23 @@ In the screen options you can enable the AddThis meta box. Check the box and sav
 
 == Screenshots ==
 
-1. Mode tab in WordPress admin area
-2. Profile tab with Analytics link in WordPress admin area
-3. Analytics on the AddThis Dashboard
-4. Tool Gallery on the AddThis Dashboard
-5. Customization options on the AddThis Dashboard
-6. Sharing Tools tab in the WordPress admin area
-7. Sharing Tools tab in the WordPress admin area
+1. Sharing Tools tab on the plugin settings page (WordPress mode)
+2. Sharing Tools tab on the plugin settings page (WordPress mode)
+3. Advanced Options tab on the plugin settings page (WordPress mode)
+4. Sharing Tools tab on the plugin settings page (AddThis mode)
+5. Advanced Options tab on the plugin settings page (AddThis mode)
+6. Analytics on the AddThis Dashboard
+7. Tool Gallery on the AddThis Dashboard
+8. Customization options on the AddThis Dashboard
 
 == PHP Version ==
 
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+
+= 5.0.3 =
+* Reduced the size of the plugin by removing unused images
 
 = 5.0.2 =
 * Fixes for WordPress instances running on PHP verions below 5.5
@@ -330,7 +334,7 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 == Upgrade Notice ==
 
-= 5.0.2 =
+= 5.0.3 =
 * Two functional modes allowing users to choose whether to control sharing buttons from within the WordPress admin area (with limited features), or through the AddThis Dashboard at addthis.com.
 * Sharing sidebar configuration available within WordPress (in addition to the previously available sharing buttons above and below content).
 * Seperate preferences for what sharing buttons appear on what templates.

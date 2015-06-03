@@ -38,8 +38,6 @@ Class AddThis_addjs{
 
     var $atversion;
 
-    var $productCode;
-
     const addjs_version = 1;
 
     /**
@@ -52,8 +50,6 @@ Class AddThis_addjs{
         if ( did_action('addthis_addjs_created') !== 0){
             _doing_it_wrong( 'addthis_addjs', 'Only one instance of this class should be initialized.  Look for the $addthis_addjs global first',1 );
         }
-
-        $this->productCode = ADDTHIS_PRODUCT_VERSION;
 
         // We haven't added our JS yet. Or at least better not have.
         $this->_js_added = false;
@@ -127,7 +123,6 @@ Class AddThis_addjs{
     }
 
     function wrapJs(){
-        $this->jsToAdd .= "var addthis_for_wordpress = '".$this->productCode."';\n";
         $this->jsToAdd = '<script type="text/javascript">' . $this->jsToAdd . '</script>';
     }
 
@@ -202,7 +197,7 @@ Class AddThis_addjs{
 
             $this->jsToAdd .= '
                 <script>
-                    var wp_product_version = "' . ADDTHIS_PRODUCT_VERSION . '";
+                    var wp_product_version = "' . $this->cmsConnector->getProductVersion() . '";
                     var wp_blog_version = "' . $this->cmsConnector->getCmsVersion() . '";
                     ' . $addthis_share_js . '
                 </script>';
