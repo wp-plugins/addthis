@@ -29,7 +29,7 @@ if (!interface_exists('AddThisCmsConnectorInterface')) {
 	    public function getSharingButtonLocations();
 	    public function getConfigs();
 	    public function getContentTypes();
-	    public function saveConfigs($configs);
+	    public function saveConfigs($configs = null);
 	    public function getSettingsPageUrl();
 	    public function getPluginCssFolderUrl();
 	    public function getPluginImageFolderUrl();

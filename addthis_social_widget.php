@@ -3,7 +3,7 @@
  * Plugin Name: AddThis Sharing Buttons
  * Plugin URI: http://www.addthis.com
  * Description: Use the AddThis suite of website tools which includes sharing, following, recommended content, and conversion tools to help you make your website smarter. With AddThis, you can see how your users are engaging with your content, provide a personalized experience for each user and encourage them to share, subscribe or follow.
- * Version: 5.0.3
+ * Version: 5.0.4
  * Author: The AddThis Team
  * Author URI: http://www.addthis.com/
  * License: GPL2
@@ -1424,7 +1424,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             $fieldName = $fieldList[0]['fieldName'];
             $display = (isset($options[$fieldName]) && $options[$fieldName]) ? true : false;
         } else {
-            echo "templateType wasn't a string :-( <br />\n";
             $display = false;
         }
 
@@ -1687,7 +1686,6 @@ EOF;
             </ul>
 
             <div id="tabs-1">
-                <?php echo $version_notification_content; ?>
                 <input
                     type="hidden"
                     value="<?php echo $options['atversion']?>"
@@ -1861,7 +1859,6 @@ EOF;
                 </div>
             </div>
             <div id="tabs-2">
-                <?php echo $version_notification_content?>
 
                 <div class="Card">
                     <div class="Card-hd">

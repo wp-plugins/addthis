@@ -21,11 +21,12 @@
 
 require_once('AddThisCmsConnectorInterface.php');
 
-if (!class_exists('AddthisWordpressConnector')) {
-    Class AddthisWordpressConnector implements AddThisCmsConnectorInterface {
+if (!class_exists('AddThisWordpressConnector')) {
+    Class AddThisWordpressConnector {
+        // implements AddThisCmsConnectorInterface {
 
         static $settingsVariableName = 'addthis_settings';
-        static $pluginVersion = '5.0.3';
+        static $pluginVersion = '5.0.4';
         static $settingsPageId = 'addthis_social_widget';
         static $anonymousProfileIdPrefix = 'wp';
         static $productPrefix = 'wpp';

@@ -3,7 +3,7 @@ Contributors: abramsm, srijith.v, vipinss, dnrahamim, jgrodel, bradaddthiscom, m
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 5.0.3
+Stable tag: 5.0.4
 
 AddThis provides the best sharing, social, recommended content, and conversion tools to help you make
 your website smarter.
@@ -86,6 +86,9 @@ In the screen options you can enable the AddThis meta box. Check the box and sav
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+
+= 5.0.4 =
+* PHP error fixes for strict modes of PHP
 
 = 5.0.3 =
 * Reduced the size of the plugin by removing unused images
