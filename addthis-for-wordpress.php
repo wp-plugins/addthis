@@ -27,9 +27,6 @@ if (!defined('ADDTHIS_ATVERSION')) {
     define('ADDTHIS_ATVERSION', '300');
 }
 
-define('ADDTHIS_CSS_PATH', 'css/style.css');
-define('ADDTHIS_JS_PATH', 'js/addthis-for-wordpress.js');
-define('ADDTHIS_SETTINGS_PAGE_ID', 'addthis_social_widget');
 define('ADDTHIS_PLUGIN_FILE', $path.'/addthis_social_widget.php');
 define('ADDTHIS_PUBNAME_LIMIT', 255);
 
@@ -37,10 +34,6 @@ require_once('addthis_settings_functions.php');
 
 class Addthis_Wordpress
 {
-    const ADDTHIS_PROFILE_SETTINGS_PAGE = 'https://www.addthis.com/settings/publisher';
-    const ADDTHIS_SITE_URL = 'https://www.addthis.com/settings/plugin-pubs';
-    const ADDTHIS_SITE_URL_WITH_PUB = 'https://www.addthis.com/dashboard#gallery';
-    const ADDTHIS_SITE_URL_ANALYTICS = 'https://www.addthis.com/dashboard#analytics';
     const ADDTHIS_REFERER  = 'www.addthis.com';
 
     /** PHP $_GET Variables * */
@@ -52,13 +45,11 @@ class Addthis_Wordpress
     /** check upgrade or fresh installation **/
     private $_upgrade;
 
-    /** Addthis Profile id **/
-    private $_pubid;
-
     /** Addthis Settings **/
     private $_options;
 
     private $addThisConfigs;
+    private $cmsConnector;
 
     /**
      * Initializes the plugin.
@@ -67,9 +58,10 @@ class Addthis_Wordpress
      *
      * @return null
      * */
-    public function __construct($upgrade, $addThisConfigs)
+    public function __construct($upgrade, $addThisConfigs, $cmsConnector)
     {
         $this->addThisConfigs = $addThisConfigs;
+        $this->cmsConnector = $cmsConnector;
         // Save async load settings via ajax request
         add_action( 'wp_ajax_at_async_loading', array($this, 'addthisAsyncLoading'));
         $this->_upgrade = $upgrade;
@@ -77,18 +69,10 @@ class Addthis_Wordpress
         $this->_postVariables = $_POST;
         $this->_options = $this->addThisConfigs->getConfigs();
 
-        $this->_pubid = null;
-        if (   isset($this->_options)
-            && isset($this->_options['addthis_profile'])
-            && !empty($this->_options['addthis_profile'])
-        ) {
-            $this->_pubid = $this->_options['addthis_profile'];
-        }
-
         include_once 'addthis-toolbox.php';
-        new Addthis_ToolBox;
+        new Addthis_ToolBox($addThisConfigs, $cmsConnector);
 
-        add_action('admin_menu', array($this, 'addthisWordpressMenu'));
+        add_action('admin_menu', array($this, 'addToWordpressMenu'));
 
         // Deactivation
         register_deactivation_hook(
@@ -111,7 +95,7 @@ class Addthis_Wordpress
      */
     public function addSettingsLink($links)
     {
-        $settingsLink = '<a href="'.self::getSettingsPageUrl().'">Settings</a>';
+        $settingsLink = '<a href="'.$this->cmsConnector->getSettingsPageUrl().'">Settings</a>';
         array_push($links, $settingsLink);
         return $links;
     }
@@ -133,15 +117,10 @@ class Addthis_Wordpress
      *
      * @return null
      */
-    public function addthisWordpressMenu()
+    public function addToWordpressMenu()
     {
-        add_options_page(
-            'AddThis Sharing Buttons',
-            'AddThis Sharing Buttons',
-            'manage_options',
-            ADDTHIS_SETTINGS_PAGE_ID,
-            array($this, 'addthisWordpressOptions')
-        );
+        $htmlGeneratingFunction = array($this, 'addthisWordpressOptions');
+        $this->cmsConnector->addSettingsPage($htmlGeneratingFunction);
     }
 
     /**
@@ -151,28 +130,11 @@ class Addthis_Wordpress
      */
     public function addthisWordpressOptions()
     {
-        if (!current_user_can('manage_options')) {
-            wp_die(
-                __('You do not have sufficient permissions to access this page.')
-            );
-        }
-
         $updateResult = null;
 
         if ($this->_checkAddPubid()) {
             $updateResult = $this->updateSettings($this->_postVariables);
         }
-        wp_enqueue_script(
-            'addThisScript',
-            plugins_url(ADDTHIS_JS_PATH, __FILE__)
-        );
-        wp_enqueue_script('atTabs',plugins_url('js/options-page.32.js', __FILE__));
-        wp_enqueue_script('jquery-ui-tabs');
-        wp_enqueue_style(
-            'addThisStylesheet',
-            plugins_url(ADDTHIS_CSS_PATH, __FILE__)
-        );
-        wp_enqueue_style('attabStyles',plugins_url('css/options-page.css', __FILE__));
         echo $this->_getHTML($updateResult);
     }
 
@@ -204,27 +166,9 @@ class Addthis_Wordpress
         }
         $this->_options = $this->addThisConfigs->saveConfigs($this->_options);
 
-        $this->_pubid = $this->_options['addthis_profile'];
-
         return "<div class='addthis_updated wrap' style='margin-top:50px;width:95%'>".
                     "AddThis Profile Settings updated successfully!!!".
                "</div>";
-    }
-
-    /**
-     *  Get addthis profile id
-     *
-     *  @return string
-     */
-    public static function getPubid()
-    {
-        global $addThisConfigs;
-        $settings = $addThisConfigs->getConfigs();
-        if (!empty($settings['addthis_profile'])) {
-            return $settings['addthis_profile'];
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -323,9 +267,9 @@ class Addthis_Wordpress
         $html = '
             <div class="wrap">
                 <form
-                    id="addthis-form"
+                    id="addthis-settings"
                     method="post"
-                    action="'.self::getSettingsPageUrl().'"
+                    action="'.$this->cmsConnector->getSettingsPageUrl().'"
                 >
                     <div class="Header">
                         <h1><em>AddThis</em> Sharing Buttons</h1>';
@@ -335,7 +279,7 @@ class Addthis_Wordpress
 
         $html .= '</div>';
 
-        if ($this->_upgrade && !$this->_pubid) {
+        if ($this->_upgrade && !$this->addThisConfigs->getProfileId()) {
             $html .= $this->_getupdateSuccessMessage();
         }
 
@@ -407,7 +351,7 @@ class Addthis_Wordpress
         $pubIdCardTitle = 'Setup AddThis Tools';
         $pubIdButtonText = "Configure AddThis Tools";
 
-        if (empty($this->_pubid)) {
+        if (!$this->addThisConfigs->getProfileId()) {
             // if they don't have a profile yet, default to setup
             $tabOrder = array(
                 'tabs-1' => 'Setup',
@@ -444,7 +388,7 @@ class Addthis_Wordpress
                     ' . $tabsHtml . '
                 </ul>
                 <div id="tabs-1">
-                    <div class="Card" id="Card-side-sharing" style="height:320px">
+                    <div class="Card" id="Card-side-sharing">
                         <div>
                             <h3 class="Card-hd-title">
                                 ' . $sharingToolsCardTitle . '
@@ -478,16 +422,6 @@ class Addthis_Wordpress
     }
 
     /**
-     * Get the plugin's settings page url
-     *
-     * @return string
-     */
-    public static function getSettingsPageUrl()
-    {
-        return admin_url("options-general.php?page=" . ADDTHIS_SETTINGS_PAGE_ID);
-    }
-
-    /**
      * Get the wp domain
      *
      * @return string
@@ -518,9 +452,10 @@ function Addthis_Wordpress_early()
 {
     global $addthis_addjs;
     global $addThisConfigs;
+    global $cmsConnector;
 
     if (!isset($addthis_addjs)) {
         include 'includes/addthis_addjs_new.php';
-        $addthis_addjs = new AddThis_addjs($addThisConfigs);
+        $addthis_addjs = new AddThis_addjs($addThisConfigs, $cmsConnector);
     }
 }

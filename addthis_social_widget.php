@@ -53,6 +53,7 @@ require_once('addthis_settings_functions.php');
 function pluginActivationNotice()
 {
     $run_once = get_option('addthis_run_once');
+    global $cmsConnector;
 
     if (!$run_once) {
         wp_enqueue_style(
@@ -64,7 +65,7 @@ function pluginActivationNotice()
                     'Congrats! You\'ve Installed AddThis Sharing Buttons'.
                   '</span>';
         $html .= '<span><a class="addthis_configure" href="'
-                . 'options-general.php?page=addthis_social_widget' .
+                . $cmsConnector->getSettingsPageUrl() .
                 '">Configure it now</a> >></span>';
         $html .= '</div><!-- /.updated -->';
         echo '<style>div#message.updated{ display: none; }</style>';
@@ -101,19 +102,21 @@ if (   isset($_POST['addthis_plugin_controls'])
 
 add_action('wp_head', 'addthis_minimal_css');
 function addthis_minimal_css() {
-    wp_enqueue_style( 'output', _addthis_css_location_base() . 'output.css' );
+    global $cmsConnector;
+    wp_enqueue_style( 'addthis_output', $cmsConnector->getPluginCssFolderUrl() . 'output.css' );
 }
 
 if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     require_once 'addthis-for-wordpress.php';
-    new Addthis_Wordpress(isset($upgraded), $addThisConfigs);
+    new Addthis_Wordpress(isset($upgraded), $addThisConfigs, $cmsConnector);
 } else {
 
     // Show old version of the plugin till upgrade button is clicked
 
     // Add settings link on plugin page
     function your_plugin_settings_link($links) {
-      $settings_link = '<a href="options-general.php?page=addthis_social_widget">Settings</a>';
+      global $cmsConnector;
+      $settings_link = '<a href="'.$cmsConnector->getSettingsPageUrl().'">Settings</a>';
       array_push($links, $settings_link);
       return $links;
     }
@@ -128,9 +131,10 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     function addthis_early(){
         global $addthis_addjs;
         global $addThisConfigs;
+        global $cmsConnector;
         if (!isset($addthis_addjs)){
             require('includes/addthis_addjs_new.php');
-            $addthis_addjs = new AddThis_addjs($addThisConfigs);
+            $addthis_addjs = new AddThis_addjs($addThisConfigs, $cmsConnector);
         }
     }
 
@@ -395,12 +399,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
 
     define('ADDTHIS_FALLBACK_USERNAME', 'wp-'.cuid() );
 
-    /**
-    * Returns major.minor WordPress version.
-    */
-    function addthis_get_wp_version() {
-        return (float)substr(get_bloginfo('version'),0,3);
-    }
 
     /**
     * For templates, we need a wrapper for printing out the code on demand.
@@ -544,6 +542,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     function addthis_admin_notices(){
         if (! current_user_can('manage_options') ||( defined('ADDTHIS_NO_NOTICES') && ADDTHIS_NO_NOTICES == true ) )
             return;
+        global $cmsConnector;
 
         global $current_user ;
         $user_id = $current_user->ID;
@@ -552,13 +551,13 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
         if (!$options && ! get_user_meta($user_id, 'addthis_ignore_notices')) {
             echo '<div class="updated addthis_setup_nag"><p>';
             printf(__('Configure the AddThis plugin to enable users to share your content around the web.<br /> <a href="%1$s">Configuration options</a> | <a href="%2$s" id="php_below_min_nag-no">Ignore this notice</a>'),
-                admin_url('options-general.php?page=' .  basename(__FILE__) ),
+                $cmsConnector->getSettingsPageUrl(),
                 '?addthis_nag_ignore=0');
             echo "</p></div>";
         } elseif ((get_user_meta($user_id, 'addthis_nag_updated_options'))) {
             echo '<div class="updated addthis_setup_nag"><p>';
             printf( __('We have updated the options for the AddThis plugin.  Check out the <a href="%1$s">AddThis settings page</a> to see the new styles and options.<br /> <a href="%1$s">See New Options</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="%2$s">Ignore this notice</a>'),
-            admin_url('options-general.php?page=' . basename(__FILE__) ),
+            $cmsConnector->getSettingsPageUrl(),
             '?addthis_nag_updated_ignore=0');
             echo "</p></div>";
         }
@@ -939,28 +938,23 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     function addthis_init()
     {
         global $addThisConfigs;
-        add_action('wp_head', 'addthis_add_content_filters');
-
-        if (   addthis_get_wp_version() >= 2.7
-            || apply_filters('at_assume_latest', __return_false())
-            || apply_filters('addthis_assume_latest', __return_false())
-        ) {
-            if (is_admin()) {
-                add_action('admin_init', 'register_addthis_settings');
-            }
-        }
+        global $cmsConnector;
 
         $options = $addThisConfigs->getConfigs();
-        $script_location = _addthis_js_location_base() . 'addthis.js' ;
-        $style_location = _addthis_css_location_base() . 'addthis.css'   ;
 
-        wp_register_style('addthis', $style_location);
-        wp_register_script('addthis', $script_location, array('jquery-ui-tabs'));
+        add_action('wp_head', 'addthis_add_content_filters');
+
+        if (   (   $cmsConnector->getCmsMinorVersion() >= 2.7
+                || $cmsConnector->assumeLatest())
+            && is_admin()
+        ) {
+            add_action('admin_init', 'register_addthis_settings');
+        }
 
         add_action('admin_print_styles-index.php', 'addthis_print_style');
         add_action('admin_print_scripts-index.php', 'addthis_print_script');
 
-        add_filter('admin_menu', 'addthis_admin_menu');
+        add_filter('admin_menu', 'addToWordpressMenu');
 
         if ( apply_filters( 'at_do_options_upgrades', '__return_true') || apply_filters( 'addthis_do_options_upgrades', '__return_true')   )
         {
@@ -1345,8 +1339,8 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
                  ."var addthis_product = '".ADDTHIS_PRODUCT_VERSION."';\n";
 
 
-        $pub = $options['addthis_profile'];
-        if (empty($options['addthis_profile'])) {
+        $pub = $addThisConfigs->getProfileId();
+        if (empty($pubid)) {
             $pub = 'wp-'.cuid();
         }
         $pub = urlencode($pub);
@@ -1537,6 +1531,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     {
         addthis_set_addthis_settings();
         global $addthis_settings;
+        global $addThisConfigs;
 
         // add nothing to RSS feed or search results; control adding to static/archive/category pages
         if (!$onSidebar)
@@ -1553,8 +1548,8 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             }
         }
 
-        $pub = $addthis_settings['addthis_profile'];
-        if (!$pub) {
+        $pub = $addThisConfigs->getProfileId();
+        if (empty($pub)) {
             $pub = 'wp-'.cuid();
         }
         $pub = urlencode($pub);
@@ -1647,66 +1642,11 @@ EOF;
 EOF;
     }
 
-    function addthis_options_page_scripts()
+    function addToWordpressMenu()
     {
-        $jsRootUrl = _addthis_js_location_base();
-        $imgRootUrl = _addthis_image_location_base();
-
-        if (   addthis_get_wp_version() >= 3.2
-            || apply_filters('at_assume_latest', __return_false() )
-            || apply_filters('addthis_assume_latest', __return_false() )
-        ) {
-            $optionsJsUrl = $jsRootUrl . 'options-page.32.js';
-        } else {
-            $optionsJsUrl = $jsRootUrl . 'options-page.js';
-        }
-
-        wp_enqueue_script(
-            'addthis_options_page_script',
-            $optionsJsUrl,
-            array('jquery-ui-tabs', 'thickbox')
-        );
-        wp_enqueue_script('addthis_core', $jsRootUrl . 'core-1.1.1.js');
-        wp_enqueue_script('addthis_lr', $jsRootUrl . 'lr.js');
-        wp_enqueue_script('addthis_qtip_script', $jsRootUrl . 'jquery.qtip.min.js');
-        wp_enqueue_script('addthis_ui_script', $jsRootUrl . 'jqueryui.sortable.js');
-        wp_enqueue_script('addthis_selectbox', $jsRootUrl . 'jquery.selectBoxIt.min.js');
-        wp_enqueue_script('', $jsRootUrl . 'jquery.messagebox.js');
-        wp_enqueue_script('', $jsRootUrl . 'jquery.atjax.js');
-        wp_enqueue_script('addthis_lodash_script', $jsRootUrl . 'lodash-0.10.0.js');
-    	wp_enqueue_script('addthis_services_script', $jsRootUrl . 'gtc-sharing-personalize.js');
-        wp_enqueue_script('addthis_service_script', $jsRootUrl . 'gtc.cover.js');
-        wp_localize_script(
-            'addthis_services_script',
-            'addthis_params',
-            array('img_base' => $imgRootUrl)
-        );
-        wp_localize_script(
-            'addthis_options_page_script',
-            'addthis_option_params',
-            array('wp_ajax_url'=> admin_url('admin-ajax.php'),
-                'addthis_validate_action' => 'validate_addthis_api_credentials',
-                'img_base' => $imgRootUrl)
-        );
-    }
-
-    function addthis_options_page_style()
-    {
-        $cssRootUrl = _addthis_css_location_base();
-        wp_enqueue_style('addthis_options_page_style', $cssRootUrl . 'options-page.css');
-        wp_enqueue_style('addthis_general_style', $cssRootUrl . 'style.css');
-        wp_enqueue_style('thickbox');
-        wp_enqueue_style('addthis_services_style', $cssRootUrl . 'gtc.sharing-personalize.css');
-        wp_enqueue_style('addthis_bootstrap_style', $cssRootUrl . 'bootstrap.css');
-        wp_enqueue_style('addthis_widget', 'https://ct1.addthis.com/static/r07/widget114.css');
-        wp_enqueue_style('addthis_widget_big', 'https://ct1.addthis.com/static/r07/widgetbig056.css');
-    }
-
-    function addthis_admin_menu()
-    {
-        $addthis = add_options_page('AddThis Plugin Options', 'AddThis Sharing Buttons', 'manage_options', basename(__FILE__), 'addthis_plugin_options_php4');
-        add_action('admin_print_scripts-' . $addthis, 'addthis_options_page_scripts');
-        add_action('admin_print_styles-' . $addthis, 'addthis_options_page_style');
+        global $cmsConnector;
+        $htmlGeneratingFunction = 'addthis_plugin_options_php4';
+        $cmsConnector->addSettingsPage($htmlGeneratingFunction);
     }
 
     function addthis_plugin_options_php4() {
@@ -1714,6 +1654,7 @@ EOF;
         $user_id = $current_user->ID;
         global $addThisConfigs;
         $options = $addThisConfigs->getConfigs();
+        global $cmsConnector;
 
         if (get_user_meta($user_id, 'addthis_nag_updated_options') )
             delete_user_meta($user_id, 'addthis_nag_updated_options', 'true');
@@ -1722,12 +1663,11 @@ EOF;
         <div class="wrap">
             <h2 class='placeholder'>&nbsp;</h2>
 
-            <form  id="addthis_settings" method="post" action="options.php">
+            <form id="addthis-settings" method="post" action="options.php">
                 <?php
                     // use the old-school settings style in older versions of wordpress
-                    if (   addthis_get_wp_version() >= 2.7
-                        || apply_filters('at_assume_latest', __return_false() )
-                        || apply_filters('addthis_assume_latest', __return_false() )
+                    if (   $cmsConnector->getCmsMinorVersion() >= 2.7
+                        || $cmsConnector->assumeLatest()
                     ) {
                         settings_fields('addthis');
                     } else {
@@ -1766,6 +1706,8 @@ EOF;
         global $addthis_styles;
         global $addthis_languages;
         global $addThisConfigs;
+        global $cmsConnector;
+
         $options = $addThisConfigs->getConfigs();
 
         $version_notification_content = _addthis_version_notification(
@@ -1810,7 +1752,7 @@ EOF;
                                 style="display:none;" <?php echo ( $options['addthis_above_enabled']  != false ? 'checked="checked"' : ''); ?>/>
                             <div
                                 id="addthis_above_enabled_switch"
-                                class="switch <?php echo ( $options['addthis_above_enabled']  != false ? 'switchOn' : ''); ?>">
+                                class="addthis-switch <?php echo ( $options['addthis_above_enabled']  != false ? 'addthis-switchOn' : ''); ?>">
                             </div>
                         </div>
                         <h3 class="Card-hd-title">Sharing Buttons Above Content</h3>
@@ -1844,7 +1786,7 @@ EOF;
                                 style="display:none;" <?php echo ( $options['addthis_below_enabled'] != false ? 'checked="checked"' : ''); ?>/>
                             <div
                                 id="addthis_below_enabled_switch"
-                                class="switch <?php echo ( $options['addthis_below_enabled'] != false ? 'switchOn' : ''); ?>">
+                                class="addthis-switch <?php echo ( $options['addthis_below_enabled'] != false ? 'addthis-switchOn' : ''); ?>">
                             </div>
                         </div>
                         <h3 class="Card-hd-title">Sharing Buttons Below Content</h3>
@@ -1877,7 +1819,7 @@ EOF;
                                 style="display:none;" <?php echo ( $options['addthis_sidebar_enabled'] != false ? 'checked="checked"' : ''); ?>/>
                             <div
                                 id="addthis_sidebar_enabled_switch"
-                                class="switch <?php echo ( $options['addthis_sidebar_enabled']  != false ? 'switchOn' : ''); ?>">
+                                class="addthis-switch <?php echo ( $options['addthis_sidebar_enabled']  != false ? 'addthis-switchOn' : ''); ?>">
                             </div>
                         </div>
                         <h3 class="Card-hd-title">Sharing Sidebar</h3>
@@ -1890,23 +1832,26 @@ EOF;
                         <div class="Card-bd">
                             <div id="side-1">
                                 <p>These buttons will appear on the side of the page, along the edge.</p>
-                                <img src="<?php echo _addthis_image_location_base() . 'sidebar_theme_light.png'; ?>" />
+                                <img src="<?php echo $cmsConnector->getPluginImageFolderUrl() . 'sidebar_theme_light.png'; ?>" />
                                 <ul>
                                     <li>
-                                        <strong>Position</strong><br />
-                                        <label for="addthis_sidebar_position">Left</label>
-                                        <input
-                                            type="radio"
-                                            id="addthis_sidebar_position"
-                                            name="addthis_settings[addthis_sidebar_position]"
-                                            value="left" <?php echo ( $options['addthis_sidebar_position'] == 'left' ? 'checked="checked"' : ''); ?>/>
-                                        <br />
-                                        <label for="addthis_sidebar_position">Right</label>
-                                        <input
-                                            type="radio"
-                                            id="addthis_sidebar_position"
-                                            name="addthis_settings[addthis_sidebar_position]"
-                                            value="right" <?php echo ( $options['addthis_sidebar_position']  == 'right' ? 'checked="checked"' : ''); ?>/></td>
+                                        <strong>Position</strong>
+                                        <label for="addthis_sidebar_position_left" class="addthis-sidebar-position-label">
+                                            <input
+                                                type="radio"
+                                                id="addthis_sidebar_position_left"
+                                                name="addthis_settings[addthis_sidebar_position]"
+                                                value="left" <?php echo ( $options['addthis_sidebar_position'] == 'left' ? 'checked="checked"' : ''); ?>/>
+                                            <span class="addthis-checkbox-label">Left</span>
+                                        </label>
+                                        <label for="addthis_sidebar_position_right" class="addthis-sidebar-position-label">
+                                            <input
+                                                type="radio"
+                                                id="addthis_sidebar_position_right"
+                                                name="addthis_settings[addthis_sidebar_position]"
+                                                value="right" <?php echo ( $options['addthis_sidebar_position']  == 'right' ? 'checked="checked"' : ''); ?>/>
+                                            <span class="addthis-checkbox-label">Right</span>
+                                        </label>
                                     </li>
                                 </ul>
                             </div>
@@ -1916,7 +1861,7 @@ EOF;
                                     <li>
                                         <label for="addthis_sidebar_count">
                                             <strong>Buttons</strong>
-                                            <span class="at-wp-tooltip" tooltip="The number of social sharing buttons to show in the side sharing tool.">&quest;</span>
+                                            <span class="at-wp-tooltip" tooltip="The number of social sharing buttons to show in the side sharing tool.">?</span>
                                         </label>
                                         <select id="addthis_sidebar_count" name="addthis_settings[addthis_sidebar_count]">
                                             <?php
@@ -1929,7 +1874,7 @@ EOF;
                                     <li>
                                         <label for="addthis_sidebar_theme">
                                             <strong>Theme</strong>
-                                            <span class="at-wp-tooltip" tooltip="You can select the background color that better matches the look of your site for the expand/minimize arrow on the side sharing tool.">&quest;</span>
+                                            <span class="at-wp-tooltip" tooltip="You can select the background color that better matches the look of your site for the expand/minimize arrow on the side sharing tool.">?</span>
                                         </label>
                                         <select id="addthis_sidebar_theme" name="addthis_settings[addthis_sidebar_theme]">
                                             <?php
@@ -1940,10 +1885,10 @@ EOF;
                                             ?>
                                         </select>
                                         <br />
-                                        <img src="<?php echo _addthis_image_location_base() . 'sidebar_theme_light.png'; ?>" id="sbpreview_Light"/>
-                                        <img src="<?php echo _addthis_image_location_base() . 'sidebar_theme_gray.png'; ?>" id="sbpreview_Gray"/>
-                                        <img src="<?php echo _addthis_image_location_base() . 'sidebar_theme_dark.png'; ?>" id="sbpreview_Dark"/>
-                                        <img src="<?php echo _addthis_image_location_base() . 'sidebar_theme_light.png'; ?>" id="sbpreview_Transparent"/>
+                                        <img src="<?php echo $cmsConnector->getPluginImageFolderUrl() . 'sidebar_theme_light.png'; ?>" id="sbpreview_Light"/>
+                                        <img src="<?php echo $cmsConnector->getPluginImageFolderUrl() . 'sidebar_theme_gray.png'; ?>" id="sbpreview_Gray"/>
+                                        <img src="<?php echo $cmsConnector->getPluginImageFolderUrl() . 'sidebar_theme_dark.png'; ?>" id="sbpreview_Dark"/>
+                                        <img src="<?php echo $cmsConnector->getPluginImageFolderUrl() . 'sidebar_theme_light.png'; ?>" id="sbpreview_Transparent"/>
                                     </li>
                                 </ul>
                             </div>
@@ -1969,9 +1914,12 @@ EOF;
                                             name="addthis_settings[addthis_append_data]"
                                             value="true" <?php echo $options['addthis_append_data'] == true ? 'checked="checked"' : ''; ?>/>
                                         <label for="addthis_append_data">
-                                            <strong><?php _e("Clickbacks", 'addthis_trans_domain' ); ?></strong> (Recommended)
+                                            <span class="addthis-checkbox-label">
+                                                <strong><?php _e("Clickbacks", 'addthis_trans_domain' ); ?></strong>
+                                                (Recommended)
+                                            </span>
                                         </label>
-                                        <span class="at-wp-tooltip" tooltip="AddThis will use this to track how many people come back to your content via links shared with AddThis buttons. This data will be available to you at addthis.com.">&quest;</span>
+                                        <span class="at-wp-tooltip" tooltip="AddThis will use this to track how many people come back to your content via links shared with AddThis buttons. This data will be available to you at addthis.com.">?</span>
                                     </li>
                                     <li>
                                         <input
@@ -1980,9 +1928,11 @@ EOF;
                                             name="addthis_settings[addthis_addressbar]"
                                             value="true" <?php echo ($options['addthis_addressbar']  == true ? 'checked="checked"' : ''); ?>/>
                                         <label for="addthis_addressbar">
-                                            <strong><?php _e("Address bar shares", 'addthis_trans_domain' ); ?></strong>
+                                            <span class="addthis-checkbox-label">
+                                                <strong><?php _e("Address bar shares", 'addthis_trans_domain' ); ?></strong>
+                                            </span>
                                         </label>
-                                        <span class="at-wp-tooltip" tooltip="AddThis will append a code to your site’s URLs (except for the homepage) to track when a visitor comes to your site from a link someone copied out of their browser's address bar.">&quest;</span>
+                                        <span class="at-wp-tooltip" tooltip="AddThis will append a code to your site’s URLs (except for the homepage) to track when a visitor comes to your site from a link someone copied out of their browser's address bar.">?</span>
                                     </li>
                                     <li>
                                         <input
@@ -1991,9 +1941,11 @@ EOF;
                                             name="addthis_settings[addthis_bitly]"
                                             value="true" <?php echo ($options['addthis_bitly'] == true ? 'checked="checked"' : ''); ?>/>
                                         <label for="addthis_bitly">
-                                            <strong><?php _e("Bitly URL shortening for Twitter", 'addthis_trans_domain' ); ?></strong>
+                                            <span class="addthis-checkbox-label">
+                                                <strong><?php _e("Bitly URL shortening for Twitter", 'addthis_trans_domain' ); ?></strong>
+                                            </span>
                                         </label>
-                                        <span class="at-wp-tooltip" tooltip="Your Bitly login and key will need to be setup with your profile on addthis.com before Bitly will begin working with WordPress.">&quest;</span>
+                                        <span class="at-wp-tooltip" tooltip="Your Bitly login and key will need to be setup with your profile on addthis.com before Bitly will begin working with WordPress.">?</span>
                                     </li>
                                 </ul>
                             </li>
@@ -2026,9 +1978,12 @@ EOF;
                                             name="addthis_settings[addthis_asynchronous_loading]"
                                             value="true" <?php echo ($options['addthis_asynchronous_loading'] == true ? 'checked="checked"' : ''); ?>/>
                                         <label for="addthis_asynchronous_loading">
-                                            <strong><?php _e("Asynchronous loading", 'addthis_trans_domain' ); ?></strong> (Recommended)
+                                            <span class="addthis-checkbox-label">
+                                                <strong><?php _e("Asynchronous loading", 'addthis_trans_domain' ); ?></strong>
+                                                (Recommended)
+                                            </span>
                                         </label>
-                                        <span class="at-wp-tooltip" tooltip="When checked, your site will load before AddThis sharing buttons are added. If unchecked, your site will not load until AddThis buttons (and AddThis JavaScript) have been loaded by your vistors.">&quest;</span>
+                                        <span class="at-wp-tooltip" tooltip="When checked, your site will load before AddThis sharing buttons are added. If unchecked, your site will not load until AddThis buttons (and AddThis JavaScript) have been loaded by your vistors.">?</span>
                                     </li>
                                     <li>
                                         <input
@@ -2037,16 +1992,18 @@ EOF;
                                             name="addthis_settings[addthis_508]" v
                                             alue="true" <?php echo ($options['addthis_508'] == true ? 'checked="checked"' : ''); ?>/>
                                         <label for="addthis_508">
-                                            <strong><?php _e("Enhanced accessibility", 'addthis_trans_domain' ); ?></strong>
+                                            <span class="addthis-checkbox-label">
+                                                <strong><?php _e("Enhanced accessibility", 'addthis_trans_domain' ); ?></strong>
+                                            </span>
                                         </label>
-                                        <span class="at-wp-tooltip" tooltip="Also known as 508 compliance. If checked, clicking an AddThis sharing button will open a new window to a page that is keyboard navigable for people with disabilities.">&quest;</span>
+                                        <span class="at-wp-tooltip" tooltip="Also known as 508 compliance. If checked, clicking an AddThis sharing button will open a new window to a page that is keyboard navigable for people with disabilities.">?</span>
                                     </li>
                                 </ul>
                             </li>
                             <li>
                                 <label id="addthis_twitter_template">
                                     <strong><?php _e("Twitter via", 'addthis_trans_domain' ); ?></strong>
-                                    <span class="at-wp-tooltip" tooltip="When a visitor uses an AddThis button to send a tweet about your page, this will be used within Twitter to identify through whom they found your page. You would usually enter a twitter handle here. For example, Twitter could show a tweet came from jsmith via AddThis.">&quest;</span>
+                                    <span class="at-wp-tooltip" tooltip="When a visitor uses an AddThis button to send a tweet about your page, this will be used within Twitter to identify through whom they found your page. You would usually enter a twitter handle here. For example, Twitter could show a tweet came from jsmith via AddThis.">?</span>
                                 </label>
                                 <input
                                     id="addthis_twitter_template"
@@ -2098,7 +2055,6 @@ EOF;
                                         <textarea
                                             id="addthis_config_json"
                                             rows='3'
-                                            cols='60'
                                             type="text"
                                             name="addthis_settings[addthis_config_json]"
                                             id="addthis-config-json"/><?php echo $options['addthis_config_json']; ?></textarea>
@@ -2114,7 +2070,6 @@ EOF;
                                         <textarea
                                             id="addthis_share_json"
                                             rows='3'
-                                            cols='60'
                                             type="text"
                                             name="addthis_settings[addthis_share_json]"
                                             id="addthis-share-json"/><?php echo $options['addthis_share_json']; ?></textarea>
@@ -2226,10 +2181,9 @@ EOF;
     function at_share_is_pro_user() {
         global $addThisConfigs;
         $isPro = false;
-        $options = $addThisConfigs->getConfigs();
 
-        if (!empty($options['addthis_profile'])) {
-            $request = wp_remote_get( "http://q.addthis.com/feeds/1.0/config.json?pubid=" . $options['addthis_profile'] );
+        if ($addThisConfigs->getProfileId()) {
+            $request = wp_remote_get( "http://q.addthis.com/feeds/1.0/config.json?pubid=" . $addThisConfigs->getProfileId() );
             $server_output = wp_remote_retrieve_body( $request );
             $array = json_decode($server_output);
             // check for pro user
@@ -2257,6 +2211,7 @@ EOF;
 
 function _addthis_profile_setup_url() {
     $pubName = get_bloginfo('name');
+    global $cmsConnector;
 
     if (!preg_match('/^[A-Za-z0-9 _\-\(\)]*$/', $pubName)) {
         // if title not match, get domain
@@ -2289,7 +2244,7 @@ function _addthis_profile_setup_url() {
         . str_replace(
             '.',
             '%2E',
-            urlencode(admin_url("options-general.php?page=addthis_social_widget"))
+            urlencode($cmsConnector->getSettingsPageUrl())
         );
 
     return $profileSetupUrl;
@@ -2297,15 +2252,14 @@ function _addthis_profile_setup_url() {
 
 function _addthis_analytics_url() {
     global $addThisConfigs;
-    $addthis_options = $addThisConfigs->getConfigs();
-    $analyticsUrl = 'https://www.addthis.com/dashboard#analytics/' . $addthis_options['addthis_profile'];
+    $analyticsUrl = 'https://www.addthis.com/dashboard#analytics/' . $addThisConfigs->getProfileId();
     return $analyticsUrl;
 }
 
 function _addthis_tools_url() {
     global $addThisConfigs;
     $addthis_options = $addThisConfigs->getConfigs();
-    $toolsUrl = 'https://www.addthis.com/settings/plugin-pubs?cms=wp&pubid=' . $addthis_options['addthis_profile'];
+    $toolsUrl = 'https://www.addthis.com/settings/plugin-pubs?cms=wp&pubid=' . $addThisConfigs->getProfileId();
     return $toolsUrl;
 }
 
@@ -2333,13 +2287,12 @@ function _addthis_profile_id_card($credential_validation_status = false) {
         $security = wp_nonce_field('update_' . $fieldName, $fieldName . '_nonce');
     }
 
-    if (empty($addthis_options['addthis_profile'])) {
+    if (!$addThisConfigs->getProfileId()) {
         $description = $noPubIdDescription;
         $buttonUrl = _addthis_profile_setup_url();
         $buttonText = $noPubIdButtonText;
         $alternatePath = '<p>Alternately, you can input your profile id manually below.</p>';
         $target = '';
-
     } else {
         $description = $pubIdDescription;
         $buttonUrl = _addthis_analytics_url();
@@ -2374,7 +2327,7 @@ function _addthis_profile_id_card($credential_validation_status = false) {
                             id="' . $fieldId . '"
                             type="text"
                             name="' . $fieldName . '"
-                            value="' . $addthis_options['addthis_profile'] . '"
+                            value="' . $addThisConfigs->getProfileId() . '"
                             autofill="off"
                             autocomplete="off"
                         />
@@ -2586,7 +2539,7 @@ function _addthis_mode_card() {
                         <th role="columnheader" scope="col">
                             <input type="radio" id="addthis-option" name="' . $fieldName . '" value="AddThis"' . $addThisChecked . '/>
                             <label for="addthis-option">
-                                <strong>AddThis.com Dashboard</strong>
+                                <strong>AddThis.com</strong>
                             </label>
                         </th>
                     </thead>
@@ -2601,11 +2554,10 @@ function _addthis_mode_card() {
 
 function _addthis_is_csr_form() {
     global $addThisConfigs;
-    $options = $addThisConfigs->getConfigs();
 
     if (   isset($_GET['complete'], $_GET['pubid'])
         && $_GET['complete'] == 'true'
-        && $_GET['pubid'] != $options['addthis_profile']
+        && $_GET['pubid'] != $addThisConfigs->getProfileId()
     ) {
         return true;
     }
@@ -2664,77 +2616,88 @@ function _addthis_settings_buttons($includePreview = true) {
  */
 function addthis_profile_id_csr_confirmation($fieldName = 'addthis_settings[addthis_profile]')
 {
-    if (isset($_GET['advanced_settings'])) {
-        $html  = '
-            <div>
-                Here you can manually set your AddThis Profile ID - you can get this from your
-                <a target="_blank" href="https://www.addthis.com/settings/publisher">
-                    Profile Settings
-                </a>
-            </div>';
-    } else {
-        $html  = '
-            <h2>You\'re almost done!</h2>
-            <div>
-                It\'s time to connect your AddThis account with Wordpress.
-            </div>';
-    }
-    $html .= '
-        <form id="addthis-form" method="post" action="'.admin_url("options-general.php?page=addthis_social_widget").'">
-            <div class="addthis_pub_id">
-                <div class="icons wp_div">
-                <img src="'.plugins_url('images/wordpress.png', __FILE__).'">
-                <span>Your WordPress Site:</span>
-                <input
-                    type="text"
-                    value="' . get_bloginfo('name') . '"
-                    name="pub_id"
-                    readonly=true
-                    onfocus="this.blur()"/>
-            </div>
-            <div class="icons arrow_div">
-                <img src="'.plugins_url('images/arrow_right.png', __FILE__).'">
-                <img src="'.plugins_url('images/arrow_left.png', __FILE__).'">
-            </div>
-            <div class="icons addthis_div">
-                <img src="'.plugins_url('images/addthis.png', __FILE__).'">
-                <span>AddThis Profile ID:</span>';
-
+    global $cmsConnector;
+    global $addThisConfigs;
     if (isset($_GET['pubid'])) {
         $pubId = $_GET['pubid'];
     } else {
-        $pubId = $this->_pubid;
+        $pubId = $addThisConfigs->getProfileId();
     }
-
-    $html .=  '
-                <input
-                    type="text"
-                    value="'.$pubId.'"
-                    name="'.$fieldName.'"
-                    id="addthis_profile" >
-                <input
-                    type="hidden"
-                    value="true"
-                    name="addthis_settings[addthis_csr_confirmation]"
-            </div>
-        </div>';
 
     $submitButtonValue = "Confirm and Save Changes";
 
-    $html .= '
-            <input
-                type="submit"
-                value="'.$submitButtonValue.'"
-                name="submit"
-                class="addthis_confirm_button">
-            <button
-                class="addthis_cancel_button"
-                type="button"
-                onclick="window.location=\''.admin_url("options-general.php?page=addthis_social_widget").'\';return false;">
-                Cancel
-            </button>
-                ' . wp_nonce_field( 'update_pubid', 'pubid_nonce' ) . '
-        </form>';
+    $html  = '<div class="Card">';
 
-        return $html;
+    if (isset($_GET['advanced_settings'])) {
+        $html  .= '
+                <div  class="Card-bd">
+                    <p>
+                        Here you can manually set your AddThis Profile ID - you can get this from your
+                        <a target="_blank" href="https://www.addthis.com/settings/publisher">Profile Settings</a>
+                    </p>
+            ';
+    } else {
+        $html  .= '
+                <div class="Card-hd">
+                    <h3 class="Card-hd-title">You\'re almost done!</h3>
+                </div>
+                <div  class="Card-bd">
+                    <p>It\'s time to connect your AddThis account with Wordpress.</p>
+                ';
     }
+    $html .= '
+        <form id="addthis-settings" method="post" action="'.$cmsConnector->getSettingsPageUrl().'">
+            <div class="addthis_pub_id">
+                <ul class="addthis-csr-confirm-list">
+                    <li class="addthis-csr-item wp_div">
+                        <img src="'.plugins_url('images/wordpress.png', __FILE__).'">
+                        <span>Your WordPress Site:</span>
+                        <input
+                            type="text"
+                            value="' . get_bloginfo('name') . '"
+                            name="pub_id"
+                            readonly=true
+                            onfocus="this.blur()"/>
+                    </li>
+                    <li class="addthis-csr-item arrow_div">
+                        <img src="'.plugins_url('images/arrow_right.png', __FILE__).'">
+                        <img src="'.plugins_url('images/arrow_left.png', __FILE__).'">
+                    </li>
+                    <li class="addthis-csr-item addthis_div">
+                        <img src="'.plugins_url('images/addthis.png', __FILE__).'">
+                        <span>AddThis Profile ID:</span>
+                        <input
+                            type="text"
+                            value="'.$pubId.'"
+                            name="'.$fieldName.'"
+                            id="addthis_profile" >
+                        <input
+                            type="hidden"
+                            value="true"
+                            name="addthis_settings[addthis_csr_confirmation]"
+                    </li>
+                </ul>
+                <ul class="addthis-csr-button-list">
+                    <li class="addthis-csr-button-item">
+                        <button
+                            class="Btn Btn-cancel"
+                            type="button"
+                            onclick="window.location=\''.$cmsConnector->getSettingsPageUrl().'\';return false;">
+                            Cancel
+                        </button>
+                        ' . wp_nonce_field( 'update_pubid', 'pubid_nonce' ) . '
+                    </li>
+                    <li class="addthis-csr-button-item">
+                        <input
+                            type="submit"
+                            value="'.$submitButtonValue.'"
+                            name="submit"
+                            class="Btn Btn-blue addthis-submit-button">
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>';
+
+    return $html;
+}

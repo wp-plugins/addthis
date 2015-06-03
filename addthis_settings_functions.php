@@ -114,6 +114,8 @@ function addthis_kses($string, $customstyles)
  */
 function _addthis_version_notification($atversion_update_status, $atversion)
 {
+    global $cmsConnector;
+
     //Fresh install Scenario. ie., atversion = 300 without reverting back.
     if($atversion_update_status == ADDTHIS_ATVERSION_AUTO_UPDATE && $atversion >= ADDTHIS_ATVERSION) {
             return;
@@ -136,7 +138,7 @@ function _addthis_version_notification($atversion_update_status, $atversion)
         <div class="addthis-notification addthis-warning-message">
             <div style="float:left">Update AddThis to activate new features that will make sharing even easier.</div>
             <div style="float:right">
-                <a href="#" class="addthis-update-atversion"><img src="<?php echo _addthis_image_location_base() . 'update.png';?>" /></a>
+                <a href="#" class="addthis-update-atversion"><img alt="update" src="<?php echo $cmsConnector->getPluginImageFolderUrl() . 'update.png';?>" /></a>
             </div>
         </div>
         <?php
@@ -164,6 +166,8 @@ function _addthis_swap_first_two_elements (&$array, $key)
  function _addthis_choose_icons($name, $options)
  {
     global $addThisConfigs;
+    global $cmsConnector;
+
     $addthis_new_styles = _get_style_options();
     $addthis_default_options = $addThisConfigs->getConfigs();
 
@@ -223,7 +227,9 @@ function _addthis_swap_first_two_elements (&$array, $key)
                                 />
                             </span>
                             <label for='{$k}_{$name}'>
-                                <img alt='".$k."' src='". _addthis_image_location_base() . $v['img'] ."' />
+                                <span class=\"addthis-checkbox-label\">
+                                    <img alt='".$k."' src='". $cmsConnector->getPluginImageFolderUrl() . $v['img'] ."' />
+                                </span>
                             </label>
                         </div>";
                 }
@@ -245,10 +251,14 @@ function _addthis_swap_first_two_elements (&$array, $key)
                                 id='$name"."_custom_string'
                             />
                         </span>
-                        <label for='{$name}_custom_string'>Advanced API button configuration</label>
+                        <label for='{$name}_custom_string'>
+                            <span class=\"addthis-checkbox-label\">
+                                Advanced API button configuration
+                            </span>
+                        </label>
                     </div>";
                 _e( sprintf("<div style='max-width: 555px;margin-left:20px' class='%s_custom_string_input'> This text box allows you to enter any AddThis markup that you wish. To see examples of what you can do, visit <a href='https://www.addthis.com/get/sharing'>AddThis.com Sharing Tools</a> and select any sharing tool. You can also check out our <a href='http://support.addthis.com/customer/portal/articles/1365467-preferred-services-personalization'>Client API</a>. For any help you may need, please visit <a href='http://support.addthis.com'>AddThis Support</a></div>", $name ),'addthis_trans_domain');
-                echo "<textarea style='max-width:555px;margin-left:20px' rows='5' cols='100' name='addthis_settings[$name"."_custom_string]' class='$name"."_custom_string_input' />".esc_textarea($custom_string)."</textarea>";
+                echo "<textarea rows='5' name='addthis_settings[$name"."_custom_string]' class='$name"."_custom_string_input' />".esc_textarea($custom_string)."</textarea>";
 
                 $class = 'hidden';
                 $checked = '';
@@ -332,17 +342,23 @@ function _addthis_print_template_checkboxes($type) {
                 $checked = 'checked="checked"';
             }
 
-            $listItemStart = "<li>\n";
-            $listItemStart .= "<input
-                type=\"checkbox\"
-                id=\"$fieldName\"
-                name=\"addthis_settings[$fieldName]\"
-                value=\"true\" $checked />\n";
-            $listItemStart .= "<label for=\"$fieldName\">";
+            $listItemStart = "
+                <li>
+                    <input
+                        type=\"checkbox\"
+                        id=\"$fieldName\"
+                        name=\"addthis_settings[$fieldName]\"
+                        value=\"true\" $checked
+                    />
+                        <label for=\"$fieldName\">
+                        <span class=\"addthis-checkbox-label\">
+            ";
 
-            $listItemEnd = "</label>\n";
-            $listItemEnd .= "<span class=\"at-wp-tooltip\" tooltip=\"$explanation\">&quest;</span>\n";
-            $listItemEnd .= "</li>\n";
+            $listItemEnd = "
+                        </span>
+                    </label>
+                    <span class=\"at-wp-tooltip\" tooltip=\"$explanation\">?</span>
+                </li>\n";
 
             echo $listItemStart;
             _e($displayName, 'addthis_trans_domain');
@@ -369,12 +385,23 @@ function _addthis_print_services_picker($name, $options) {
                                 each user based on their location and activity across the web.</p>
                             <div class="above_option select_row">
                                 <span class="radio mt4">
-                                    <input type="radio" checked="checked" name="addthis_settings[<?php echo $name;?>_sharing]" id="<?php echo $name;?>-enable-smart-sharing" value="<?php echo $name;?>-enable-smart-sharing"/> <strong>Auto Personalization</strong><span> (recommended)</span>
+                                    <input
+                                        type="radio"
+                                        checked="checked"
+                                        name="addthis_settings[<?php echo $name;?>_sharing]"
+                                        id="<?php echo $name;?>-enable-smart-sharing"
+                                        value="<?php echo $name;?>-enable-smart-sharing"
+                                    />
+                                    <span class="addthis-checkbox-label">
+                                        <strong>Auto Personalization</strong>
+                                        <span> (recommended)</span>
+                                    </span>
                                 </span>
                             </div>
                             <div class="above_option select_row">
-                                <span class="radio mt4">
-                                    <input type="radio" name="addthis_settings[<?php echo $name;?>_sharing]" id="<?php echo $name;?>-disable-smart-sharing" <?php $sharing_key = $name.'_sharing';echo ( $options[$sharing_key]  == $name."-disable-smart-sharing" ? 'checked="checked"' : ''); ?> value="<?php echo $name;?>-disable-smart-sharing"> <strong>Select Your Own</strong>
+                                <span class="radio mt4 addthis-checkbox-label">
+                                    <input type="radio" name="addthis_settings[<?php echo $name;?>_sharing]" id="<?php echo $name;?>-disable-smart-sharing" <?php $sharing_key = $name.'_sharing';echo ( $options[$sharing_key]  == $name."-disable-smart-sharing" ? 'checked="checked"' : ''); ?> value="<?php echo $name;?>-disable-smart-sharing">
+                                    <strong>Select Your Own</strong>
                                 </span>
                             </div>
 
@@ -501,52 +528,4 @@ function _addthis_excerpt_buttons_enabled() {
     $addthis_below_showon_excerpts = _addthis_excerpt_buttons_enabled_below();
     $enabled = (boolean)($addthis_above_showon_excerpts || $addthis_below_showon_excerpts);
     return $enabled;
-}
-
-/**
- * the folder name for the AddThis plugin - OMG why is this hard coded?!?
- * @return string
- */
-function _addthis_plugin_folder(){
-    return 'addthis';
-}
-
-/**
- * gives you the base URL for our plugin
- * @return string
- */
-function _addthis_plugin_base_url(){
-    $url = apply_filters(
-        'addthis_files_uri',
-        plugins_url('' , basename(dirname(__FILE__)))
-    );
-    $url .= '/' . _addthis_plugin_folder();
-    return $url;
-}
-
-/**
- * gives you the base URL for our plugin's images
- * @return string
- */
-function _addthis_image_location_base(){
-    $url = _addthis_plugin_base_url() . '/img/';
-    return $url;
-}
-
-/**
- * gives you the base URL for our plugin's JavaScript
- * @return string
- */
-function _addthis_js_location_base(){
-    $url = _addthis_plugin_base_url() . '/js/';
-    return $url;
-}
-
-/**
- * gives you the base URL for our plugin's JavaScript
- * @return string
- */
-function _addthis_css_location_base(){
-    $url = _addthis_plugin_base_url() . '/css/';
-    return $url;
 }

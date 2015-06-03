@@ -86,6 +86,13 @@ PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
 
+= 5.0.1 =
+* Improved migration of checkbox settings from 4.0 plugin
+* Improved settings page layout on mobile devices and small screens
+* Improved CSS class naming around red/green enable sliders on the settings page, to reduce CSS conflicts
+* Proactively removing all other CSS and JavaScript files from other plugins when on our settings page to reduce conflicts with other active plugins
+* Removing unused CSS
+
 = 5.0 =
 * Two functional modes allowing users to choose whether to control sharing buttons from within the WordPress admin area (with limited features), or through the AddThis Dashboard at addthis.com.
 * Sharing sidebar configuration available within WordPress (in addition to the previously available sharing buttons above and below content).
@@ -320,7 +327,7 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 == Upgrade Notice ==
 
-= 5.0 =
+= 5.0.1 =
 * Two functional modes allowing users to choose whether to control sharing buttons from within the WordPress admin area (with limited features), or through the AddThis Dashboard at addthis.com.
 * Sharing sidebar configuration available within WordPress (in addition to the previously available sharing buttons above and below content).
 * Seperate preferences for what sharing buttons appear on what templates.

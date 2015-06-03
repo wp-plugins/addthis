@@ -127,7 +127,7 @@ if (!class_exists('AddThisConfigs')) {
         }
 
         private function setDefaultConfigs() {
-            $this->configs = $this->cmsInterface->getConfigs();
+            $this->configs = $this->cmsInterface->getConfigs(true);
 
             if (!is_array($this->configs)) {
                 $this->configs = $this->getDefaultConfigs();
@@ -188,6 +188,17 @@ if (!class_exists('AddThisConfigs')) {
             }
 
             return $fields;
+        }
+
+        public function getProfileId() {
+            $this->getConfigs();
+            if(isset($this->configs['addthis_profile'])
+                && !empty($this->configs['addthis_profile'])
+            ) {
+                return $this->configs['addthis_profile'];
+            }
+
+            return '';
         }
     }
 }

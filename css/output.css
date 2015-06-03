@@ -18,7 +18,10 @@
  * +--------------------------------------------------------------------------+
  */
 
-.entry-content .addthis_toolbox, .entry-content .addthis_button, .entry-header .addthis_toolbox, .entry-header .addthis_button {
+.entry-content .addthis_toolbox,
+.entry-content .addthis_button,
+.entry-header .addthis_toolbox,
+.entry-header .addthis_button {
     margin:10px 0 10px 0;
 }
 .addthis_button_tweet {
@@ -28,6 +31,7 @@
 .atwidget iframe {
     max-width:none;
 }
-div.addthis_toolbox a, a.at-share-btn {
+div.addthis_toolbox a,
+a.at-share-btn {
     border: 0;
 }

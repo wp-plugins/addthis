@@ -86,6 +86,8 @@ class AddThisSidebarWidget extends WP_Widget {
      */
     function form($instance)
     {
+        global $cmsConnector;
+
         if (empty($instance)) {
             $instance = array('style'=> '' , 'title' => '');
         }
@@ -133,7 +135,7 @@ class AddThisSidebarWidget extends WP_Widget {
                         <img
                             align="middle"
                             style="padding:5px 0"
-                            src="'. _addthis_image_location_base .  $v['img'] .'"
+                            src="'. $cmsConnector->getPluginImageFolderUrl() .  $v['img'] .'"
                         />
                     </div>';
             }

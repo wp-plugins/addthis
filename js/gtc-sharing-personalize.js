@@ -800,7 +800,6 @@
     		});
     	}
 
-        $('#above_previewContainer').html(buttons);
     },
 
 
@@ -852,7 +851,6 @@
     	        });
     		});
     	}
-        $('#below_previewContainer').html(buttons);
     },
 
     'events': function() {
@@ -892,7 +890,6 @@
         sortableListItemsCloseIcons = sortableSelectedListItems.find('.close'),
         aboveRestoreDefaultOptions = $('.above-smart-sharing-container .restore-default-options'),
         belowRestoreDefaultOptions = $('.below-smart-sharing-container .restore-default-options'),
-        previewBox = $('#previewBox'),
         aboverestoreToDefault = _.debounce(function() {
           // Updates the personalization UI
         	self.abovepopulateSharingServices(true);
@@ -914,19 +911,6 @@
         disableCustomization = _.debounce(function() {
           trackPageView('/tracker/gtc/' + (window.page || '') + '/event/disable_customization');
         }, 1000, true);
-
-      //to show options upon save
-      if($('#above-chosen-list').val() != "") {
-    	  $('.above-smart-sharing-container #customizedMessage').show();
-    	  $('.above-smart-sharing-container #personalizedMessage').hide();
-//    	  $('.above-smart-sharing-container .customize-your-buttons').html('Your buttons are currently customized. <a href="#" class="above-customize-sharing-link customize-your-buttons">Show customization</a>.');
-      }
-
-      if($('#below-chosen-list').val() != "") {
-    	  $('.below-smart-sharing-container #customizedMessage').show();
-    	  $('.below-smart-sharing-container #personalizedMessage').hide();
-//    	  $('.below-smart-sharing-container .customize-your-buttons').html('Your buttons are currently customized. <a href="#" class="below-customize-sharing-link customize-your-buttons">Show customization</a>.');
-      }
 
       aboveDisableSmartSharing.add(aboveradioInputs).not('#button_above').bind('click', function() {
 
@@ -979,12 +963,7 @@
 
         }
 
-        if(abovecurrentStyle === 'horizontal' && $('#above_previewContainer').width() < 380) {
-          $('#above_previewContainer').css({ 'width': '380px' });
-        }
-
         aboveSmartSharingInnerContainer.show();
-        $('.above-customize-sharing-link, .customize-sharing-checkbox').show();
 
       });
 
@@ -1039,39 +1018,21 @@
 
           }
 
-          if(belowcurrentStyle === 'horizontal' && $('#below_previewContainer').width() < 380) {
-            $('#below_previewContainer').css({ 'width': '380px' });
-          }
-
           belowSmartSharingInnerContainer.show();
-          $('.below-customize-sharing-link, .customize-sharing-checkbox').show();
 
         });
 
       $('#button_above').click(function() {
         var self = $(this);
-        $('.previewbox').removeClass('previewboxbg');
         aboveSmartSharingInnerContainer.hide();
-        $('.above-customize-sharing-link, .customize-sharing-checkbox').hide();
-        $('#above_previewContainer').css({ 'width': '100%', 'margin-right': 'auto' });
       });
 
       $('#button_below').click(function() {
           var self = $(this);
-          $('.previewbox').removeClass('previewboxbg');
           belowSmartSharingInnerContainer.hide();
-          $('.below-customize-sharing-link, .customize-sharing-checkbox').hide();
-          $('#below_previewContainer').css({ 'width': '100%', 'margin-right': 'auto' });
         });
 
       aboveEnableSmartSharing.bind('click', function() {
-    	if($('#above-chosen-list').val() != "") {
-    		$('.above-smart-sharing-container #customizedMessage').hide();
-    		$('#above-chosen-list').val('');
-        }
-    	else {
-    		$('.above-smart-sharing-container #customizedMessage').hide();
-    	}
 
         currentRadioInput = $('input[name="addthis_settings[above]"]:checked');
 
@@ -1089,13 +1050,8 @@
 
       belowEnableSmartSharing.bind('click', function() {
 
-    	  if($('#below-chosen-list').val() != "") {
-      		$('.below-smart-sharing-container #customizedMessage').hide();
-      		$('#below-chosen-list').val('');
-          }
-    	  else {
-    		  $('.below-smart-sharing-container #customizedMessage').hide();
-    	  }
+
+
 
           currentRadioInput = $('input[name="addthis_settings[below]"]:checked');
 
@@ -1488,56 +1444,6 @@
 
         });
 
-      $('.above-customize-sharing-link').bind('click', function(ev) {
-
-        var aboveSmartSharingLink = $('.above-smart-sharing-container .smart-sharing-link'),
-          customizeButtonLink = $('.above-smart-sharing-container .customize-your-buttons');
-
-        ev.preventDefault();
-
-        if($(this).is(customizeButtonLink)) {
-          customizeButtonLink.hide();
-          aboveSmartSharingLink.show();
-          if(!aboveDisableSmartSharing.is(':checked')) {
-        	  aboveDisableSmartSharing.prop('checked', true).trigger('click');
-          }
-        }
-
-        else if($(this).is(aboveSmartSharingLink)) {
-        	aboveSmartSharingLink.hide();
-          customizeButtonLink.show();
-          if(!aboveEnableSmartSharing.is(':checked')) {
-            aboveEnableSmartSharing.prop('checked', true).trigger('click');
-          }
-        }
-
-      });
-
-      $('.below-customize-sharing-link').bind('click', function(ev) {
-
-          var belowSmartSharingLink = $('.below-smart-sharing-container .smart-sharing-link'),
-            customizeButtonLink = $('.below-smart-sharing-container .customize-your-buttons');
-
-          ev.preventDefault();
-
-          if($(this).is(customizeButtonLink)) {
-            customizeButtonLink.hide();
-            belowSmartSharingLink.show();
-            if(!belowDisableSmartSharing.is(':checked')) {
-          	  belowDisableSmartSharing.prop('checked', true).trigger('click');
-            }
-          }
-
-          else if($(this).is(belowSmartSharingLink)) {
-        	  belowSmartSharingLink.hide();
-            customizeButtonLink.show();
-            if(!belowEnableSmartSharing.is(':checked')) {
-              belowEnableSmartSharing.prop('checked', true).trigger('click');
-            }
-          }
-
-        });
-
       $('body').bind({
 
       'populatedList': function() {
@@ -1662,8 +1568,8 @@
         // Makes the new list sortable
         $('.below-smart-sharing-container .sortable').sortable().disableSelection().sortable('option', 'connectWith', '.sortable');
       }, 0);
-    }   
-  }); 
+    }
+  });
 
 }(window.jQuery, window, document));
 

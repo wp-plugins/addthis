@@ -47,12 +47,17 @@ class Addthis_ToolBox
     const AT_CONTENT_ABOVE_POST = "at-above-post-recommended";
     const AT_CONTENT_ABOVE_CAT_PAGE = "at-above-post-cat-page-recommended";
     const AT_CONTENT_ABOVE_ARCH_PAGE = "at-above-post-arch-page-recommended";
+    protected $addThisConfigs;
+    protected $cmsConnector;
 
     /**
      * Initializes the widget class.
      * */
-    public function __construct()
+    public function __construct($addThisConfigs, $cmsConnector)
     {
+        $this->addThisConfigs = $addThisConfigs;
+        $this->cmsConnector = $cmsConnector;
+
         add_filter('the_content', array($this, 'addWidget'));
         if ( has_excerpt()) {
             add_filter('the_excerpt', array($this, 'addWidget'));
@@ -68,7 +73,7 @@ class Addthis_ToolBox
      */
     public function addWidget($content)
     {
-        if (Addthis_Wordpress::getPubid() && !is_404() && !is_feed()) {
+        if ($this->addThisConfigs->getProfileId() && !is_404() && !is_feed()) {
             global $post;
             $postid = $post->ID;
             $at_flag = get_post_meta( $postid, '_at_widget', TRUE );
@@ -130,11 +135,11 @@ class Addthis_ToolBox
         $title = get_the_title();
         $url   = get_permalink();
         if($inline_data == true){
-            return "<div class='".$class." addthis_default_style addthis-toolbox at-wordpress-hide'".
+            return "<div class='".$class." addthis_default_style addthis_toolbox at-wordpress-hide'".
                        " data-title='".$title."' data-url='".$url."'>".
                     "</div>";
         } else {
-             return "<div class='".$class." addthis_default_style addthis-toolbox at-wordpress-hide'></div>";
+             return "<div class='".$class." addthis_default_style addthis_toolbox at-wordpress-hide'></div>";
         }
     }
 
@@ -146,7 +151,7 @@ class Addthis_ToolBox
     public static function getUserTools()
     {
         $curl = curl_init();
-        $url  = AT_API_URL . '?pub='. Addthis_Wordpress::getPubid();
+        $url  = AT_API_URL . '?pub='. $this->addThisConfigs->getProfileId();
         $url .= '&dp=' . Addthis_Wordpress::getDomain();
 
         curl_setopt($curl, CURLOPT_URL, $url);

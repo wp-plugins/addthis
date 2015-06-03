@@ -25,7 +25,8 @@ if (!class_exists('AddthisWordpressConnector')) {
     Class AddthisWordpressConnector implements AddThisCmsConnectorInterface {
 
         static $settingsVariableName = 'addthis_settings';
-        static $pluginVersion = '5.0';
+        static $pluginVersion = '5.0.1';
+        static $settingsPageId = 'addthis_social_widget';
         protected $configs = null;
 
         protected $defaultConfigs = array(
@@ -65,6 +66,73 @@ if (!class_exists('AddthisWordpressConnector')) {
 
         static function getPluginVersion() {
             return self::$pluginVersion;
+        }
+
+        static function getSettingsPageId() {
+            return self::$settingsPageId;
+        }
+
+        static function getCmsVersion() {
+            $version =  get_bloginfo('version');
+            return $version;
+        }
+
+        static function getCmsMinorVersion() {
+            $version =  (float)substr(self::getCmsVersion(),0,3);
+            return $version;
+        }
+
+        /**
+         * the folder name for the AddThis plugin - OMG why is this hard coded?!?
+         * @return string
+         */
+        public function getPluginFolder(){
+            return 'addthis';
+        }
+
+        /**
+         * gives you the base URL for our plugin
+         * @return string
+         */
+        public function getPluginUrl(){
+            $url = apply_filters(
+                'addthis_files_uri',
+                plugins_url()
+            );
+            $url .= '/' . $this->getPluginFolder();
+            return $url;
+        }
+
+        /**
+         * gives you the base URL for our plugin's JavaScript
+         * @return string
+         */
+        public function getPluginJsFolderUrl() {
+            $url = $this->getPluginUrl() . '/js/';
+            return $url;
+        }
+
+        /**
+         * gives you the base URL for our plugin's CSS
+         * @return string
+         */
+        public function getPluginCssFolderUrl() {
+            $url = $this->getPluginUrl() . '/css/';
+            return $url;
+        }
+
+        /**
+         * gives you the base URL for our plugin's images
+         * @return string
+         */
+        public function getPluginImageFolderUrl() {
+            $url = $this->getPluginUrl() . '/img/';
+            return $url;
+        }
+
+        public function getSettingsPageUrl() {
+            $url = admin_url("options-general.php?page=" . $this->getSettingsPageId());
+            return $url;
         }
 
         public function getDefaultConfigs() {
@@ -224,12 +292,217 @@ if (!class_exists('AddthisWordpressConnector')) {
             // if we don't have this value, get from a the depricated field
             if (   is_array($this->configs)
                 && isset($this->configs[$deprecatedFieldName])
-                && !empty($this->configs[$deprecatedFieldName])
                 && !isset($this->configs[$currentFieldName])
             ) {
                 $deprecatedValue = $this->configs[$deprecatedFieldName];
                 $this->configs[$currentFieldName] = $deprecatedValue;
             }
+        }
+
+        /**
+         * Evaluates a handle and its source to determine if we should keep it.
+         * We want to keep stuff from out plugin, from themes and from core
+         * WordPress, but not stuff from other plugins as it can conflict with
+         * our code.
+         *
+         * @param string  $handle     The name given to an enqueued script or
+         * @param mixed   $src        style.  This is usually a string with the
+         *                            the location of the enqueued script or
+         *                            style, relative or absolute. Sometimes
+         *                            this is not a string, and it adds CSS code
+         *                            to a WordPress generated CSS file.
+         * @param string[] $whitelist We will inevitably run into code from
+         *                            other plugins that should be included on
+         *                            our settings page. For those, their
+         *                            handles can be added to this array of
+         *                            strings. We've decided to whitelist
+         *                            instead of blacklist, as we are likely to
+         *                            encounter fewer plugins that add
+         *                            functionality to our settings page than
+         *                            plugins that behave badly and add unwanted
+         *                            code to our page. This also keeps our code
+         *                            working (though perhaps without the added
+         *                            functionality from another plugin that may
+         *                            be desired by the user) instead of
+         *                            breaking the page outright.
+         *                            Troubleshooting should also be easier, as
+         *                            a user is more likely to be aware of which
+         *                            of their plugins add functionality on
+         *                            their settings pages, rather than which
+         *                            ones doesn't play nicely with how they
+         *                            enqueue their scripts and styles.
+         * @return boolean true when a particular script or style should be
+         *                 killed from our settings page, false when it should
+         *                 not be killed
+         */
+        public function evalKillEnqueue($handle, $src, $whitelist = array()) {
+            $pluginsFolder = '/wp-content/plugins/';
+            $addThisPluginsFolder = $pluginsFolder . $this->getPluginFolder();
+            $addThisUrl = $this->getPluginUrl();
+
+            if (!is_string($src)) { return false; }
+
+            if (   !is_string($src) // is the source location a string? keep css if not, cause, for some reason it breaks otherwise
+                || in_array($handle, $whitelist) // keep stuff that's in the whitelist
+                || substr($handle, 0, 7) === 'addthis' // handle has our prefix
+                || substr($src, 0, strlen($addThisPluginsFolder)) === $addThisPluginsFolder // keep relative path stuff from this plugin
+                || substr($src, 0, strlen($addThisUrl)) === $addThisUrl //full urls for this plugin
+                || (   substr($src, 0, 4) === "/wp-" // keep css for non-plugins
+                    && substr($src, 0, strlen($pluginsFolder)) !== $pluginsFolder)
+            ) {
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * Dequeues unwanted scripts from the HTML page generated by WordPress.
+         * This should only be used for our settings page. See the documentation
+         * for the evalKillEnqueue function for more details, secifically for
+         * more information on the $whitespace variable.
+         */
+        public function killUnwantedScripts() {
+            global $wp_scripts;
+            $whitelist = array();
+
+            foreach ($wp_scripts->queue as $handle) {
+                $obj = $wp_scripts->registered[$handle];
+                $src = $obj->src;
+                $kill = $this->evalKillEnqueue($handle, $src, $whitelist);
+                if ($kill) {
+                    wp_dequeue_script($handle);
+                }
+            }
+        }
+
+        /**
+         * Dequeues unwanted styles from the HTML page generated by WordPress.
+         * This should only be used for our settings page. See the documentation
+         * for the evalKillEnqueue function for more details, secifically for
+         * more information on the $whitespace variable.
+         */
+        public function killUnwantedStyles() {
+            global $wp_styles;
+            $whitelist = array();
+
+            foreach ($wp_styles->queue as $handle) {
+                $obj = $wp_styles->registered[$handle];
+                $src = $obj->src;
+                $kill = $this->evalKillEnqueue($handle, $src, $whitelist);
+                if ($kill) {
+                    wp_dequeue_style($handle);
+                }
+            }
+        }
+
+        public function addSettingsPageScripts() {
+            $this->getConfigs(true);
+            $this->killUnwantedScripts();
+
+            $jsRootUrl = $this->getPluginJsFolderUrl();
+            $imgRootUrl = $this->getPluginImageFolderUrl();
+
+            if (   $this->getCmsMinorVersion() >= 3.2
+                || $this->assumeLatest()
+            ) {
+                $optionsJsUrl = $jsRootUrl . 'options-page.32.js';
+            } else {
+                $optionsJsUrl = $jsRootUrl . 'options-page.js';
+            }
+
+            wp_enqueue_script(
+                'addthis_options_page_script',
+                $optionsJsUrl,
+                array('jquery-ui-tabs', 'thickbox')
+            );
+
+            if ($this->configs['addthis_plugin_controls'] == 'AddThis') {
+                wp_enqueue_script(
+                    'addThisScript',
+                    $jsRootUrl . 'addthis-for-wordpress.js'
+                );
+
+                return;
+            }
+
+            wp_enqueue_script('addthis_core', $jsRootUrl . 'core-1.1.1.js');
+            wp_enqueue_script('addthis_lr', $jsRootUrl . 'lr.js');
+            wp_enqueue_script('addthis_qtip_script', $jsRootUrl . 'jquery.qtip.min.js');
+            wp_enqueue_script('addthis_ui_script', $jsRootUrl . 'jqueryui.sortable.js');
+            wp_enqueue_script('addthis_selectbox', $jsRootUrl . 'jquery.selectBoxIt.min.js');
+            wp_enqueue_script('addthis_jquery_messagebox', $jsRootUrl . 'jquery.messagebox.js');
+            wp_enqueue_script('addthis_jquery_atjax', $jsRootUrl . 'jquery.atjax.js');
+            wp_enqueue_script('addthis_lodash_script', $jsRootUrl . 'lodash-0.10.0.js');
+            wp_enqueue_script('addthis_services_script', $jsRootUrl . 'gtc-sharing-personalize.js');
+            wp_enqueue_script('addthis_service_script', $jsRootUrl . 'gtc.cover.js');
+
+            wp_localize_script(
+                'addthis_services_script',
+                'addthis_params',
+                array('img_base' => $imgRootUrl)
+            );
+            wp_localize_script(
+                'addthis_options_page_script',
+                'addthis_option_params',
+                array(
+                    'wp_ajax_url'=> admin_url('admin-ajax.php'),
+                    'addthis_validate_action' => 'validate_addthis_api_credentials',
+                    'img_base' => $imgRootUrl
+                )
+            );
+        }
+
+        public function addSettingsPageStyles() {
+            $this->getConfigs(true);
+            $this->killUnwantedStyles();
+            $cssRootUrl = $this->getPluginCssFolderUrl();
+
+            wp_enqueue_style('addthis_options_page_style', $cssRootUrl . 'options-page.css');
+            wp_enqueue_style('addthis_general_style', $cssRootUrl . 'style.css');
+
+            if ($this->configs['addthis_plugin_controls'] == 'AddThis') {
+                return;
+            }
+
+            wp_enqueue_style('thickbox');
+            wp_enqueue_style('addthis_services_style', $cssRootUrl . 'gtc.sharing-personalize.css');
+            wp_enqueue_style('addthis_bootstrap_style', $cssRootUrl . 'bootstrap.css');
+            wp_enqueue_style('addthis_widget', 'https://ct1.addthis.com/static/r07/widget114.css');
+            wp_enqueue_style('addthis_widget_big', 'https://ct1.addthis.com/static/r07/widgetbig056.css');
+        }
+
+        public function addSettingsPage($htmlGeneratingFunction) {
+            $hook_suffix = add_options_page(
+                'AddThis Sharing Buttons',
+                'AddThis Sharing Buttons',
+                'manage_options',
+                self::$settingsPageId,
+                $htmlGeneratingFunction
+            );
+
+            $print_scripts_hook = 'admin_print_scripts-' . $hook_suffix;
+            $print_styles_hook = 'admin_print_styles-' . $hook_suffix;
+
+            add_action(
+                $print_scripts_hook,
+                array($this, 'addSettingsPageScripts')
+            );
+            add_action(
+                $print_styles_hook,
+                array($this, 'addSettingsPageStyles')
+            );
+
+        }
+
+        public function assumeLatest() {
+            if (   apply_filters('at_assume_latest', __return_false())
+                || apply_filters('addthis_assume_latest', __return_false())
+            ) {
+                return true;
+            }
+
+            return false;
         }
     }
 }

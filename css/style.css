@@ -154,7 +154,10 @@ button.addthis_cancel_button:focus {
     float: left;
     margin-left: 15px;
 }
-
+.Btn-cancel {
+    background-color: #fff;
+    color: #359af9;
+}
 .addthis_confirm_button a {
     text-decoration: none;
     font-size: 12px;
@@ -174,12 +177,12 @@ button.addthis_cancel_button:focus {
     background-color: #F2EDD9;
     border: 2px solid #EEE4B5;
     display: block;
-    float: left;
     margin: 15px 0;
     padding: 15px;
     text-align: center;
     font-weight: bold;
     width:408px;
+    overflow: hidden;
 }
 
 .addthis_updated {
@@ -213,7 +216,21 @@ a.addthis_configure, a.addthis_configure:hover {
 .icons {
     float: left;
 }
-
+.addthis-csr-confirm-list,
+.addthis-csr-button-list  {
+    display: inline-block;
+    margin: 10px auto;
+}
+.addthis-csr-button-item {
+    display: inline-block;
+}
+.addthis-csr-button-item:first-child {
+    margin-right: 10px;
+}
+.addthis-csr-item {
+    display: table-cell;
+    vertical-align: top;
+}
 .wp_div, .addthis_div {
     width: 160px;
     text-align: center;
@@ -243,12 +260,16 @@ a.addthis_configure, a.addthis_configure:hover {
 }
 
 .arrow_div{
-    padding-top: 25px;
-    margin-right: 22px;
+    width: 50px;
+
 }
 .arrow_div img{
-    display: block;
+    margin: auto;
 }
+.arrow_div img:first-child {
+    margin-top: 20px;
+}
+
 
 .addthis_reset_button{
     border: 1px solid gray;

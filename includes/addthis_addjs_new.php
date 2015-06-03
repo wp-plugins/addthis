@@ -33,8 +33,6 @@ Class AddThis_addjs{
     private $_cuid;
     private $addThisConfigs;
 
-    var $pubid;
-
     var $jsToAdd;
 
     var $jsAfterAdd;
@@ -48,8 +46,9 @@ Class AddThis_addjs{
     /**
     *
     */
-    public function __construct ($addThisConfigs){
+    public function __construct ($addThisConfigs, $cmsConnector){
         $this->addThisConfigs = $addThisConfigs;
+        $this->cmsConnector = $cmsConnector;
 
         if ( did_action('addthis_addjs_created') !== 0){
             _doing_it_wrong( 'addthis_addjs', 'Only one instance of this class should be initialized.  Look for the $addthis_addjs global first',1 );
@@ -76,8 +75,6 @@ Class AddThis_addjs{
         {
             add_action('admin_init',array($this, 'update_wpfooter'));
         }
-
-        $this->pubid = $this->getProfileId();
 
         // on theme swich, check for footer again
         add_action('switch_theme', array($this, 'switch_theme'),15);
@@ -211,11 +208,11 @@ Class AddThis_addjs{
             $this->jsToAdd .= '
                 <script>
                     var wp_product_version = "' . ADDTHIS_PRODUCT_VERSION . '";
-                    var wp_blog_version = "' . get_bloginfo('version') . '";
+                    var wp_blog_version = "' . $this->cmsConnector->getCmsVersion() . '";
                     ' . $addthis_share_js . '
                 </script>';
 
-            $this->jsToAdd .= $firstScriptHalf . $this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->pubid ).'" ' . $async. '></script>';
+            $this->jsToAdd .= $firstScriptHalf . $this->atversion.'/addthis_widget.js#pubid='. urlencode( $this->addThisConfigs->getProfileId() ).'" ' . $async. '></script>';
         }
     }
 
@@ -223,12 +220,6 @@ Class AddThis_addjs{
         if (! empty($this->jsAfterAdd)) {
             $this->jsToAdd .= '<script type="text/javascript">' . $this->jsAfterAdd . '</script>';
             $this->jsAfterAdd = NULL;
-        }
-    }
-
-    function getProfileId(){
-        if (!empty($this->_options['addthis_profile'])) {
-            return $this->_options['addthis_profile'];
         }
     }
 
