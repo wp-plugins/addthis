@@ -3,7 +3,7 @@
  * Plugin Name: AddThis Sharing Buttons
  * Plugin URI: http://www.addthis.com
  * Description: Use the AddThis suite of website tools which includes sharing, following, recommended content, and conversion tools to help you make your website smarter. With AddThis, you can see how your users are engaging with your content, provide a personalized experience for each user and encourage them to share, subscribe or follow.
- * Version: 5.0.4
+ * Version: 5.0.5
  * Author: The AddThis Team
  * Author URI: http://www.addthis.com/
  * License: GPL2
@@ -31,8 +31,6 @@ if (!defined('ADDTHIS_INIT')) define('ADDTHIS_INIT', 1);
 else return;
 
 define( 'addthis_style_default' , 'fb_tw_p1_sc');
-define( 'ADDTHIS_ATVERSION', '300');
-define( 'ADDTHIS_ATVERSION_REVERTED', 1);
 define( 'ENABLE_ADDITIONAL_PLACEMENT_OPTION', 0);
 
 require_once('AddThisWordPressConnector.php');
@@ -43,6 +41,43 @@ $addThisConfigs = new AddThisConfigs($cmsConnector);
 $addthis_options = $addThisConfigs->getConfigs();
 
 require_once('addthis_settings_functions.php');
+
+$addthis_languages = array(
+    ''   => 'Automatic',
+    'af' => 'Afrikaaner',
+    'ar' => 'Arabic',
+    'zh' => 'Chinese',
+    'cs' => 'Czech',
+    'da' => 'Danish',
+    'nl' => 'Dutch',
+    'en' => 'English',
+    'fa' => 'Farsi',
+    'fi' => 'Finnish',
+    'fr' => 'French',
+    'ga' => 'Gaelic',
+    'de' => 'German',
+    'el' => 'Greek',
+    'he' => 'Hebrew',
+    'hi' => 'Hindi',
+    'it' => 'Italian',
+    'ja' => 'Japanese',
+    'ko' => 'Korean',
+    'lv' => 'Latvian',
+    'lt' => 'Lithuanian',
+    'no' => 'Norwegian',
+    'pl' => 'Polish',
+    'pt' => 'Portugese',
+    'ro' => 'Romanian',
+    'ru' => 'Russian',
+    'sk' => 'Slovakian',
+    'sl' => 'Slovenian',
+    'es' => 'Spanish',
+    'sv' => 'Swedish',
+    'th' => 'Thai',
+    'ur' => 'Urdu',
+    'cy' => 'Welsh',
+    'vi' => 'Vietnamese',
+);
 
 /**
  * Show Plugin activation notice on first installation*
@@ -86,13 +121,21 @@ function addthis_activation_hook(){
 
 register_activation_hook( __FILE__, 'addthis_activation_hook' );
 
-if (   isset($_POST['addthis_plugin_controls'])
-    && $_POST['addthis_plugin_controls'] != $addthis_options['addthis_plugin_controls']
+if (isset($_POST['addthis_plugin_controls'])) {
+    $newModeValue = $_POST['addthis_plugin_controls'];
+} else if (isset($_POST['addthis_settings']['addthis_plugin_controls'])) {
+    $newModeValue = $_POST['addthis_settings']['addthis_plugin_controls'];
+}
+
+if (   isset($newModeValue)
+    && $newModeValue != $addthis_options['addthis_plugin_controls']
 ) {
-    if($_POST['addthis_plugin_controls'] != 'AddThis') {
-        $addthis_options['addthis_plugin_controls'] = 'WordPress';
+    if($newModeValue == 'AddThis') {
+        // the WordPress mode magically doesn't need this to switch modes appropriately
+        // probably because it handles settings correctly (registering them and then adding a hook for their sanitization)
+        // $addthis_options['addthis_plugin_controls'] = 'AddThis';
     } else {
-        $addthis_options['addthis_plugin_controls'] = 'AddThis';
+        $addthis_options['addthis_plugin_controls'] = 'WordPress';
     }
     $addthis_options = $addThisConfigs->saveConfigs($addthis_options);
 }
@@ -105,13 +148,13 @@ function addthis_minimal_css() {
 
 if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     require_once 'addthis-for-wordpress.php';
-    new Addthis_Wordpress(isset($upgraded), $addThisConfigs, $cmsConnector);
+    $addThisWordPress = new Addthis_Wordpress(isset($upgraded), $addThisConfigs, $cmsConnector);
 } else {
 
     // Show old version of the plugin till upgrade button is clicked
 
     // Add settings link on plugin page
-    function your_plugin_settings_link($links) {
+    function addthis_plugin_settings_link($links) {
       global $cmsConnector;
       $settings_link = '<a href="'.$cmsConnector->getSettingsPageUrl().'">Settings</a>';
       array_push($links, $settings_link);
@@ -119,19 +162,19 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     }
 
     $plugin = plugin_basename(__FILE__);
-    add_filter("plugin_action_links_$plugin", 'your_plugin_settings_link' );
+    add_filter("plugin_action_links_$plugin", 'addthis_plugin_settings_link' );
 
 
     // Setup our shared resources early
     // addthis_addjs.php is a standard class shared by the various AddThis plugins to make it easy for us to include our bootstrapping JavaScript only once. Priority should be lowest for Share plugin.
     add_action('init', 'addthis_early', 0);
     function addthis_early(){
-        global $addthis_addjs;
+        global $AddThis_addjs_sharing_button_plugin;
         global $addThisConfigs;
         global $cmsConnector;
-        if (!isset($addthis_addjs)){
+        if (!isset($AddThis_addjs_sharing_button_plugin)){
             require('addthis_addjs_new.php');
-            $addthis_addjs = new AddThis_addjs($addThisConfigs, $cmsConnector);
+            $AddThis_addjs_sharing_button_plugin = new AddThis_addjs_sharing_button_plugin($addThisConfigs, $cmsConnector);
         }
     }
 
@@ -142,10 +185,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     $addthis_settings['language'] = 'en';
     $addthis_settings['fallback_username'] = '';
     $addthis_settings['style'] = 'share';
-    $addthis_settings['atversion'] = ADDTHIS_ATVERSION;
     $addthis_settings['placement'] = ENABLE_ADDITIONAL_PLACEMENT_OPTION;
-
-    $addthis_languages = array(''=>'Automatic','af'=>'Afrikaaner', 'ar'=>'Arabic', 'zh'=>'Chinese', 'cs'=>'Czech', 'da'=>'Danish', 'nl'=>'Dutch', 'en'=>'English', 'fa'=>'Farsi', 'fi'=>'Finnish', 'fr'=>'French', 'ga'=>'Gaelic', 'de'=>'German', 'el'=>'Greek', 'he'=>'Hebrew', 'hi'=>'Hindi', 'it'=>'Italian', 'ja'=>'Japanese', 'ko'=>'Korean', 'lv'=>'Latvian', 'lt'=>'Lithuanian', 'no'=>'Norwegian', 'pl'=>'Polish', 'pt'=>'Portugese', 'ro'=>'Romanian', 'ru'=>'Russian', 'sk'=>'Slovakian', 'sl'=>'Slovenian', 'es'=>'Spanish', 'sv'=>'Swedish', 'th'=>'Thai', 'ur'=>'Urdu', 'cy'=>'Welsh', 'vi'=>'Vietnamese');
 
     $addthis_menu_types = array('static', 'dropdown', 'toolbox');
 
@@ -159,7 +199,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     );
 
     $addthis_options = get_option('addthis_settings');
-    $atversion = is_array($addthis_options) && array_key_exists('atversion_reverted', $addthis_options) && $addthis_options['atversion_reverted'] == 1 ? $addthis_options['atversion'] : ADDTHIS_ATVERSION;
+    $atversion = $addThisConfigs->getAddThisVersion();
 
     $addthis_new_styles = array(
         'large_toolbox' => array(
@@ -305,12 +345,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
 
             $addthis_new_options['below'] = 'none';
 
-            if ($header_background = get_option('addthis_header_background'))
-                $addthis_new_options['addthis_header_background'] = $header_background;
-            if ($header_color = get_option('addthis_header_color'))
-                $addthis_new_options['addthis_header_color'] = $header_color;
-            if ($brand = get_option('addthis_brand'))
-                $addthis_new_options['addthis_brand'] = $brand;
             if ($language = get_option('addthis_language'))
                 $addthis_new_options['addthis_language'] = $language;
 
@@ -335,9 +369,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             delete_option('addthis_aftertitle');
             delete_option('addthis_beforecomments');
             delete_option('addthis_style');
-            delete_option('addthis_header_background');
-            delete_option('addthis_header_color');
-            delete_option('addthis_brand');
             delete_option('addthis_language');
             delete_option('atversion');
 
@@ -365,9 +396,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
         {
             global $addThisConfigs;
             $options = $addThisConfigs->getConfigs();
-
-            // Add An option for the AT Version
-            $options['atversion'] = ADDTHIS_ATVERSION;
 
             //$options['wpfooter'] = false;
             $addThisConfigs->saveConfigs($options);
@@ -698,7 +726,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             //[addthis_twitter_template]
             if ( isset ($data['addthis_twitter_template']) && strlen($data['addthis_twitter_template'])  != 0  ) {
                  //Parse the first twitter username to be used with via
-                 $options['addthis_twitter_template'] = get_first_twitter_username(sanitize_text_field($data['addthis_twitter_template']));
+                 $options['addthis_twitter_template'] = sanitize_text_field($data['addthis_twitter_template']);
             }
 
             $options['above'] = 'custom_string';
@@ -761,7 +789,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             'addthis_addressbar',
             'addthis_aftertitle' ,
             'addthis_append_data',
-            'addthis_append_data',
             'addthis_asynchronous_loading',
             'addthis_beforecomments',
             'addthis_below_enabled',
@@ -792,16 +819,8 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
         //[addthis_twitter_template]
         if ( isset ($data['addthis_twitter_template'])) {
              //Parse the first twitter username to be used with via
-             $options['addthis_twitter_template'] = get_first_twitter_username(sanitize_text_field($data['addthis_twitter_template']));
+             $options['addthis_twitter_template'] = sanitize_text_field($data['addthis_twitter_template']);
         }
-
-        if (isset ($data['addthis_bitly']) && strlen($data['addthis_bitly']) != 0 )
-            $options['addthis_bitly'] = sanitize_text_field($data['addthis_bitly']);
-
-
-        //[addthis_brand] =>
-        if ( isset ($data['addthis_brand']) && strlen($data['addthis_brand'])  != 0  )
-            $options['addthis_brand'] = sanitize_text_field($data['addthis_brand']);
 
         //[addthis_language] =>
         if ( isset ($data['addthis_language']))
@@ -818,22 +837,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
 
         if ( isset ($data['credential_validation_status']))
             $options['credential_validation_status'] = sanitize_text_field($data['credential_validation_status']);
-
-        if ( isset ($data['addthis_header_background']) && strlen($data['addthis_header_background']) != 0 )
-        {
-            if (! strpos($data['addthis_header_background'], '#') === 0)
-                $options['addthis_header_background'] =  '#' . sanitize_text_field($data['addthis_header_background']);
-            else
-                $options['addthis_header_background'] =  sanitize_text_field($data['addthis_header_background']);
-        }
-
-        if ( isset ($data['addthis_header_color']) && strlen($data['addthis_header_color']) != 0 )
-        {
-            if (! strpos($data['addthis_header_color'], '#') === 0)
-                $options['addthis_header_color'] =  '#' . sanitize_text_field($data['addthis_header_color']);
-            else
-                $options['addthis_header_color'] =  sanitize_text_field($data['addthis_header_color']);
-        }
 
         if (isset($data['addthis_config_json'])) {
             $options['addthis_config_json'] = sanitize_text_field($data['addthis_config_json']);
@@ -879,7 +882,12 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             $options['addthis_plugin_controls'] = $data['addthis_plugin_controls'];
         }
 
-       return $options;
+        if (isset($data['addthis_rate_us'])) {
+            $options['addthis_rate_us'] = $data['addthis_rate_us'];
+            $options['addthis_rate_us_timestamp'] = time();
+        }
+
+        return $options;
     }
 
 
@@ -1294,15 +1302,13 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     add_action('wp_head', 'addthis_register_script_in_addjs', 20);
 
     function addthis_register_script_in_addjs(){
-        global $addthis_addjs;
+        global $AddThis_addjs_sharing_button_plugin;
         $script = addthis_output_script(true, true);
-        $addthis_addjs->addToScript($script);
+        $AddThis_addjs_sharing_button_plugin->addToScript($script);
 
         $addthis_sidebar = addthis_sidebar_script();
-        $addthis_addjs->addAfterScript($addthis_sidebar);
+        $AddThis_addjs_sharing_button_plugin->addAfterScript($addthis_sidebar);
     }
-
-    //add_action('wp_footer', 'addthis_output_script');
 
     /**
      * Check to see if our Javascript has been outputted yet.  If it hasn't, return it.  Else, return false.
@@ -1315,97 +1321,69 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
         global $cmsConnector;
         $options = $addThisConfigs->getConfigs();
 
-        $script = "\n<!-- AddThis Button Begin -->\n"
-                 .'<script type="text/javascript">'
-                 ."var addthis_product = '". $cmsConnector->getProductVersion() ."';\n";
-
-        $addthis_config = array();
-        $addthis_share = array();
-
-        $addthis_config["data_track_clickback"] = (isset($options['addthis_append_data']) && $options['addthis_append_data'] == true);
-
-        if ( isset($options['data_ga_property']) ){
-            $addthis_config['data_ga_property'] = $options['data_ga_property'];
-            $addthis_config['data_ga_social'] = true;
+        $addthis_config = $addThisConfigs->createAddThisConfigVariable();
+        $addthis_config_js = '';
+        if (!empty($addthis_config)) {
+            $addthis_config_js = 'var addthis_config = '. json_encode($addthis_config) .';';
         }
 
-        $addthis_config["data_track_addressbar"] = (isset($options['addthis_addressbar']) && $options['addthis_addressbar'] == true);
-
-        if ( isset($options['addthis_language']) && strlen($options['addthis_language']) == 2)
-            $addthis_config['ui_language'] = $options['addthis_language'];
-
-        if ( isset($options['atversion']))
-            $addthis_config['ui_atversion'] = isset($options['atversion_update_status']) && $options['atversion_update_status'] == ADDTHIS_ATVERSION_REVERTED ? $options['atversion'] : ADDTHIS_ATVERSION;
-
-        if ( isset($options['addthis_header_background']) )
-            $addthis_config['ui_header_background'] = $options['addthis_header_background'];
-
-        if ( isset($options['addthis_header_color']) )
-            $addthis_config['ui_header_color'] = $options['addthis_header_color'];
-
-        if ( isset($options['addthis_brand']) )
-            $addthis_config['ui_cobrand'] = $options['addthis_brand'];
-
-        if (isset($options['addthis_508']) && $options['addthis_508'] == true)
-            $addthis_config['ui_508_compliant'] = true;
-
-        $addthis_config = apply_filters('addthis_config_js_var', $addthis_config);
-        $addthis_config_json = array_key_exists('addthis_config_json', $options) ? $options['addthis_config_json'] : '';
-        $script = merge_config_with_json_config($script, $addthis_config, $addthis_config_json);
-
-        if (isset($options['addthis_twitter_template'])){
-            //The following twitter template translation is deprecated and replaced with via
-            //$addthis_share['templates']['twitter'] =  esc_js($options['addthis_twitter_template']);
-            $addthis_share['passthrough']['twitter']['via'] = esc_js(get_first_twitter_username($options['addthis_twitter_template']));
-
-        }
-        if (isset($options['addthis_bitly']) && $options['addthis_bitly']) {
-            $addthis_share['url_transforms']['shorten']['twitter'] = 'bitly';
-            $addthis_share['shorteners']['bitly'] = new stdClass();
+        $addthis_share = $addThisConfigs->createAddThisShareVariable();
+        $addthis_share_js = '';
+        if (!empty($addthis_share)) {
+            $addthis_share_js = 'var addthis_share = '. json_encode($addthis_share) .';';
         }
 
-        if ($justConfig)
-        {
-            $return = '';
-            $share = apply_filters('addthis_share_js_var', $addthis_share );
-            if ( isset( $options['addthis_share_json'] ) && $options['addthis_share_json'] != '') {
-                $addthis_json_share = array_key_exists('addthis_share_json', $options) ? $options['addthis_share_json'] : '';
-                $return .= merge_share_with_json_share($addthis_share, $addthis_json_share);
-            }
-            else
-            {
-                if (! empty($share) )
-                    $return .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
-            }
-            $return .= "\n";
-
-            $return = merge_config_with_json_config($return, $addthis_config, $addthis_config_json);
-
-            $return .= "\n";
-
-            if(   isset($options['addthis_plugin_controls'])
-               && $options['addthis_plugin_controls'] != "AddThis"
-            ) {
-                $return .= "addthis_config.ignore_server_config = true;";
-                $return .= "\n";
-            }
-
-            return $return;
-        }
-
-
-        if ( isset( $options['addthis_share_json'] ) && $options['addthis_share_json'] != '')
-            $script .= merge_share_with_json_share($addthis_share, $addthis_json_share);
-        else
-            $script .= 'if (typeof(addthis_share) == "undefined"){ addthis_share = ' . json_encode( apply_filters('addthis_share_js_var', $addthis_share ) ) .';}';
-        $script .= '</script>';
-
-        $script .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$atversion.'/addthis_widget.js#pubid='. urlencode($addThisConfigs->getUsableProfileId()) . '"></script>';
-
-        if ( ! is_admin() && ! is_feed() )
-            echo $script;
-        elseif ($return == true && ! is_admin() && ! is_feed() )
+        if ($justConfig) {
+            $script = "\n" . $addthis_config_js . "\n" . $addthis_share_js . "\n";
             return $script;
+        }
+
+        $async = '';
+        if (!empty($addthis_config['addthis_asynchronous_loading'])) {
+            $async = 'async="async"';
+        }
+
+        /**
+         * Load client script based on the enviornment variable
+         * Admin can enable debug mode in adv settings by adding url param debug=true
+         */
+        $script_domain = '//s7.addthis.com/js/';
+        if (!empty($addthis_config['addthis_environment'])) {
+            $at_env = $addthis_config['addthis_environment'];
+            $script_domain = '//cache-'.$at_env.'.addthis.com/cachefly/js/';
+        }
+
+        $url = $script_domain .
+            $addthis_config['atversion'] .
+            '/addthis_widget.js#pubid=' .
+            urlencode($addThisConfigs->getUsableProfileId());
+
+        $script = '
+            <!-- AddThis Settings Begin -->
+            <script type="text/javascript">
+                var addthis_product = "'. $cmsConnector->getProductVersion() . ';
+                var wp_product_version = "' . $this->cmsConnector->getProductVersion() . ';
+                var wp_blog_version = "' . $this->cmsConnector->getCmsVersion() . ';
+                if (typeof(addthis_config) == "undefined") {
+                    ' . $addthis_config_js . '
+                }
+                if (typeof(addthis_share) == "undefined") {
+                    ' . $addthis_share_js . '
+                }
+            </script>
+            <script
+                type="text/javascript"
+                src="' . $url . '"
+                ' . $async . '
+            >
+            </script>
+            ';
+
+        if (!is_admin() && !is_feed()) {
+            echo $script;
+        } elseif ($return && !is_admin() && !is_feed()) {
+            return $script;
+        }
     }
 
     function addthis_sidebar_script(){
@@ -1450,49 +1428,6 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             }());";
 
         return $return;
-    }
-
-    /*
-     * Merge the AddThis settings with that given using JSON format
-     * @param String $appendString - The string to build and return the script
-     * @param array $addthis_config - The setting array for AddThis config
-     * @param String $addthis_json_config - The JSON String
-     * @return String $appendString - The string to build and return the script
-     */
-    function merge_config_with_json_config($append_string, $addthis_config, $addthis_json_config) {
-        if ( isset( $addthis_json_config ) &&   trim($addthis_json_config) != '') {
-            $addthis_config_json_list = json_decode($addthis_json_config, true);
-            if (! empty ($addthis_config_json_list) && ! empty ($addthis_config)) {
-                foreach($addthis_config_json_list as $key_json => $json_config_value) {
-                        $addthis_config[$key_json] = $json_config_value;
-                }
-            }
-        }
-        if (! empty ($addthis_config) )
-            $append_string .= 'var addthis_config = '. json_encode($addthis_config) .';';
-        return $append_string;
-    }
-
-    /*
-     * Merge the AddThis settings with that given using JSON format
-    * @param String $appendString - The string to build and return the script
-    * @param array $addthis_share - The setting array for AddThis share
-    * @param String $addthis_json_share - The JSON String
-    * @return String $appendString - The string to build and return the script
-    */
-    function merge_share_with_json_share($addthis_share, $addthis_json_share) {
-        $append_string = '';
-        if ( isset( $addthis_json_share ) &&   trim($addthis_json_share) != '') {
-            $addthis_share_json_list = json_decode($addthis_json_share, true);
-            if (! empty ($addthis_share_json_list) && ! empty ($addthis_share)) {
-                foreach($addthis_share_json_list as $key_json => $json_share_value) {
-                    $addthis_share[$key_json] = $json_share_value;
-                }
-            }
-        }
-        if (! empty ($addthis_share) )
-            $append_string = 'if (typeof(addthis_share) == "undefined"){ addthis_share = '. json_encode($addthis_share) .';}';
-        return $append_string;
     }
 
     /**
@@ -1631,7 +1566,11 @@ EOF;
         <div class="wrap">
             <h2 class='placeholder'>&nbsp;</h2>
 
-            <form id="addthis-settings" method="post" action="options.php">
+            <form
+                id="addthis-settings"
+                method="post"
+                action="options.php"
+            >
                 <?php
                     // use the old-school settings style in older versions of wordpress
                     if (   $cmsConnector->getCmsMinorVersion() >= 2.7
@@ -1671,8 +1610,6 @@ EOF;
     add_action('init', 'addthis_init');
 
     function addthis_wordpress_mode_tabs() {
-        global $addthis_styles;
-        global $addthis_languages;
         global $addThisConfigs;
         global $cmsConnector;
 
@@ -1857,190 +1794,14 @@ EOF;
                         </div>
                     </div>
                 </div>
+                <?php echo _addthis_rate_us_card(); ?>
             </div>
             <div id="tabs-2">
+                <?php echo _addthis_tracking_card(); ?>
 
-                <div class="Card">
-                    <div class="Card-hd">
-                        <h3 class="Card-hd-title">Tracking</h3>
-                    </div>
-                    <div class="Card-bd">
-                        <ul class="Card-option-list">
-                            <li>
-                                <ul>
-                                    <li>
-                                        <input
-                                            id="addthis_append_data"
-                                            type="checkbox"
-                                            name="addthis_settings[addthis_append_data]"
-                                            value="true" <?php echo $options['addthis_append_data'] == true ? 'checked="checked"' : ''; ?>/>
-                                        <label for="addthis_append_data">
-                                            <span class="addthis-checkbox-label">
-                                                <strong><?php _e("Clickbacks", 'addthis_trans_domain' ); ?></strong>
-                                                (Recommended)
-                                            </span>
-                                        </label>
-                                        <span class="at-wp-tooltip" tooltip="AddThis will use this to track how many people come back to your content via links shared with AddThis buttons. This data will be available to you at addthis.com.">?</span>
-                                    </li>
-                                    <li>
-                                        <input
-                                            type="checkbox"
-                                            id="addthis_addressbar"
-                                            name="addthis_settings[addthis_addressbar]"
-                                            value="true" <?php echo ($options['addthis_addressbar']  == true ? 'checked="checked"' : ''); ?>/>
-                                        <label for="addthis_addressbar">
-                                            <span class="addthis-checkbox-label">
-                                                <strong><?php _e("Address bar shares", 'addthis_trans_domain' ); ?></strong>
-                                            </span>
-                                        </label>
-                                        <span class="at-wp-tooltip" tooltip="AddThis will append a code to your site’s URLs (except for the homepage) to track when a visitor comes to your site from a link someone copied out of their browser's address bar.">?</span>
-                                    </li>
-                                    <li>
-                                        <input
-                                            id="addthis_bitly"
-                                            type="checkbox"
-                                            name="addthis_settings[addthis_bitly]"
-                                            value="true" <?php echo ($options['addthis_bitly'] == true ? 'checked="checked"' : ''); ?>/>
-                                        <label for="addthis_bitly">
-                                            <span class="addthis-checkbox-label">
-                                                <strong><?php _e("Bitly URL shortening for Twitter", 'addthis_trans_domain' ); ?></strong>
-                                            </span>
-                                        </label>
-                                        <span class="at-wp-tooltip" tooltip="Your Bitly login and key will need to be setup with your profile on addthis.com before Bitly will begin working with WordPress.">?</span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <label for="data_ga_property">
-                                    <strong><?php _e("Google Analytics property ID", 'addthis_trans_domain' ); ?></strong>
-                                </label>
-                                <input
-                                    id="data_ga_property"
-                                    type="text"
-                                    name="addthis_settings[data_ga_property]"
-                                    value="<?php echo $options['data_ga_property'] ?>"/>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <?php echo _addthis_display_options_card(); ?>
 
-                <div class="Card">
-                    <div class="Card-hd">
-                        <h3 class="Card-hd-title">Display Options</h3>
-                    </div>
-                    <div class="Card-bd">
-                        <ul class="Card-option-list">
-                            <li>
-                                <ul>
-                                    <li>
-                                        <input
-                                            id="addthis_asynchronous_loading"
-                                            type="checkbox"
-                                            name="addthis_settings[addthis_asynchronous_loading]"
-                                            value="true" <?php echo ($options['addthis_asynchronous_loading'] == true ? 'checked="checked"' : ''); ?>/>
-                                        <label for="addthis_asynchronous_loading">
-                                            <span class="addthis-checkbox-label">
-                                                <strong><?php _e("Asynchronous loading", 'addthis_trans_domain' ); ?></strong>
-                                                (Recommended)
-                                            </span>
-                                        </label>
-                                        <span class="at-wp-tooltip" tooltip="When checked, your site will load before AddThis sharing buttons are added. If unchecked, your site will not load until AddThis buttons (and AddThis JavaScript) have been loaded by your vistors.">?</span>
-                                    </li>
-                                    <li>
-                                        <input
-                                            id="addthis_508"
-                                            type="checkbox"
-                                            name="addthis_settings[addthis_508]" v
-                                            alue="true" <?php echo ($options['addthis_508'] == true ? 'checked="checked"' : ''); ?>/>
-                                        <label for="addthis_508">
-                                            <span class="addthis-checkbox-label">
-                                                <strong><?php _e("Enhanced accessibility", 'addthis_trans_domain' ); ?></strong>
-                                            </span>
-                                        </label>
-                                        <span class="at-wp-tooltip" tooltip="Also known as 508 compliance. If checked, clicking an AddThis sharing button will open a new window to a page that is keyboard navigable for people with disabilities.">?</span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <label id="addthis_twitter_template">
-                                    <strong><?php _e("Twitter via", 'addthis_trans_domain' ); ?></strong>
-                                    <span class="at-wp-tooltip" tooltip="When a visitor uses an AddThis button to send a tweet about your page, this will be used within Twitter to identify through whom they found your page. You would usually enter a twitter handle here. For example, Twitter could show a tweet came from jsmith via AddThis.">?</span>
-                                </label>
-                                <input
-                                    id="addthis_twitter_template"
-                                    type="text"
-                                    name="addthis_settings[addthis_twitter_template]"
-                                    value="<?php echo get_first_twitter_username($options['addthis_twitter_template']) ; ?>" />
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="Card">
-                    <div class="Card-hd">
-                        <h3 class="Card-hd-title">Additional Options</h3>
-                    </div>
-                    <div class="Card-bd">
-                        <ul class="Card-option-list">
-                            <li>
-                                <p class="Card-description">
-                                    For more details on the following options, see <a href="//support.addthis.com/customer/portal/articles/381263-addthis-client-api">our customization documentation</a>.
-                                    Important: AddThis optimizes displayed services based on popularity and language, and personalizes the list for
-                                    each user. You may decrease sharing by overriding these features.
-                                </p>
-                            </li>
-                            <li>
-                                <label for="addthis_language">
-                                    <strong><?php _e("Language", 'addthis_trans_domain' ); ?></strong>
-                                </label>
-                                <select id="addthis_language" name="addthis_settings[addthis_language]">
-                                    <?php
-                                        $curlng = $options['addthis_language'];
-                                        foreach ($addthis_languages as $lng=>$name)
-                                        {
-                                            echo "<option value=\"$lng\"". ($lng == $curlng ? " selected='selected'":""). ">$name</option>";
-                                        }
-                                    ?>
-                                </select>
-                            </li>
-                            <li>
-                                <h4><strong>Global Advanced API Configuration</strong></h4>
-                                <ul>
-                                    <li>
-                                        <label for="addthis_config_json">
-                                            <?php _e("addthis_config values (json format)", 'addthis_trans_domain' ); ?>
-                                        </label>
-                                        <br/>
-                                        <small>ex:- <i>{ "services_exclude": "print" }</i></small>
-                                        <div><p>For more information, please see the AddThis documentation on <a href="http://support.addthis.com/customer/portal/articles/1337994-the-addthis_config-variable">the addthis_config variable</a>.</p></div>
-                                        <textarea
-                                            id="addthis_config_json"
-                                            rows='3'
-                                            type="text"
-                                            name="addthis_settings[addthis_config_json]"
-                                            id="addthis-config-json"/><?php echo $options['addthis_config_json']; ?></textarea>
-                                        <span id="config-error" class="hidden error_text">Invalid JSON format</span>
-                                    </li>
-                                    <li>
-                                        <label for="addthis_share_json">
-                                            <?php _e("addthis_share values (json format)", 'addthis_trans_domain' ); ?>
-                                        </label>
-                                        <br/>
-                                        <small>ex:- <i>{ "url" : "http://www.yourdomain.com", "title" : "Custom Title" }</i></small>
-                                        <div><p>For more information, please see the AddThis documentation on <a href="http://support.addthis.com/customer/portal/articles/1337996-the-addthis_share-variable">the addthis_share variable</a>.</p></div>
-                                        <textarea
-                                            id="addthis_share_json"
-                                            rows='3'
-                                            type="text"
-                                            name="addthis_settings[addthis_share_json]"
-                                            id="addthis-share-json"/><?php echo $options['addthis_share_json']; ?></textarea>
-                                        <span id="share-error" class="hidden error_text">Invalid JSON format</span>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <?php echo _addthis_additional_options_card(); ?>
 
                 <?php echo _addthis_profile_id_card($options['credential_validation_status']); ?>
 
@@ -2112,30 +1873,6 @@ EOF;
              return $safe_text;
         }
 
-    }
-
-    /**
-     * Parse for the first twitter username in the given string
-     * @param String $raw_twitter_username Raw string containing twitter usernames
-     * @return String twitter username
-     */
-    if (! function_exists('get_first_twitter_username'))
-    {
-        function get_first_twitter_username($raw_twitter_username)
-        {
-            $twitter_username = '';
-            preg_match_all('/@(\w+)\b/i', $raw_twitter_username, $twitter_via_matches);
-            if (count($twitter_via_matches[1]) == 0) {
-                //To handle strings without @
-                preg_match_all('/(\w+)\b/i', $raw_twitter_username, $twitter_via_refined_matches);
-                if (count($twitter_via_refined_matches[1]) > 0) {
-                   $twitter_username = $twitter_via_refined_matches[1][0];
-                }
-            } else {
-                $twitter_username = $twitter_via_matches[1][0];
-            }
-            return $twitter_username;
-        }
     }
 
     // check for pro user
@@ -2233,6 +1970,7 @@ function _addthis_profile_id_card($credential_validation_status = false) {
     $noPubIdButtonText = "AddThis profile setup";
     $pubIdDescription = 'To see analytics on social shares from your site, use the button below. It will take you to Analytics on addthis.com.';
     $pubIdButtonText = "Your analytics on addthis.com";
+    $fieldName = 'addthis_settings[addthis_profile]';
 
     $securitySnippet = '';
     if ($credential_validation_status == 1) {
@@ -2241,11 +1979,9 @@ function _addthis_profile_id_card($credential_validation_status = false) {
 
     // because i can't figure out how to bring these two in line... :-(
     if ($addthis_options['addthis_plugin_controls'] != "AddThis") {
-        $fieldName = 'addthis_settings[addthis_profile]';
         $security = '';
     } else {
-        $fieldName = 'pubid';
-        $security = wp_nonce_field('update_' . $fieldName, $fieldName . '_nonce');
+        $security = wp_nonce_field('update_pubid', 'pubid_nonce');
     }
 
     if ($addThisConfigs->getProfileId()) {
@@ -2313,16 +2049,15 @@ function _addthis_mode_card() {
 
     $wordPressChecked = '';
     $addThisChecked = '';
+    $fieldName = 'addthis_settings[addthis_plugin_controls]';
+    $fieldId = 'addthis_plugin_controls';
+
     $checked = 'checked="checked"';
     if ($addthis_options['addthis_plugin_controls'] != 'AddThis') {
         $wordPressChecked = $checked;
-        $fieldName = 'addthis_settings[addthis_plugin_controls]';
-        $fieldId = 'addthis_plugin_controls';
         $tbody = '<tbody></tbody>';
     } else {
         $addThisChecked = $checked;
-        $fieldName = 'addthis_plugin_controls';
-        $fieldId = 'downgrade-plugin';
         $tbody = '
             <tbody>
                 <tr>
@@ -2513,6 +2248,315 @@ function _addthis_mode_card() {
     return $html;
 }
 
+function _addthis_tracking_card() {
+    global $addThisConfigs;
+    $options = $addThisConfigs->getConfigs();
+
+    $checkedString = 'checked="checked"';
+    $clickbacksChecked = "";
+    $addressBarChecked = "";
+    $bitlyChecked = "";
+    if (!empty($options['addthis_append_data'])) {
+        $clickbacksChecked = $checkedString;
+    }
+    if (!empty($options['addthis_addressbar'])) {
+        $addressBarChecked = $checkedString;
+    }
+    if (!empty($options['addthis_bitly'])) {
+        $bitlyChecked = $checkedString;
+    }
+
+    $html = '
+        <div class="Card">
+            <div class="Card-hd">
+                <h3 class="Card-hd-title">Tracking</h3>
+            </div>
+            <div class="Card-bd">
+                <ul class="Card-option-list">
+                    <li>
+                        <ul>
+                            <li>
+                                <input
+                                    id="addthis_append_data"
+                                    type="checkbox"
+                                    name="addthis_settings[addthis_append_data]"
+                                    value="true"' . $clickbacksChecked . '/>
+                                <label for="addthis_append_data">
+                                    <span class="addthis-checkbox-label">
+                                        <strong>' . translate("Clickbacks", 'addthis_trans_domain') . '</strong>
+                                        (Recommended)
+                                    </span>
+                                </label>
+                                <span class="at-wp-tooltip" tooltip="AddThis will use this to track how many people come back to your content via links shared with AddThis buttons. This data will be available to you at addthis.com.">?</span>
+                            </li>
+                            <li>
+                                <input
+                                    type="checkbox"
+                                    id="addthis_addressbar"
+                                    name="addthis_settings[addthis_addressbar]"
+                                    value="true"' . $addressBarChecked . '/>
+                                <label for="addthis_addressbar">
+                                    <span class="addthis-checkbox-label">
+                                        <strong>' . translate("Address bar shares", 'addthis_trans_domain') . '</strong>
+                                    </span>
+                                </label>
+                                <span class="at-wp-tooltip" tooltip="AddThis will append a code to your site’s URLs (except for the homepage) to track when a visitor comes to your site from a link someone copied out of their browser\'s address bar.">?</span>
+                            </li>
+                            <li>
+                                <input
+                                    id="addthis_bitly"
+                                    type="checkbox"
+                                    name="addthis_settings[addthis_bitly]"
+                                    value="true" ' . $bitlyChecked . '/>
+                                <label for="addthis_bitly">
+                                    <span class="addthis-checkbox-label">
+                                        <strong>' . translate("Bitly URL shortening for Twitter", 'addthis_trans_domain') . '</strong>
+                                    </span>
+                                </label>
+                                <span class="at-wp-tooltip" tooltip="Your Bitly login and key will need to be setup with your profile on addthis.com before Bitly will begin working with WordPress.">?</span>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <label for="data_ga_property">
+                            <strong>' . translate("Google Analytics property ID", 'addthis_trans_domain') . '</strong>
+                        </label>
+                        <input
+                            id="data_ga_property"
+                            type="text"
+                            name="addthis_settings[data_ga_property]"
+                            value="' . $options['data_ga_property'] . '"/>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    ';
+
+    return $html;
+}
+
+function _addthis_display_options_card() {
+    global $addThisConfigs;
+    $options = $addThisConfigs->getConfigs();
+
+    $checkedString = 'checked="checked"';
+    $asyncChecked = "";
+    $a508Checked = "";
+    if (!empty($options['addthis_asynchronous_loading'])) {
+        $asyncChecked = $checkedString;
+    }
+    if (!empty($options['addthis_508'])) {
+        $a508Checked = $checkedString;
+    }
+
+    $html = '
+        <div class="Card">
+            <div class="Card-hd">
+                <h3 class="Card-hd-title">Display Options</h3>
+            </div>
+            <div class="Card-bd">
+                <ul class="Card-option-list">
+                    <li>
+                        <ul>
+                            <li>
+                                <input
+                                    id="addthis_asynchronous_loading"
+                                    type="checkbox"
+                                    name="addthis_settings[addthis_asynchronous_loading]"
+                                    value="true" ' . $asyncChecked . ' />
+                                <label for="addthis_asynchronous_loading">
+                                    <span class="addthis-checkbox-label">
+                                        <strong>' . translate("Asynchronous loading", 'addthis_trans_domain') . '</strong>
+                                        (Recommended)
+                                    </span>
+                                </label>
+                                <span class="at-wp-tooltip" tooltip="When checked, your site will load before AddThis sharing buttons are added. If unchecked, your site will not load until AddThis buttons (and AddThis JavaScript) have been loaded by your vistors.">?</span>
+                            </li>
+                            <li>
+                                <input
+                                    id="addthis_508"
+                                    type="checkbox"
+                                    name="addthis_settings[addthis_508]" v
+                                    alue="true" ' . $a508Checked . ' />
+                                <label for="addthis_508">
+                                    <span class="addthis-checkbox-label">
+                                        <strong>' . translate("Enhanced accessibility", 'addthis_trans_domain') . '</strong>
+                                    </span>
+                                </label>
+                                <span class="at-wp-tooltip" tooltip="Also known as 508 compliance. If checked, clicking an AddThis sharing button will open a new window to a page that is keyboard navigable for people with disabilities.">?</span>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <label id="addthis_twitter_template">
+                            <strong>' . translate("Twitter via", 'addthis_trans_domain') . '</strong>
+                            <span class="at-wp-tooltip" tooltip="When a visitor uses an AddThis button to send a tweet about your page, this will be used within Twitter to identify through whom they found your page. You would usually enter a twitter handle here. For example, Twitter could show a tweet came from jsmith via AddThis.">?</span>
+                        </label>
+                        <input
+                            id="addthis_twitter_template"
+                            type="text"
+                            name="addthis_settings[addthis_twitter_template]"
+                            value="' . $options['addthis_twitter_template'] . '" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    ';
+
+    return $html;
+}
+
+function _addthis_additional_options_card() {
+    global $addthis_languages;
+    global $addThisConfigs;
+    $options = $addThisConfigs->getConfigs();
+
+    $curlng = $options['addthis_language'];
+    $languageDropdown = '';
+    foreach ($addthis_languages as $lng=>$name)
+    {
+        $languageDropdown .= '
+            <option
+                value="'. $lng . '"'
+                . ($lng == $curlng ? ' selected="selected"':'') . '"
+            >
+            '.$name.'
+            </option>'."\n";
+    }
+
+    $html = '
+        <div class="Card">
+            <div class="Card-hd">
+                <h3 class="Card-hd-title">Additional Options</h3>
+            </div>
+            <div class="Card-bd">
+                <ul class="Card-option-list">
+                    <li>
+                        <p class="Card-description">
+                            For more details on the following options, see <a href="//support.addthis.com/customer/portal/articles/381263-addthis-client-api">our customization documentation</a>.
+                            Important: AddThis optimizes displayed services based on popularity and language, and personalizes the list for
+                            each user. You may decrease sharing by overriding these features.
+                        </p>
+                    </li>
+                    <li>
+                        <label for="addthis_language">
+                            <strong>' . translate("Language", 'addthis_trans_domain') . '</strong>
+                        </label>
+                        <select id="addthis_language" name="addthis_settings[addthis_language]">
+                            ' . $languageDropdown . '
+                        </select>
+                    </li>
+                    <li>
+                        <h4><strong>Global Advanced API Configuration</strong></h4>
+                        <ul>
+                            <li>
+                                <label for="addthis_config_json">
+                                    <?php ' . translate("addthis_config values (json format)", 'addthis_trans_domain') . '
+                                </label>
+                                <br/>
+                                <small>ex:- <i>{ "services_exclude": "print" }</i></small>
+                                <div><p>For more information, please see the AddThis documentation on <a href="http://support.addthis.com/customer/portal/articles/1337994-the-addthis_config-variable">the addthis_config variable</a>.</p></div>
+                                <textarea
+                                    id="addthis_config_json"
+                                    rows="3"
+                                    type="text"
+                                    name="addthis_settings[addthis_config_json]"
+                                    id="addthis-config-json"/>' . $options['addthis_config_json'] . '</textarea>
+                                <span id="config-error" class="hidden error_text">Invalid JSON format</span>
+                            </li>
+                            <li>
+                                <label for="addthis_share_json">
+                                    ' . translate("addthis_share values (json format)", 'addthis_trans_domain') . '
+                                </label>
+                                <br/>
+                                <small>ex:- <i>{ "url" : "http://www.yourdomain.com", "title" : "Custom Title" }</i></small>
+                                <div><p>For more information, please see the AddThis documentation on <a href="http://support.addthis.com/customer/portal/articles/1337996-the-addthis_share-variable">the addthis_share variable</a>.</p></div>
+                                <textarea
+                                    id="addthis_share_json"
+                                    rows="3"
+                                    type="text"
+                                    name="addthis_settings[addthis_share_json]"
+                                    id="addthis-share-json"/>' . $options['addthis_share_json'] . '</textarea>
+                                <span id="share-error" class="hidden error_text">Invalid JSON format</span>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    ';
+
+    return $html;
+}
+
+function _addthis_rate_us_card() {
+    global $addThisConfigs;
+    $options = $addThisConfigs->getConfigs();
+
+    $html = '
+        <div class="Card" id="addthis_do_you_like_us">
+            <div class="Card-hd">
+                <h3 class="Card-hd-title">Did you find this plugin useful?</h3>
+            </div>
+
+            <div class="Card-bd" id="addthis_like_us_answers">
+                <div class="Btn-container-card">
+                    <a class="Btn Btn-blue" id="addthis_dislike_confirm"> Not really </a>
+                    <a class="Btn Btn-blue" id="addthis_like_confirm"> Yes! </a>
+                </div>
+
+                <input
+                    type="hidden"
+                    value="' . $options['addthis_rate_us'] . '"
+                    id="addthis_rate_us"
+                    name="addthis_settings[addthis_rate_us]" >
+            </div>
+
+            <div class="Card-bd" id="addthis_dislike">
+                <div class="addthis_description">
+                    <p class="Card-description">
+                        Let us know how we can improve our plugin through our support forum or by emailing <a href="mailto:help@addthis.com">help@addthis.com</a>.
+                    </p>
+                </div>
+                <div class="Btn-container-card">
+                    <a
+                        class="Btn Btn-blue"
+                        target="_blank"
+                        href="https://wordpress.org/support/plugin/addthis"> Support Forum &#8594;
+                    </a>
+                    <a
+                        class="Btn Btn-blue"
+                        target="_blank"
+                        href="mailto:help@addthis.com"> Email &#8594;
+                    </a>
+                </div>
+            </div>
+
+            <div class="Card-bd" id="addthis_like">
+                <div class="addthis_description">
+                    <p class="Card-description">
+                        How about rating us?
+                    </p>
+                    <h3 id="addthis_rating_thank_you">Thank you!</h3>
+                </div>
+                <div class="Btn-container-card">
+                    <a
+                        class="Btn Btn-blue" id="addthis_not_rating"> No, thanks.
+                    </a>
+                    <a
+                        class="Btn Btn-blue" id="addthis_rating"
+                        target="_blank"
+                        href="https://wordpress.org/support/view/plugin-reviews/addthis#postform"> Yes, I will rate this plugin &#8594;
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    ';
+
+    return $html;
+}
+
 function _addthis_is_csr_form() {
     global $addThisConfigs;
 
@@ -2575,7 +2619,7 @@ function _addthis_settings_buttons($includePreview = true) {
  *
  * @return string
  */
-function addthis_profile_id_csr_confirmation($fieldName = 'addthis_settings[addthis_profile]')
+function addthis_profile_id_csr_confirmation()
 {
     global $cmsConnector;
     global $addThisConfigs;
@@ -2586,6 +2630,7 @@ function addthis_profile_id_csr_confirmation($fieldName = 'addthis_settings[addt
     }
 
     $submitButtonValue = "Confirm and Save Changes";
+    $fieldName = 'addthis_settings[addthis_profile]';
 
     $html  = '<div class="Card">';
 
@@ -2635,7 +2680,7 @@ function addthis_profile_id_csr_confirmation($fieldName = 'addthis_settings[addt
                         <input
                             type="hidden"
                             value="true"
-                            name="addthis_settings[addthis_csr_confirmation]"
+                            name="addthis_settings[addthis_csr_confirmation]" >
                     </li>
                 </ul>
                 <ul class="addthis-csr-button-list">

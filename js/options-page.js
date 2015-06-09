@@ -39,6 +39,46 @@ jQuery(document).ready(function($) {
         }
     };
 
+    $('#addthis_rating_thank_you').hide()
+
+    switch($('#addthis_rate_us').val()) {
+        case 'dislike':
+            $('#addthis_like_us_answers').hide();
+            $('#addthis_dislike').show();
+            $('#addthis_like').hide();
+            break;
+        case 'like':
+            $('#addthis_like_us_answers').hide();
+            $('#addthis_dislike').hide();
+            $('#addthis_like').show();
+            break;
+        case 'will not rate':
+        case 'rated':
+            $('#addthis_do_you_like_us').hide()
+            break;
+        default:
+            $('#addthis_dislike').hide();
+            $('#addthis_like').hide();
+    }
+
+    $('#addthis_dislike_confirm').click(function() {
+        $('#addthis_like_us_answers').hide();
+        $('#addthis_dislike').show();
+        $('#addthis_rate_us').val('dislike')
+    });
+    $('#addthis_like_confirm').click(function() {
+        $('#addthis_like_us_answers').hide();
+        $('#addthis_like').show();
+        $('#addthis_rate_us').val('like')
+    });
+    $('#addthis_not_rating').click(function() {
+        $('#addthis_do_you_like_us').hide()
+        $('#addthis_rate_us').val('will not rate')
+    });
+    $('#addthis_rating').click(function() {
+        $('#addthis_rating_thank_you').show()
+        $('#addthis_rate_us').val('rated')
+    });
 
     $('a.thickbox-preview').click( function() {
 

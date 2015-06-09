@@ -1,26 +1,15 @@
-=== Smart Website Tools by AddThis ===
+=== AddThis Sharing Buttons ===
 Contributors: abramsm, srijith.v, vipinss, dnrahamim, jgrodel, bradaddthiscom, mkitzman, kirk-at-addthis, addthis_paul, addthis_matt, addthis_elsa, ribin_addthis
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 5.0.4
+Stable tag: 5.0.5
 
-AddThis provides the best sharing, social, recommended content, and conversion tools to help you make
-your website smarter.
+AddThis provides the best sharing tools to help you make your website smarter.
 
 == Description ==
 
-Traditionally known as the "sharing tool", AddThis has taken website tools to the next level through the creation of recommended content and conversion tools while also streamlining and evolving their suite of social tools, including sharing and following buttons.
-
-**Social Tools:** Promote your content easily by sharing to over 200 of the most popular social networking and bookmarking sites (like Facebook, Twitter, Pinterest, Google+, WhatsApp, LinkedIn and more). Clean, customizable and simple social buttons are unobtrusive, quick to load and recognized all over the web.
-
-**Recommended Content Tools:** Keep visitors on your site longer with the use of our recommended content based on what’s trending, giving your user a unique experience and keeps them engaged with your content longer.
-
-**Conversion Tools:** Reach business goals quickly with the use of our conversion tools, including email subscriptions, event registration and more.
-
-**Analytics:** Use the AddThis dashboard to find out how your visitors are sharing content, what content is trending, which services visitors for sharing, how many more followers you’ve gotten, and much, much more.
-
-Many of our tools are free, but Pro users get the benefit of exclusive widgets, including mobile-friendly tools and retina display buttons, priority support and deeper analytics.
+The best sharing and following tools on the web are now available for your WordPress site. Promote your content easily by sharing to over 200 of the most popular social networking and bookmarking sites (like Facebook, Twitter, Pinterest, Google+, WhatsApp, LinkedIn and more). Clean, customizable and simple social buttons are unobtrusive, quick to load and recognized all over the web.
 
 == Installation ==
 
@@ -74,18 +63,24 @@ In the screen options you can enable the AddThis meta box. Check the box and sav
 
 1. Sharing Tools tab on the plugin settings page (WordPress mode)
 2. Sharing Tools tab on the plugin settings page (WordPress mode)
-3. Advanced Options tab on the plugin settings page (WordPress mode)
+3. Advanced Options tab on the plugin settings page
 4. Sharing Tools tab on the plugin settings page (AddThis mode)
-5. Advanced Options tab on the plugin settings page (AddThis mode)
-6. Analytics on the AddThis Dashboard
-7. Tool Gallery on the AddThis Dashboard
-8. Customization options on the AddThis Dashboard
+5. Analytics on the AddThis Dashboard
+6. Tool Gallery on the AddThis Dashboard
+7. Customization options on the AddThis Dashboard
 
 == PHP Version ==
 
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+
+= 5.0.5 =
+* Adding all WordPress mode Advanced Options to AddThis mode Advanced Options. These are primarily options to edit the addthis_share and addthis_config JavaScript variables used by AddThis tools, as well as giving you the option to choose whether to load the AddThis script asyncronously.
+* Removing conflicts with WordPress Login Box plugin
+* Removing conflicts with AddThis Follow Widget plugin
+* CSS to remove new lines from br tags between our buttons, because some themes add them and break stuff (Thanks Customizr)
+* Exposing more objects for use with adding sharing buttons to troublesome themes
 
 = 5.0.4 =
 * PHP error fixes for strict modes of PHP
@@ -336,6 +331,13 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+
+= 5.0.5 =
+* Adding all WordPress mode Advanced Options to AddThis mode Advanced Options. These are primarily options to edit the addthis_share and addthis_config JavaScript variables used by AddThis tools, as well as giving you the option to choose whether to load the AddThis script asyncronously.
+* Removing conflicts with WordPress Login Box plugin
+* Removing conflicts with AddThis Follow Widget plugin
+* CSS to remove new lines from br tags between our buttons, because some themes add them and break stuff (Thanks Customizr)
+* Exposing more objects for use with adding sharing buttons to troublesome themes
 
 = 5.0.3 =
 * Two functional modes allowing users to choose whether to control sharing buttons from within the WordPress admin area (with limited features), or through the AddThis Dashboard at addthis.com.

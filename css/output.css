@@ -35,3 +35,7 @@ div.addthis_toolbox a,
 a.at-share-btn {
     border: 0;
 }
+
+div.addthis_toolbox br {
+    display: none
+}

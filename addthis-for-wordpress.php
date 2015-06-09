@@ -23,10 +23,6 @@ $pathParts = pathinfo(__FILE__);
 
 $path = $pathParts['dirname'];
 
-if (!defined('ADDTHIS_ATVERSION')) {
-    define('ADDTHIS_ATVERSION', '300');
-}
-
 define('ADDTHIS_PLUGIN_FILE', $path.'/addthis_social_widget.php');
 define('ADDTHIS_PUBNAME_LIMIT', 255);
 
@@ -51,6 +47,8 @@ class Addthis_Wordpress
     private $addThisConfigs;
     private $cmsConnector;
 
+    public $addThisToolBox;
+
     /**
      * Initializes the plugin.
      *
@@ -70,7 +68,7 @@ class Addthis_Wordpress
         $this->_options = $this->addThisConfigs->getConfigs();
 
         include_once 'addthis-toolbox.php';
-        new Addthis_ToolBox($addThisConfigs, $cmsConnector);
+        $this->addThisToolBox = new Addthis_ToolBox($addThisConfigs, $cmsConnector);
 
         add_action('admin_menu', array($this, 'addToWordpressMenu'));
 
@@ -147,28 +145,15 @@ class Addthis_Wordpress
      */
     public function updateSettings($settings)
     {
-        if(isset($settings['pubid'])){
-            $this->_options['addthis_profile'] = sanitize_key($settings['pubid']);
+        if (!empty($settings['addthis_settings'])) {
+            $this->_options = $this->addThisConfigs->saveSubmittedConfigs($settings['addthis_settings']);
         }
 
-        if(isset($settings['addthis_settings']['addthis_environment'])){
-            $this->_options['addthis_environment'] = sanitize_key($settings['addthis_settings']['addthis_environment']);
-        }
-
-        if(    isset($settings['addthis_plugin_controls'])
-            && $settings['addthis_plugin_controls'] == "WordPress"
-        ) {
-            $this->_options['addthis_plugin_controls'] = $settings['addthis_plugin_controls'];
-        }
-
-        if(isset($settings['async_loading'])){
-            $this->_options['addthis_asynchronous_loading'] = intval($settings['async_loading']);
-        }
-        $this->_options = $this->addThisConfigs->saveConfigs($this->_options);
-
-        return "<div class='addthis_updated wrap' style='margin-top:50px;width:95%'>".
-                    "AddThis Profile Settings updated successfully!!!".
-               "</div>";
+        return '
+            <div class="addthis_updated wrap" style="margin-top:50px;width:95%">
+                AddThis Profile Settings updated successfully!!!
+            </div>
+        ';
     }
 
     /**
@@ -211,7 +196,7 @@ class Addthis_Wordpress
      */
     private function _checkAddPubid()
     {
-        $successReturn = isset ($this->_postVariables['pubid'])
+        $successReturn = isset ($this->_postVariables['addthis_settings']['addthis_profile'])
                          && isset ($this->_postVariables['submit'])
                          && isset( $this->_postVariables['pubid_nonce'] )
                          && wp_verify_nonce( $this->_postVariables['pubid_nonce'], 'update_pubid' );
@@ -296,7 +281,7 @@ class Addthis_Wordpress
             && ($this->_getVariables['advanced_settings'] == 'true'))
         ) {
             // Get Confirmation form
-            $html .= addthis_profile_id_csr_confirmation('pubid');
+            $html .= addthis_profile_id_csr_confirmation();
         } else {
             $html .= $this->_getAddThisLinkButton();
         }
@@ -411,8 +396,12 @@ class Addthis_Wordpress
                             </p>
                         </div>
                     </div>
+                   ' . _addthis_rate_us_card() . '
                 </div>
                 <div id="tabs-2">
+                    ' . _addthis_tracking_card() . '
+                    ' . _addthis_display_options_card() . '
+                    ' . _addthis_additional_options_card() . '
                     ' . _addthis_profile_id_card() . '
                     ' . _addthis_mode_card() . '
                 </div>
@@ -445,17 +434,17 @@ add_action('init', 'Addthis_Wordpress_early', 0);
 /**
  * Include addthis js widget
  *
- * @global AddThis_addjs $addthis_addjs
+ * @global AddThis_addjs_sharing_button_plugin $AddThis_addjs_sharing_button_plugin
  * @return null
  */
 function Addthis_Wordpress_early()
 {
-    global $addthis_addjs;
+    global $AddThis_addjs_sharing_button_plugin;
     global $addThisConfigs;
     global $cmsConnector;
 
-    if (!isset($addthis_addjs)) {
+    if (!isset($AddThis_addjs_sharing_button_plugin)) {
         include 'addthis_addjs_new.php';
-        $addthis_addjs = new AddThis_addjs($addThisConfigs, $cmsConnector);
+        $AddThis_addjs_sharing_button_plugin = new AddThis_addjs_sharing_button_plugin($addThisConfigs, $cmsConnector);
     }
 }

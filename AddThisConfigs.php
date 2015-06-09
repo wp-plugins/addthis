@@ -25,6 +25,7 @@ if (!class_exists('AddThisConfigs')) {
         protected $cmsInterface;
         protected $configs = null;
         protected $changedConfigs = false;
+
         protected $defaultConfigs = array(
             'above'                        => 'large_toolbox',
             'above_custom_more'            => '',
@@ -42,20 +43,18 @@ if (!class_exists('AddThisConfigs')) {
             'addthis_beforecomments'       => false,
             'addthis_below_enabled'        => false,
             'addthis_bitly'                => false,
-            'addthis_brand'                => '',
             'addthis_config_json'          => '',
-            'addthis_header_background'    => '',
-            'addthis_header_color'         => '',
             'addthis_language'             => '',
             'addthis_plugin_controls'      => 'AddThis',
             'addthis_profile'              => '',
+            'addthis_rate_us'              => '',
             'addthis_share_json'           => '',
             'addthis_sidebar_count'        => '5',
             'addthis_sidebar_enabled'      => false,
             'addthis_sidebar_position'     => 'left',
             'addthis_twitter_template'     => '',
             'addthis_environment'          => '',
-            'atversion'                    => ADDTHIS_ATVERSION,
+            'atversion'                    => 300,
             'atversion_update_status'      => 0,
             'below'                        => 'large_toolbox',
             'below_custom_more'            => '',
@@ -97,19 +96,56 @@ if (!class_exists('AddThisConfigs')) {
             return $defaultConfigs;
         }
 
+        public function getDefaultAddThisVersion() {
+            $defaultConfigs = $this->cmsInterface->getDefaultConfigs();
+            if (!empty($defaultConfigs['atversion'])) {
+                $version = $defaultConfigs['atversion'];
+                return $version;
+            }
+
+            $defaultConfigs = $this->getDefaultConfigs();
+            if (!empty($defaultConfigs['atversion'])) {
+                $version = $defaultConfigs['atversion'];
+                return $version;
+            }
+
+            return false;
+        }
+
+        public function getAddThisVersion() {
+            if (!is_array($this->configs)) {
+                $this->getConfigs();
+            }
+
+            if (   isset($this->configs['atversion_update_status'])
+                && $this->configs['atversion_update_status']
+                && !empty($this->configs['atversion'])
+            ) {
+                $version = $this->configs['atversion'];
+            } else {
+                $version = $this->getDefaultAddThisVersion();
+            }
+
+            return $version;
+        }
+
         public function getConfigs() {
             if ($this->cmsInterface->isUpgrade()) {
                 $this->configs = $this->cmsInterface->upgradeConfigs();
             }
 
             $this->configs = $this->setDefaultConfigs();
+
+            if (!empty($this->configs['addthis_twitter_template'])) {
+                $this->configs['addthis_twitter_template'] = $this->getFirstTwitterUsername($this->configs['addthis_twitter_template']);
+            }
+
             return $this->configs;
         }
 
-
         public function saveConfigs($configs = null) {
             if (!is_array($this->configs)) {
-                $this->configs = $this->getConfigs();
+                $this->getConfigs();
             }
 
             if (is_array($configs) && is_array($this->configs)) {
@@ -119,11 +155,29 @@ if (!class_exists('AddThisConfigs')) {
             }
 
             if (!is_null($this->configs)) {
+                if (!empty($this->configs['addthis_twitter_template'])) {
+                    $this->configs['addthis_twitter_template'] = $this->getFirstTwitterUsername($this->configs['addthis_twitter_template']);
+                }
+
+                $this->configs['atversion'] = $this->getAddThisVersion();
+
                 $this->configs = $this->cmsInterface->saveConfigs($this->configs);
             }
 
             $this->changedConfigs = false;
             return $this->configs;
+        }
+
+        public function saveSubmittedConfigs($input) {
+            $configs = $this->cmsInterface->prepareSubmittedConfigs($input);
+
+            if(   isset($options['addthis_plugin_controls'])
+               && $this->configs['addthis_plugin_controls'] != "AddThis"
+            ) {
+                $configs = $this->cmsInterface->prepareCmsModeSubmittedConfigs($input, $configs);
+            }
+
+            return $this->saveConfigs($configs);
         }
 
         private function setDefaultConfigs() {
@@ -139,6 +193,16 @@ if (!class_exists('AddThisConfigs')) {
                         $this->changedConfigs = true;
                     }
                 }
+
+                $this->configs['atversion'] = $this->getAddThisVersion();
+            }
+
+            $twoWeeksAgo = time() - (60 * 60 * 24 * 7 * 2);
+            if (   isset($this->configs['addthis_rate_us_timestamp'])
+                && $this->configs['addthis_rate_us_timestamp'] < $twoWeeksAgo
+                && $configs['addthis_rate_us'] != 'rated'
+            ) {
+                $configs['addthis_rate_us'] = '';
             }
 
             if ($this->changedConfigs) {
@@ -223,6 +287,108 @@ if (!class_exists('AddThisConfigs')) {
             }
 
             return $this->getAnonymousProfileId();
+        }
+
+        public function createAddThisShareVariable() {
+            if (!is_array($this->configs)) {
+                $this->getConfigs();
+            }
+
+            $addThisShareVariable = array();
+
+            if (!empty($this->configs['addthis_twitter_template'])) {
+                $addThisShareVariable['passthrough']['twitter']['via'] = esc_js($this->configs['addthis_twitter_template']);
+            }
+
+            if (!empty($this->configs['addthis_bitly'])) {
+                $addThisShareVariable['url_transforms']['shorten']['twitter'] = 'bitly';
+                $addThisShareVariable['shorteners']['bitly'] = new stdClass();
+            }
+
+            // this should happen last!
+            if (!empty($this->configs['addthis_share_json'])) {
+                $json = $this->configs['addthis_share_json'];
+                $fromJson = json_decode($json, true);
+                $addThisShareVariable = array_merge($addThisShareVariable, $fromJson);
+            }
+
+            return $addThisShareVariable;
+        }
+
+        public function createAddThisConfigVariable() {
+            if (!is_array($this->configs)) {
+                $this->getConfigs();
+            }
+
+            $addThisConfigVariable = array();
+
+            if(   isset($options['addthis_plugin_controls'])
+               && $this->configs['addthis_plugin_controls'] != "AddThis"
+            ) {
+                $addThisConfigVariable['ignore_server_config'] = true;
+            }
+
+            if (!empty($this->configs['data_ga_property']) ){
+                $addThisConfigVariable['data_ga_property'] = $this->configs['data_ga_property'];
+                $addThisConfigVariable['data_ga_social'] = true;
+            }
+
+            if (   isset($this->configs['addthis_language'])
+                && strlen($this->configs['addthis_language']) == 2
+            ) {
+                $addThisConfigVariable['ui_language'] = $this->configs['addthis_language'];
+            }
+
+            if (isset($this->configs['atversion'])) {
+                $addThisConfigVariable['ui_atversion'] = $this->configs['atversion'];
+            }
+
+            $simpleCheckboxOptions = array(
+                array(
+                    'cmsConfigName'      => 'addthis_append_data',
+                    'variableConfigName' => 'data_track_clickback',
+                ),
+                array(
+                    'cmsConfigName'      => 'addthis_addressbar',
+                    'variableConfigName' => 'data_track_addressbar',
+                ),
+                array(
+                    'cmsConfigName'      => 'addthis_508',
+                    'variableConfigName' => 'ui_508_compliant',
+                ),
+            );
+
+            foreach ($simpleCheckboxOptions as $option) {
+                if (!empty($this->configs[$option['cmsConfigName']])) {
+                    $addThisConfigVariable[$option['variableConfigName']] = true;
+                }
+            }
+
+            // this should happen last!
+            if (!empty($this->configs['addthis_config_json'])) {
+                $json = $this->configs['addthis_config_json'];
+                $fromJson = json_decode($json, true);
+                $addThisConfigVariable = array_merge($addThisConfigVariable, $fromJson);
+            }
+
+            return $addThisConfigVariable;
+        }
+
+        public function getFirstTwitterUsername($input)
+        {
+            $twitter_username = '';
+            preg_match_all('/@(\w+)\b/i', $input, $twitter_via_matches);
+            if (count($twitter_via_matches[1]) == 0) {
+                //To handle strings without @
+                preg_match_all('/(\w+)\b/i', $input, $twitter_via_refined_matches);
+                if (count($twitter_via_refined_matches[1]) > 0) {
+                   $twitter_username = $twitter_via_refined_matches[1][0];
+                }
+            } else {
+                $twitter_username = $twitter_via_matches[1][0];
+            }
+
+            return $twitter_username;
         }
     }
 }

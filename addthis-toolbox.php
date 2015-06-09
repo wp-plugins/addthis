@@ -59,9 +59,8 @@ class Addthis_ToolBox
         $this->cmsConnector = $cmsConnector;
 
         add_filter('the_content', array($this, 'addWidget'));
-        if ( has_excerpt()) {
-            add_filter('the_excerpt', array($this, 'addWidget'));
-        }
+        add_filter('get_the_excerpt', array($this, 'addWidget'));
+        //add_filter('the_excerpt', array($this, 'addWidget'));
     }
 
     /**

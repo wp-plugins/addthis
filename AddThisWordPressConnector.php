@@ -26,7 +26,7 @@ if (!class_exists('AddThisWordpressConnector')) {
         // implements AddThisCmsConnectorInterface {
 
         static $settingsVariableName = 'addthis_settings';
-        static $pluginVersion = '5.0.4';
+        static $pluginVersion = '5.0.5';
         static $settingsPageId = 'addthis_social_widget';
         static $anonymousProfileIdPrefix = 'wp';
         static $productPrefix = 'wpp';
@@ -166,11 +166,11 @@ if (!class_exists('AddThisWordpressConnector')) {
         }
 
         public function saveConfigs($configs = null) {
-            if (is_null($configs)) {
+            if (!is_array($configs)) {
                 $configs = $this->configs;
             }
 
-            if (!is_null($configs)) {
+            if (is_array($configs)) {
                 update_option(self::$settingsVariableName, $configs);
                 $this->configs = $this->getConfigs();
             }
@@ -520,6 +520,72 @@ if (!class_exists('AddThisWordpressConnector')) {
         public function getHomepageUrl() {
             $url = get_option('home');
             return $url;
+        }
+
+        public function prepareSubmittedConfigs($input) {
+            if (isset($input['addthis_profile'])) {
+                $configs['addthis_profile'] = $input['addthis_profile'];
+            }
+
+            if (isset($input['addthis_environment'])) {
+                $configs['addthis_environment'] = $input['addthis_environment'];
+            }
+
+            if (isset($input['addthis_plugin_controls'])) {
+                if ($input['addthis_plugin_controls'] == 'WordPress') {
+                    $configs['addthis_plugin_controls'] = 'WordPress';
+                } else {
+                    $configs['addthis_plugin_controls'] = 'AddThis';
+                }
+            }
+
+            if (isset($input['addthis_twitter_template'])) {
+                $configs['addthis_twitter_template'] = $input['addthis_twitter_template'];
+            }
+
+            if (isset($input['data_ga_property'])) {
+                $configs['data_ga_property'] = $input['data_ga_property'];
+            }
+
+            if (isset($input['addthis_language'])) {
+                $configs['addthis_language'] = $input['addthis_language'];
+            }
+
+            if (isset($input['addthis_rate_us'])) {
+                $configs['addthis_rate_us'] = $input['addthis_rate_us'];
+                $configs['addthis_rate_us_timestamp'] = time();
+            }
+
+            if (isset($input['addthis_config_json'])) {
+                $configs['addthis_config_json'] = sanitize_text_field($input['addthis_config_json']);
+            }
+
+            if (isset($input['addthis_share_json'])) {
+                $configs['addthis_share_json'] = sanitize_text_field($input['addthis_share_json']);
+            }
+
+            // All the checkbox fields
+            $checkboxFields = array(
+                'addthis_508',
+                'addthis_addressbar',
+                'addthis_append_data',
+                'addthis_asynchronous_loading',
+                'addthis_bitly',
+            );
+
+            foreach ($checkboxFields as $field) {
+                if (!empty($input[$field])) {
+                    $configs[$field] = true;
+                } else {
+                    $configs[$field] = false;
+                }
+            }
+
+            return $configs;
+        }
+
+        public function prepareCmsModeSubmittedConfigs($input, $configs) {
+            return $configs;
         }
     }
 }

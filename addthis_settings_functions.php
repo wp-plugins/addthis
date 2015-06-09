@@ -403,13 +403,16 @@ function _addthis_print_services_picker($name, $options) {
  */
 function _addthis_deprecated_fields() {
     $deletedFields = array(
-        'addthis_bitly_login',
         'addthis_bitly_key',
+        'addthis_bitly_login',
+        'addthis_brand',
         'addthis_copytracking1',
         'addthis_copytracking2',
         'addthis_copytrackingremove',
         'addthis_fallback_username',
         'addthis_for_wordpress',
+        'addthis_header_background',
+        'addthis_header_color',
         'addthis_nag_username_ignore',
         'addthis_options',
         'addthis_password',
