@@ -59,8 +59,22 @@ class Addthis_ToolBox
         $this->cmsConnector = $cmsConnector;
 
         add_filter('the_content', array($this, 'addWidget'));
-        add_filter('get_the_excerpt', array($this, 'addWidget'));
-        //add_filter('the_excerpt', array($this, 'addWidget'));
+        add_filter('get_the_excerpt', array($this, 'addWidgetForExcerpt'));
+    }
+
+    /**
+     * Adds toolbox to excerpts wp pages -- can't use addWidget straight out
+     * because when the filter on get_the_excerpt is added, it doesn't yet know
+     * if it has an excerpt or not
+     *
+     * @param string $content Page contents
+     * @return string Page content with our sharing button HTML added
+     */
+    public function addWidgetForExcerpt($content){
+        if (has_excerpt() || !is_single()) {
+            $content = $this->addWidget($content);
+        }
+        return $content;
     }
 
     /**

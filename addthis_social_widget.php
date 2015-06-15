@@ -3,7 +3,7 @@
  * Plugin Name: AddThis Sharing Buttons
  * Plugin URI: http://www.addthis.com
  * Description: Use the AddThis suite of website tools which includes sharing, following, recommended content, and conversion tools to help you make your website smarter. With AddThis, you can see how your users are engaging with your content, provide a personalized experience for each user and encourage them to share, subscribe or follow.
- * Version: 5.0.5
+ * Version: 5.0.6
  * Author: The AddThis Team
  * Author URI: http://www.addthis.com/
  * License: GPL2
@@ -1360,10 +1360,11 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
 
         $script = '
             <!-- AddThis Settings Begin -->
-            <script type="text/javascript">
+            <script data-cfasync="false" type="text/javascript">
                 var addthis_product = "'. $cmsConnector->getProductVersion() . ';
                 var wp_product_version = "' . $this->cmsConnector->getProductVersion() . ';
                 var wp_blog_version = "' . $this->cmsConnector->getCmsVersion() . ';
+                var addthis_plugin_info = ' . $addThisConfigs->getAddThisPluginInfoJson() . ';
                 if (typeof(addthis_config) == "undefined") {
                     ' . $addthis_config_js . '
                 }
@@ -1372,6 +1373,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
                 }
             </script>
             <script
+                data-cfasync="false"
                 type="text/javascript"
                 src="' . $url . '"
                 ' . $async . '
@@ -1461,7 +1463,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
         $title = !is_null($title) ? $title : ($onSidebar ? get_bloginfo('title') : the_title('', '', false));
 
         $content .= "\n<!-- AddThis Button BEGIN -->\n"
-                    .'<script type="text/javascript">'
+                    .'<script data-cfasync="false" type="text/javascript">'
                     ."\n//<!--\n"
                     ."var addthis_product = '". $cmsConnector->getProductVersion() ."';\n";
 
@@ -1478,7 +1480,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
 </script>
 <div class="addthis_container"><a href="//www.addthis.com/bookmark.php?v='.$atversion.'&amp;username=$pub" class="addthis_button" addthis:url="$link" addthis:title="$title">
 EOF;
-            $content .= ($addthis_settings['language'] == '' ? '' /* no hardcoded image -- we'll choose the language automatically */ : addthis_get_button_img()) . '</a><script type="text/javascript" src="//s7.addthis.com/js/'.$atversion.'/addthis_widget.js#username='.$pub.'"></script></div>';
+            $content .= ($addthis_settings['language'] == '' ? '' /* no hardcoded image -- we'll choose the language automatically */ : addthis_get_button_img()) . '</a><script data-cfasync="false" type="text/javascript" src="//s7.addthis.com/js/'.$atversion.'/addthis_widget.js#username='.$pub.'"></script></div>';
         }
         else if ($addthis_settings['menu_type'] === 'toolbox')
         {
@@ -1486,7 +1488,7 @@ EOF;
             $content .= <<<EOF
 <div class="addthis_container addthis_toolbox addthis_default_style" addthis:url="$link" addthis:title="$title"><a href="//www.addthis.com/bookmark.php?v='.$atversion.'&amp;username=$pub" class="addthis_button_compact">Share</a><span class="addthis_separator">|</span>
 EOF;
-            $content .= '<script type="text/javascript" src="//s7.addthis.com/js/'.$atversion.'/addthis_widget.js#username='.$pub.'"></script></div>';
+            $content .= '<script data-cfasync="false" type="text/javascript" src="//s7.addthis.com/js/'.$atversion.'/addthis_widget.js#username='.$pub.'"></script></div>';
         }
         else
         {

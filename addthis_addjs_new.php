@@ -48,7 +48,7 @@ Class AddThis_addjs_sharing_button_plugin{
         $this->cmsConnector = $cmsConnector;
 
         if ( did_action('addthis_addjs_created') !== 0){
-            _doing_it_wrong( 'addthis_addjs', 'Only one instance of this class should be initialized.  Look for the $addthis_addjs global first',1 );
+            //_doing_it_wrong( 'addthis_addjs', 'Only one instance of this class should be initialized.  Look for the $addthis_addjs global first',1 );
         }
 
         // We haven't added our JS yet. Or at least better not have.
@@ -83,7 +83,7 @@ Class AddThis_addjs_sharing_button_plugin{
         else
             add_filter('the_content', array($this, 'output_script_filter') );
 
-        do_action('addthis_addjs_created');
+        //do_action('addthis_addjs_created');
     }
 
     function switch_theme(){
@@ -121,7 +121,7 @@ Class AddThis_addjs_sharing_button_plugin{
     }
 
     function wrapJs(){
-        $this->jsToAdd = '<script type="text/javascript">' . $this->jsToAdd . '</script>';
+        $this->jsToAdd = '<script data-cfasync="false" type="text/javascript">' . $this->jsToAdd . '</script>';
     }
 
     /* testing for wp_footer in a theme stuff */
@@ -200,10 +200,11 @@ Class AddThis_addjs_sharing_button_plugin{
 
             $this->jsToAdd .= '
                 <!-- AddThis Settings Begin -->
-                <script type="text/javascript">
+                <script data-cfasync="false" type="text/javascript">
                     var addthis_product = "'. $this->cmsConnector->getProductVersion() . '";
                     var wp_product_version = "' . $this->cmsConnector->getProductVersion() . '";
                     var wp_blog_version = "' . $this->cmsConnector->getCmsVersion() . '";
+                    var addthis_plugin_info = ' . $this->addThisConfigs->getAddThisPluginInfoJson() . ';
                     if (typeof(addthis_config) == "undefined") {
                         ' . $addthis_config_js . '
                     }
@@ -212,6 +213,7 @@ Class AddThis_addjs_sharing_button_plugin{
                     }
                 </script>
                 <script
+                    data-cfasync="false"
                     type="text/javascript"
                     src="' . $url . ' "
                     ' . $async . '
@@ -222,7 +224,7 @@ Class AddThis_addjs_sharing_button_plugin{
 
     function addAfterToJs(){
         if (! empty($this->jsAfterAdd)) {
-            $this->jsToAdd .= '<script type="text/javascript">' . $this->jsAfterAdd . '</script>';
+            $this->jsToAdd .= '<script data-cfasync="false" type="text/javascript">' . $this->jsAfterAdd . '</script>';
             $this->jsAfterAdd = NULL;
         }
     }

@@ -26,10 +26,12 @@ if (!class_exists('AddThisWordpressConnector')) {
         // implements AddThisCmsConnectorInterface {
 
         static $settingsVariableName = 'addthis_settings';
-        static $pluginVersion = '5.0.5';
+        static $pluginVersion = '5.0.6';
         static $settingsPageId = 'addthis_social_widget';
         static $anonymousProfileIdPrefix = 'wp';
+        static $pluginName = "AddThis Sharing Buttons";
         static $productPrefix = 'wpp';
+        static $cmsName = "WordPress";
         protected $configs = null;
 
         protected $defaultConfigs = array(
@@ -69,6 +71,14 @@ if (!class_exists('AddThisWordpressConnector')) {
 
         static function getPluginVersion() {
             return self::$pluginVersion;
+        }
+
+        static function getCmsName() {
+            return self::$cmsName;
+        }
+
+        static function getPluginName() {
+            return self::$pluginName;
         }
 
         static function getSettingsPageId() {

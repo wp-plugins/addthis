@@ -3,7 +3,7 @@ Contributors: abramsm, srijith.v, vipinss, dnrahamim, jgrodel, bradaddthiscom, m
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 5.0.5
+Stable tag: 5.0.6
 
 AddThis provides the best sharing tools to help you make your website smarter.
 
@@ -75,11 +75,17 @@ PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
 
+= 5.0.6 =
+* Limiting when we filter content from get_the_excerpt because of issues with the manshet and backstreet themes
+* Reducing PHP warnings and error messages
+* Adding back in addthis_config.ignore_server_config JavaScript variable for WordPress model (for on page configurations)
+* Adding data-cfasync="false" to all AddThis JavaScript to stop CloudFlare's RocketScript feature from breaking sharing buttons
+
 = 5.0.5 =
 * Adding all WordPress mode Advanced Options to AddThis mode Advanced Options. These are primarily options to edit the addthis_share and addthis_config JavaScript variables used by AddThis tools, as well as giving you the option to choose whether to load the AddThis script asyncronously.
 * Removing conflicts with WordPress Login Box plugin
 * Removing conflicts with AddThis Follow Widget plugin
-* CSS to remove new lines from br tags between our buttons, because some themes add them and break stuff (Thanks Customizr)
+* CSS to remove new lines from br tags between our buttons, because some themes add them and break stuff (such as Customizr)
 * Exposing more objects for use with adding sharing buttons to troublesome themes
 
 = 5.0.4 =
@@ -332,11 +338,17 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 == Upgrade Notice ==
 
+= 5.0.6 =
+* Limiting when we filter content from get_the_excerpt because of issues with the manshet and backstreet themes
+* Reducing PHP warnings and error messages
+* Adding back in addthis_config.ignore_server_config JavaScript variable for WordPress model (for on page configurations)
+* Adding data-cfasync="false" to all AddThis JavaScript to stop CloudFlare's RocketScript feature from breaking sharing buttons
+
 = 5.0.5 =
 * Adding all WordPress mode Advanced Options to AddThis mode Advanced Options. These are primarily options to edit the addthis_share and addthis_config JavaScript variables used by AddThis tools, as well as giving you the option to choose whether to load the AddThis script asyncronously.
 * Removing conflicts with WordPress Login Box plugin
 * Removing conflicts with AddThis Follow Widget plugin
-* CSS to remove new lines from br tags between our buttons, because some themes add them and break stuff (Thanks Customizr)
+* CSS to remove new lines from br tags between our buttons, because some themes add them and break stuff (such as Customizr)
 * Exposing more objects for use with adding sharing buttons to troublesome themes
 
 = 5.0.3 =

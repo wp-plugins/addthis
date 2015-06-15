@@ -309,7 +309,9 @@ if (!class_exists('AddThisConfigs')) {
             if (!empty($this->configs['addthis_share_json'])) {
                 $json = $this->configs['addthis_share_json'];
                 $fromJson = json_decode($json, true);
-                $addThisShareVariable = array_merge($addThisShareVariable, $fromJson);
+                if (is_array($fromJson)) {
+                  $addThisShareVariable = array_merge($addThisShareVariable, $fromJson);
+                }
             }
 
             return $addThisShareVariable;
@@ -321,12 +323,6 @@ if (!class_exists('AddThisConfigs')) {
             }
 
             $addThisConfigVariable = array();
-
-            if(   isset($options['addthis_plugin_controls'])
-               && $this->configs['addthis_plugin_controls'] != "AddThis"
-            ) {
-                $addThisConfigVariable['ignore_server_config'] = true;
-            }
 
             if (!empty($this->configs['data_ga_property']) ){
                 $addThisConfigVariable['data_ga_property'] = $this->configs['data_ga_property'];
@@ -368,7 +364,15 @@ if (!class_exists('AddThisConfigs')) {
             if (!empty($this->configs['addthis_config_json'])) {
                 $json = $this->configs['addthis_config_json'];
                 $fromJson = json_decode($json, true);
-                $addThisConfigVariable = array_merge($addThisConfigVariable, $fromJson);
+                if (is_array($fromJson)) {
+                  $addThisConfigVariable = array_merge($addThisConfigVariable, $fromJson);
+                }
+            }
+
+            if(   isset($this->configs['addthis_plugin_controls'])
+               && $this->configs['addthis_plugin_controls'] != "AddThis"
+            ) {
+                $addThisConfigVariable['ignore_server_config'] = true;
             }
 
             return $addThisConfigVariable;
@@ -389,6 +393,22 @@ if (!class_exists('AddThisConfigs')) {
             }
 
             return $twitter_username;
+        }
+
+        public function getAddThisPluginInfoJson() {
+            if (!is_array($this->configs)) {
+                $this->getConfigs();
+            }
+
+            $pluginInfo = array();
+            $pluginInfo['cms_name'] = $this->cmsInterface->getCmsName();
+            $pluginInfo['cms_version'] = $this->cmsInterface->getCmsVersion();
+            $pluginInfo['plugin_name'] = $this->cmsInterface->getPluginName();
+            $pluginInfo['plugin_version'] = $this->cmsInterface->getPluginVersion();
+            $pluginInfo['plugin_mode'] = $this->configs['addthis_plugin_controls'];
+
+            $json = json_encode($pluginInfo);
+            return $json;
         }
     }
 }
