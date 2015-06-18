@@ -252,20 +252,53 @@ Class AddThis_addjs_sharing_button_plugin{
      * Function to add checkbox to show/hide Addthis sharing buttons in admin post add/edit page.
      */
     public function register_post_at_flag() {
-        add_meta_box('at_widget', __('AddThis For Wordpress'), array($this, 'add_at_flag_meta_box'), 'post', 'advanced', 'high');
-        add_meta_box('at_widget', __('AddThis For Wordpress'), array($this, 'add_at_flag_meta_box'), 'page', 'advanced', 'high');
+        $configs = $this->addThisConfigs->getConfigs();
+        if (!$configs['addthis_per_post_enabled']) {
+            return;
+        }
+
+        add_meta_box('at_widget', __('AddThis Sharing Buttons'), array($this, 'add_at_flag_meta_box'), 'post', 'advanced', 'high');
+        add_meta_box('at_widget', __('AddThis Sharing Buttons'), array($this, 'add_at_flag_meta_box'), 'page', 'advanced', 'high');
     }
     /*
      * Function to add checkbox to show/hide Addthis sharing buttons in admin post add/edit page.
      */
     public function add_at_flag_meta_box($post){
         $at_flag = get_post_meta($post->ID, '_at_widget', true);
-        echo "<label for='_at_widget'>".__('Show AddThis sharing buttons: ', 'foobar')."</label>";
-        if($at_flag == '' || $at_flag == '1'){
-            echo "<input type='checkbox' name='_at_widget' id='at_widget' value='1' checked='checked'/>";
-        } else if($at_flag == '0'){
-            echo "<input type='checkbox' name='_at_widget' id='at_widget' value='1'/>";
+
+        $off_checked = '';
+        $on_checked = '';
+        if ($at_flag == '0') {
+            $off_checked = 'checked="checked"';
+        } else {
+            $on_checked = 'checked="checked"';
         }
+
+        $html = '
+            <label for="_at_widget_on">
+                <input
+                    type="radio"
+                    id="_at_widget_on"
+                    name="_at_widget"
+                    value="1"
+                    ' . $on_checked . '
+                />
+                <span class="addthis-checkbox-label">On</span>
+            </label>
+            <label for="_at_widget_off">
+                <input
+                    type="radio"
+                    id="_at_widget_off"
+                    name="_at_widget"
+                    value="0"
+                    ' . $off_checked . '
+                />
+                <span class="addthis-checkbox-label">Off</span>
+            </label>
+        ';
+
+        echo $html;
+
     }
     /*
      * Function to save the value of checkbox to show/hide Addthis sharing buttons in admin post add/edit page.
@@ -274,13 +307,14 @@ Class AddThis_addjs_sharing_button_plugin{
         global $post;
 
         //Ignore if trigger is by theme specific actions without post object
-        if (!isset($post)) {
+        if (!isset($post, $_POST['_at_widget'])) {
             return;
         }
 
-        if(isset($_POST['_at_widget']))
-            update_post_meta($post->ID, '_at_widget', $_POST['_at_widget']);
-        else
+        if ($_POST['_at_widget'] == 1) {
+            update_post_meta($post->ID, '_at_widget', '1');
+        } else {
             update_post_meta($post->ID, '_at_widget', '0');
+        }
     }
 }

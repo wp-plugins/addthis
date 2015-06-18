@@ -26,7 +26,7 @@ if (!class_exists('AddThisWordpressConnector')) {
         // implements AddThisCmsConnectorInterface {
 
         static $settingsVariableName = 'addthis_settings';
-        static $pluginVersion = '5.0.6';
+        static $pluginVersion = '5.0.7';
         static $settingsPageId = 'addthis_social_widget';
         static $anonymousProfileIdPrefix = 'wp';
         static $pluginName = "AddThis Sharing Buttons";
@@ -581,6 +581,7 @@ if (!class_exists('AddThisWordpressConnector')) {
                 'addthis_append_data',
                 'addthis_asynchronous_loading',
                 'addthis_bitly',
+                'addthis_per_post_enabled',
             );
 
             foreach ($checkboxFields as $field) {

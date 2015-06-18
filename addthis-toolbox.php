@@ -86,10 +86,16 @@ class Addthis_ToolBox
      */
     public function addWidget($content)
     {
+        $configs = $this->addThisConfigs->getConfigs();
+
         if ($this->addThisConfigs->getProfileId() && !is_404() && !is_feed()) {
             global $post;
             $postid = $post->ID;
             $at_flag = get_post_meta( $postid, '_at_widget', TRUE );
+            if (!$configs['addthis_per_post_enabled']) {
+                $at_flag = '1';
+            }
+
             if (is_home() || is_front_page()) {
                 if($at_flag == '' || $at_flag == '1'){
                     $content  = self::_buildDiv(self::AT_ABOVE_POST_HOME) .

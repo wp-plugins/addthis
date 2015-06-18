@@ -3,7 +3,7 @@ Contributors: abramsm, srijith.v, vipinss, dnrahamim, jgrodel, bradaddthiscom, m
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 5.0.6
+Stable tag: 5.0.7
 
 AddThis provides the best sharing tools to help you make your website smarter.
 
@@ -32,7 +32,7 @@ To upload the plugin through WordPress, instead of FTP:
 
 = Is AddThis free? =
 
-Many of our tools are free, but Pro users get the benefit of exclusive widgets, including mobile­friendly tools
+Many of our tools are free, but Pro users get the benefit of exclusive widgets, including mobile­ friendly tools
 and retina icons, priority support and deeper analytics.
 
 = Do I need to create an account? =
@@ -64,6 +64,7 @@ In the screen options you can enable the AddThis meta box. Check the box and sav
 1. Sharing Tools tab on the plugin settings page (WordPress mode)
 2. Sharing Tools tab on the plugin settings page (WordPress mode)
 3. Advanced Options tab on the plugin settings page
+4. Drag and dropable sharing buttons widget (WordPress mode)
 4. Sharing Tools tab on the plugin settings page (AddThis mode)
 5. Analytics on the AddThis Dashboard
 6. Tool Gallery on the AddThis Dashboard
@@ -74,6 +75,10 @@ In the screen options you can enable the AddThis meta box. Check the box and sav
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+
+= 5.0.7 =
+* Changed the page/post edit screens AddThing sharing buttons checkbox to on/off radiobuttons
+* Added a checkbox to the plugin's settings page's Advanced Options tab to enable/disable the per page/post sharing button configurations mentioned above
 
 = 5.0.6 =
 * Limiting when we filter content from get_the_excerpt because of issues with the manshet and backstreet themes
@@ -337,6 +342,10 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+
+= 5.0.7 =
+* Changed the page/post edit screens AddThing sharing buttons checkbox to on/off radiobuttons
+* Added a checkbox to the plugin's settings page's Advanced Options tab to enable/disable the per page/post sharing button configurations mentioned above
 
 = 5.0.6 =
 * Limiting when we filter content from get_the_excerpt because of issues with the manshet and backstreet themes

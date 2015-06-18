@@ -3,7 +3,7 @@
  * Plugin Name: AddThis Sharing Buttons
  * Plugin URI: http://www.addthis.com
  * Description: Use the AddThis suite of website tools which includes sharing, following, recommended content, and conversion tools to help you make your website smarter. With AddThis, you can see how your users are engaging with your content, provide a personalized experience for each user and encourage them to share, subscribe or follow.
- * Version: 5.0.6
+ * Version: 5.0.7
  * Author: The AddThis Team
  * Author URI: http://www.addthis.com/
  * License: GPL2
@@ -322,6 +322,9 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
 
             if ($asynchronous_loading = get_option('addthis_asynchronous_loading'))
                 $addthis_new_options['addthis_asynchronous_loading'] = $asynchronous_loading;
+
+            if ($addthis_per_post_enabled = get_option('addthis_per_post_enabled'))
+                $addthis_new_options['addthis_per_post_enabled'] = $addthis_per_post_enabled;
 
             if ($append_data = get_option('addthis_append_data'))
                 $addthis_new_options['addthis_append_data'] = $append_data;
@@ -794,6 +797,7 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             'addthis_below_enabled',
             'addthis_bitly',
             'addthis_sidebar_enabled',
+            'addthis_per_post_enabled',
         );
 
         // add all share button location template settings to list of checkbox fields
@@ -1283,6 +1287,10 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
         }
 
         $at_flag = get_post_meta( $post->ID, '_at_widget', TRUE );
+        if (!$options['addthis_per_post_enabled']) {
+            $at_flag = '1';
+        }
+
         if ($at_flag !== '0') {
             if ($displayAbove && isset($above)) {
                 $content = sprintf($above, $url_above) . $content;
@@ -2343,9 +2351,13 @@ function _addthis_display_options_card() {
 
     $checkedString = 'checked="checked"';
     $asyncChecked = "";
+    $perPostEnableChecked = "";
     $a508Checked = "";
     if (!empty($options['addthis_asynchronous_loading'])) {
         $asyncChecked = $checkedString;
+    }
+    if (!empty($options['addthis_per_post_enabled'])) {
+        $perPostEnableChecked = $checkedString;
     }
     if (!empty($options['addthis_508'])) {
         $a508Checked = $checkedString;
@@ -2373,6 +2385,20 @@ function _addthis_display_options_card() {
                                     </span>
                                 </label>
                                 <span class="at-wp-tooltip" tooltip="When checked, your site will load before AddThis sharing buttons are added. If unchecked, your site will not load until AddThis buttons (and AddThis JavaScript) have been loaded by your vistors.">?</span>
+                            </li>
+                            <li>
+                                <input
+                                    id="addthis_per_post_enabled"
+                                    type="checkbox"
+                                    name="addthis_settings[addthis_per_post_enabled]"
+                                    value="true" ' . $perPostEnableChecked . ' />
+                                <label for="addthis_per_post_enabled">
+                                    <span class="addthis-checkbox-label">
+                                        <strong>' . translate("Include an option to turn off sharing tools by post", 'addthis_trans_domain') . '</strong>
+                                        (Recommended)
+                                    </span>
+                                </label>
+                                <span class="at-wp-tooltip" tooltip="When checked, on the edit page of posts you will be able to turn off sharing buttons for that specific post.">?</span>
                             </li>
                             <li>
                                 <input
