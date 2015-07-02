@@ -26,7 +26,7 @@ if (!class_exists('AddThisWordpressConnector')) {
         // implements AddThisCmsConnectorInterface {
 
         static $settingsVariableName = 'addthis_settings';
-        static $pluginVersion = '5.0.7';
+        static $pluginVersion = '5.0.8';
         static $settingsPageId = 'addthis_social_widget';
         static $anonymousProfileIdPrefix = 'wp';
         static $pluginName = "AddThis Sharing Buttons";

@@ -201,9 +201,9 @@ if (!class_exists('AddThisConfigs')) {
             $twoWeeksAgo = time() - (60 * 60 * 24 * 7 * 2);
             if (   isset($this->configs['addthis_rate_us_timestamp'])
                 && $this->configs['addthis_rate_us_timestamp'] < $twoWeeksAgo
-                && $configs['addthis_rate_us'] != 'rated'
+                && $this->configs['addthis_rate_us'] != 'rated'
             ) {
-                $configs['addthis_rate_us'] = '';
+                $this->configs['addthis_rate_us'] = '';
             }
 
             if ($this->changedConfigs) {
