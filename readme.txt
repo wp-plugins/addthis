@@ -3,7 +3,7 @@ Contributors: abramsm, srijith.v, vipinss, dnrahamim, jgrodel, bradaddthiscom, m
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 5.0.9
+Stable tag: 5.0.10
 
 AddThis provides the best sharing tools to help you make your website smarter.
 
@@ -75,6 +75,10 @@ In the screen options you can enable the AddThis meta box. Check the box and sav
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+
+= 5.0.10 =
+* Fixing bug where all checkboxes get unchecked on first settings page save
+* Fixing PHP error with getConfigs() on a non-object in addthis_social_widget.php on line 1086
 
 = 5.0.9 =
 * Updated troubleshooting information available to AddThis support to be more in line with other plugins, including providing the anonymous profile IDs to help in moving over statistics to registered profile IDs upon request.
@@ -353,6 +357,10 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+
+= 5.0.10 =
+* Fixing bug where all checkboxes get unchecked on first settings page save
+* Fixing PHP error with getConfigs() on a non-object in addthis_social_widget.php on line 1086
 
 = 5.0.9 =
 * Updated troubleshooting information available to AddThis support to be more in line with other plugins, including providing the anonymous profile IDs to help in moving over statistics to registered profile IDs upon request.

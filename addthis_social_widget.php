@@ -3,7 +3,7 @@
  * Plugin Name: AddThis Sharing Buttons
  * Plugin URI: http://www.addthis.com
  * Description: Use the AddThis suite of website tools which includes sharing, following, recommended content, and conversion tools to help you make your website smarter. With AddThis, you can see how your users are engaging with your content, provide a personalized experience for each user and encourage them to share, subscribe or follow.
- * Version: 5.0.9
+ * Version: 5.0.10
  * Author: The AddThis Team
  * Author URI: http://www.addthis.com/
  * License: GPL2
@@ -721,6 +721,10 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
         $below_custom_styles = $above_custom_styles = '';
         $options = $addThisConfigs->getConfigs();
 
+        if (!is_array($data)) {
+          return $options;
+        }
+
         if (isset($data['show_below'])) {
             $options['below'] = 'none';
         } elseif (isset($data['below'], $styles[$data['below']])) {
@@ -1083,6 +1087,19 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
     function addthis_remove_tag($content)
     {
         global $addThisConfigs;
+
+        if (!is_object($addThisConfigs)) {
+            $addThisSharingButtonsPluginObject = new AddThisWordPressSharingButtonsPlugin();
+            $cmsConnector = new AddThisWordPressConnector($addThisSharingButtonsPluginObject);
+            $addThisConfigs = new AddThisConfigs($cmsConnector);
+        }
+
+        if(   !is_object($addThisConfigs)
+           || !method_exists($addThisConfigs, 'getConfigs')
+        ) {
+            return $content;
+        }
+
         $options = $addThisConfigs->getConfigs();
 
         $checkForToolbox = "addthis_toolbox";
