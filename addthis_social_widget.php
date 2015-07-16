@@ -3,7 +3,7 @@
  * Plugin Name: AddThis Sharing Buttons
  * Plugin URI: http://www.addthis.com
  * Description: Use the AddThis suite of website tools which includes sharing, following, recommended content, and conversion tools to help you make your website smarter. With AddThis, you can see how your users are engaging with your content, provide a personalized experience for each user and encourage them to share, subscribe or follow.
- * Version: 5.0.10
+ * Version: 5.0.11
  * Author: The AddThis Team
  * Author URI: http://www.addthis.com/
  * License: GPL2
@@ -1129,31 +1129,31 @@ if ($addthis_options['addthis_plugin_controls'] == "AddThis") {
             return $link_text;
         }
 
-        $addThisConfigs = $addThisConfigs->getConfigs();
+        $options = $addThisConfigs->getConfigs();
         $styles = array_merge($addthis_styles, $addthis_new_styles);
 
         if (   has_excerpt()
             && !is_attachment()
-            && isset($addThisConfigs['below'])
-            && $addThisConfigs['below'] == 'custom'
+            && isset($options['below'])
+            && $options['below'] == 'custom'
         ) {
-            $options['size'] = $addThisConfigs['below_custom_size'];
-            $options['more'] = $addThisConfigs['below_custom_more'];
+            $parsedOptions['size'] = $options['below_custom_size'];
+            $newOptions['more'] = $options['below_custom_more'];
 
-            if ($addThisConfigs['below_do_custom_services']) {
-                $options['services'] = $addThisConfigs['below_custom_services'];
+            if ($options['below_do_custom_services']) {
+                $parsedOptions['services'] = $options['below_custom_services'];
             }
 
-            if ($addThisConfigs['below_do_custom_preferred']) {
-                $options['preferred'] = $addThisConfigs['below_custom_preferred'];
+            if ($options['below_do_custom_preferred']) {
+                $parsedOptions['preferred'] = $options['below_custom_preferred'];
             }
 
-            $template = addthis_custom_toolbox($options);
-        } elseif (   isset($styles[$addThisConfigs['below']])
+            $template = addthis_custom_toolbox($parsedOptions);
+        } elseif (   isset($styles[$options['below']])
                   && has_excerpt()
                   && !is_attachment()
         ) {
-            $template = $styles[$addThisConfigs['below']]['src'];
+            $template = $styles[$options['below']]['src'];
         } else {
             $template = '';
         }
