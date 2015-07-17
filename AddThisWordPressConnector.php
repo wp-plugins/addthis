@@ -357,20 +357,32 @@ if (!class_exists('AddThisWordPressConnector')) {
             $migrationVariable = $this->migrationStatusVariable();
 
             $oldConfigs = $this->recurseForOldConfigs($this->plugin->getOldConfigVariableName());
-            if (   isset($oldConfigs[$migrationVariable])
-                && $oldConfigs[$migrationVariable] !== $this->plugin->getConfigVariableName()
+
+            if (   !isset($oldConfigs[$migrationVariable])
+                || $oldConfigs[$migrationVariable] !== $this->plugin->getConfigVariableName()
             ) {
-                if (is_array($this->configs)) {
+                if (is_array($this->configs) && is_array($oldConfigs)) {
                     $this->configs = array_merge($oldConfigs, $this->configs);
-                } else {
+                } else if (is_array($oldConfigs)) {
                     $this->configs = $oldConfigs;
                 }
 
-                $oldConfigs[$migrationVariable] = $this->plugin->getConfigVariableName();
-                update_option($this->migratedConfigSettingsName, $oldConfigs);
-
-                return $this->configs;
+                $updatedOldConfigs[$migrationVariable] = $this->plugin->getConfigVariableName();
+                update_option($this->migratedConfigSettingsName, $updatedOldConfigs);
             }
+
+            $badUpgradeVersions = array('5.0.9', '5.0.10', '5.0.11');
+            if (!empty($this->configs['addthis_plugin_version'])) {
+                $oldVersion = $this->configs['addthis_plugin_version'];
+            } else {
+                $oldVersion = 'unknown';
+            }
+
+            if (in_array($oldVersion, $badUpgradeVersions)) {
+                $this->configs = $oldConfigs;
+            }
+
+            return $this->configs;
         }
 
         public function upgradeConfigs() {

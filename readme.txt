@@ -3,7 +3,7 @@ Contributors: abramsm, srijith.v, vipinss, dnrahamim, jgrodel, bradaddthiscom, m
 Tags: AddThis, addtoany, bookmark, bookmarking, email, e-mail, sharing buttons, share, share this, facebook, google+, pinterest, instagram, linkedin, whatsapp, social tools, website tools, twitter, content marketing, recommended content, conversion tool, subscription button, conversion tools, email tools, ecommerce tools, social marketing, personalization tools
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 5.0.11
+Stable tag: 5.0.12
 
 AddThis provides the best sharing tools to help you make your website smarter.
 
@@ -75,6 +75,10 @@ In the screen options you can enable the AddThis meta box. Check the box and sav
 PHP 5+ is preferred; PHP 4 is supported.
 
 == Changelog ==
+
+= 5.0.12 =
+* Fixing a bug that resets settings to defaults during the upgrade for users in AddThis mode
+* Reverting to pre-5.0.9 settings of plugin for upgrades from 5.0.9, 5.0.10 and 5.0.11
 
 = 5.0.11 =
 * Fixing overwrite of $addThisConfig global to resolve more PHP errors where a function is called from a non-object
@@ -360,6 +364,10 @@ Fixed nondeterministic bug with the_title(), causing the title to occasionally a
 
 
 == Upgrade Notice ==
+
+= 5.0.12 =
+* Fixing a bug that resets settings to defaults during the upgrade for users in AddThis mode
+* Reverting to pre-5.0.9 settings of plugin for upgrades from 5.0.9, 5.0.10 and 5.0.11
 
 = 5.0.11 =
 * Fixing overwrite of $addThisConfig global to resolve more PHP errors where a function is called from a non-object
