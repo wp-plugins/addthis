@@ -2763,7 +2763,7 @@ function addthis_profile_id_csr_confirmation()
                         <span>AddThis Profile ID:</span>
                         <input
                             type="text"
-                            value="'.$pubId.'"
+                            value="'.esc_html($pubId).'"
                             name="'.$fieldName.'"
                             id="addthis_profile" >
                         <input
